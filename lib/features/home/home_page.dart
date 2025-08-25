@@ -1,11 +1,12 @@
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
-import 'package:go_router/go_router.dart';
 import 'package:farm/features/drafting/drafting_scan_page.dart';
 
+@RoutePage()
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -37,16 +38,19 @@ class _HomePageState extends State<HomePage> {
 
     try {
       adapterState = await _flutterBlueClassicPlugin.adapterStateNow;
-      _adapterStateSubscription =
-          _flutterBlueClassicPlugin.adapterState.listen((current) {
-        if (mounted) setState(() => _adapterState = current);
-      });
-      _scanSubscription =
-          _flutterBlueClassicPlugin.scanResults.listen((device) {
+      _adapterStateSubscription = _flutterBlueClassicPlugin.adapterState.listen(
+        (current) {
+          if (mounted) setState(() => _adapterState = current);
+        },
+      );
+      _scanSubscription = _flutterBlueClassicPlugin.scanResults.listen((
+        device,
+      ) {
         if (mounted) setState(() => _scanResults.add(device));
       });
-      _scanningStateSubscription =
-          _flutterBlueClassicPlugin.isScanning.listen((isScanning) {
+      _scanningStateSubscription = _flutterBlueClassicPlugin.isScanning.listen((
+        isScanning,
+      ) {
         if (mounted) setState(() => _isScanning = isScanning);
       });
     } catch (e) {
@@ -73,9 +77,7 @@ class _HomePageState extends State<HomePage> {
     List<BluetoothDevice> scanResults = _scanResults.toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('FlutterBlueClassic example app'),
-      ),
+      appBar: AppBar(title: const Text('FlutterBlueClassic example app')),
       body: ListView(
         children: [
           ListTile(
@@ -93,7 +95,8 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 title: Text("${result.name ?? "???"} (${result.address})"),
                 subtitle: Text(
-                    "Bondstate: ${result.bondState.name}, Device type: ${result.type.name}"),
+                  "Bondstate: ${result.bondState.name}, Device type: ${result.type.name}",
+                ),
                 trailing: index == _connectingToIndex
                     ? const CircularProgressIndicator()
                     : Text("${result.rssi} dBm"),
@@ -101,28 +104,32 @@ class _HomePageState extends State<HomePage> {
                   BluetoothConnection? connection;
                   setState(() => _connectingToIndex = index);
                   try {
-                    connection =
-                        await _flutterBlueClassicPlugin.connect(result.address);
+                    connection = await _flutterBlueClassicPlugin.connect(
+                      result.address,
+                    );
                     if (!this.context.mounted) return;
                     if (connection != null && connection.isConnected) {
                       if (mounted) setState(() => _connectingToIndex = null);
-                      context.push('/drafting-scan', extra: connection);
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) =>
-                      //             DeviceScreen(connection: connection!)));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DraftingScanPage(connection: connection!),
+                        ),
+                      );
                     }
                   } catch (e) {
                     if (mounted) setState(() => _connectingToIndex = null);
                     if (kDebugMode) print(e);
                     connection?.dispose();
                     ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-                        const SnackBar(
-                            content: Text("Error connecting to device")));
+                      const SnackBar(
+                        content: Text("Error connecting to device"),
+                      ),
+                    );
                   }
                 },
-              )
+              ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(

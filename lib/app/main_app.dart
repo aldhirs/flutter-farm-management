@@ -1,23 +1,15 @@
-import 'dart:async';
-
-import 'package:app/app.dart';
-import 'package:app/helpers/local_push_notification_helper.dart';
-import 'package:app/navigation/routes/app_router.gr.dart';
-import 'package:app_links/app_links.dart';
-import 'package:chucker_flutter/chucker_flutter.dart';
-import 'package:dartx/dartx_io.dart';
-import 'package:domain/domain.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
+import 'package:farm/app/bloc/app_bloc.dart';
+import 'package:farm/app/bloc/app_event.dart';
+import 'package:farm/app/bloc/app_state.dart';
+import 'package:farm/base/base_page_state.dart';
+import 'package:farm/constants/ui/device_constants.dart';
+import 'package:farm/constants/ui/ui_constants.dart';
+import 'package:farm/navigation/routes/app_router.dart';
+import 'package:farm/resources/resource.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:resources/resources.dart';
-import 'package:shared/shared.dart';
 
 GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
@@ -28,31 +20,50 @@ class MainApp extends StatefulWidget {
   State<MainApp> createState() => _MainAppState();
 }
 
-class _MainAppState extends BasePageState<KariermuApp, AppBloc> {
+class _MainAppState extends BasePageState<MainApp, AppBloc> {
+  final _appRouter = GetIt.instance.get<AppRouter>();
+
+  @override
+  bool get isAppWidget => true;
+
+  @override
+  void initState() {
+    super.initState();
+    bloc.add(const AppInitiated());
+  }
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Flutter Demo',
-      routerConfig: AppRouter.router,
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+  Widget buildPage(BuildContext context) {
+    return ScreenUtilInit(
+      key: navKey,
+      designSize: const Size(
+        DeviceConstants.designDeviceWidth,
+        DeviceConstants.designDeviceHeight,
+      ),
+      builder: (context, _) => BlocBuilder<AppBloc, AppState>(
+        buildWhen: (previous, current) =>
+            previous.isDarkTheme != current.isDarkTheme,
+        builder: (context, state) {
+          return MaterialApp.router(
+            builder: (context, child) {
+              final MediaQueryData data = MediaQuery.of(context);
+
+              return MediaQuery(
+                data: data.copyWith(textScaler: const TextScaler.linear(1.0)),
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
+            title: UiConstants.materialAppTitle,
+            color: UiConstants.taskMenuMaterialAppColor,
+            themeMode: state.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+            theme: lightTheme,
+            darkTheme: darkTheme,
+            debugShowCheckedModeBanner: true,
+            routerDelegate: _appRouter.delegate(),
+            routeInformationParser: _appRouter.defaultRouteParser(),
+          );
+        },
       ),
     );
   }
