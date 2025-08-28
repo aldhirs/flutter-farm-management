@@ -16,6 +16,7 @@ class EmptyState extends StatelessWidget {
     required this.title,
     required this.description,
     this.buttonText,
+    this.buttonSize,
     this.secondaryButtonText,
     this.onPressed,
     this.onSecondaryPressed,
@@ -39,6 +40,7 @@ class EmptyState extends StatelessWidget {
   final bool isEnabledPositifButton;
   final Color? colorTitle;
   final Widget? leftIconButton;
+  final ButtonSize? buttonSize;
 
   final void Function()? onPressed;
   final void Function()? onSecondaryPressed;
@@ -80,7 +82,7 @@ class EmptyState extends StatelessWidget {
               child: Text(
                 title.orEmpty(),
                 textAlign: TextAlign.center,
-                style: TextStyles.body1().copyWith(
+                style: TextStyles.heading4().copyWith(
                   color: colorTitle ?? AppColors.current.royalNavy900,
                 ),
               ),
@@ -98,7 +100,7 @@ class EmptyState extends StatelessWidget {
                   ? Text(
                       description,
                       textAlign: TextAlign.center,
-                      style: TextStyles.paragraph3(),
+                      style: TextStyles.paragraph1(),
                     )
                   : description,
             ),
@@ -110,6 +112,7 @@ class EmptyState extends StatelessWidget {
                 const SizedBox(height: Dimens.d16),
                 Center(
                   child: Button(
+                    size: buttonSize ?? ButtonSize.medium,
                     fulLWidth: isButtonFullWidth,
                     type: isEnabledPositifButton
                         ? ButtonType.primary

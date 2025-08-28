@@ -95,46 +95,46 @@ class _LoginPageState extends BasePageState<LoginPage, LoginBloc> {
 
   Widget _viewPage() {
     return SingleChildScrollView(
-      child: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.only(
-            left: Dimens.d16,
-            right: Dimens.d16,
-            top: Dimens.d16,
-            bottom: Dimens.d16,
-          ),
-          child: Center(
-            child: Column(
-              children: [
-                const SizedBox(height: Dimens.d36),
-                _headerTitleWidget(),
-                const SizedBox(height: Dimens.d24),
-                _errorWidget(),
-                _textInputEmailWidget(),
-                const SizedBox(height: Dimens.d16),
-                _textInputPasswordWidget(),
-                const SizedBox(height: Dimens.d4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ButtonText(
-                      text: "Lupa Password?",
-                      onPressed: () {
-                        showDialog(
-                          useRootNavigator: false,
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) => _popupInputForgotPassword(),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: Dimens.d8),
-                _loginButtonWidget(),
-                const SizedBox(height: Dimens.d48),
-              ],
-            ),
+      child: Container(
+        padding: const EdgeInsets.only(
+          left: Dimens.d16,
+          right: Dimens.d16,
+          top: Dimens.d16,
+          bottom: Dimens.d16,
+        ),
+        child: Center(
+          child: Column(
+            children: [
+              const SizedBox(height: Dimens.d36),
+              _headerLogoWidget(),
+              const SizedBox(height: Dimens.d24),
+              _headerTitleWidget(),
+              const SizedBox(height: Dimens.d24),
+              _errorWidget(),
+              _textInputEmailWidget(),
+              const SizedBox(height: Dimens.d16),
+              _textInputPasswordWidget(),
+              const SizedBox(height: Dimens.d4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ButtonText(
+                    text: "Lupa Kata Sandi?",
+                    onPressed: () {
+                      showDialog(
+                        useRootNavigator: false,
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) => _popupInputForgotPassword(),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: Dimens.d8),
+              _loginButtonWidget(),
+              const SizedBox(height: Dimens.d48),
+            ],
           ),
         ),
       ),
@@ -143,14 +143,24 @@ class _LoginPageState extends BasePageState<LoginPage, LoginBloc> {
 
   Future<void> _initData() async {}
 
+  Widget _headerLogoWidget() {
+    return Assets.images.logo.image(
+      height: Dimens.d180,
+      width: AppDimen.current.screenWidth,
+    );
+  }
+
   Widget _headerTitleWidget() {
     return Column(
       children: [
         Text(
-          'Masuk',
-          style: TextStyles.heading6().copyWith(
-            color: AppColors.current.royalNavy900,
-          ),
+          'Selamat datang kembali.',
+          style: TextStyles.heading4().copyWith(color: AppColors.current.black),
+        ),
+        const SizedBox(height: Dimens.d8),
+        Text(
+          'Silakan login disini.',
+          style: TextStyles.body2().copyWith(color: AppColors.current.black),
         ),
         const SizedBox(height: Dimens.d8),
       ],

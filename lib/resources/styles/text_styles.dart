@@ -17,7 +17,7 @@ import 'package:google_fonts/google_fonts.dart';
 class TextStyles {
   TextStyles._();
 
-  static const _defaultLetterSpacing = 0.0;
+  static const _defaultLetterSpacing = 0.5;
 
   static TextStyle _baseInterFontStyle() => GoogleFonts.inter(
     color: AppColors.current.text100,
@@ -276,7 +276,7 @@ class TextStyles {
   static TextStyle _label1Mobile() => _baseInterFontStyle().merge(
     const TextStyle(
       fontSize: Dimens.d14,
-      fontWeight: FontWeight.normal,
+      fontWeight: FontWeight.w600,
       height: 1.714, // line height 24sp
     ),
   );

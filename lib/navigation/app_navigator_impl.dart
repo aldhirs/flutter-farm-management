@@ -5,6 +5,7 @@ import 'package:farm/navigation/app_navigator.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/navigation/base/base_route_info_mapper.dart';
 import 'package:farm/navigation/routes/app_router.dart';
+import 'package:farm/navigation/routes/app_router.gr.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/device_utils.dart';
 import 'package:farm/utils/view_utils.dart';
@@ -17,7 +18,7 @@ import 'package:injectable/injectable.dart';
 class AppNavigatorImpl extends AppNavigator with LogMixin {
   AppNavigatorImpl(this._appRouter, this._appRouteInfoMapper);
 
-  // final homeNavBarRoutes = const [MyProgramRoute(), AccountRoute()];
+  final homeNavBarRoutes = const [HomeRoute(), AccountRoute()];
 
   TabsRouter? tabsRouter;
 

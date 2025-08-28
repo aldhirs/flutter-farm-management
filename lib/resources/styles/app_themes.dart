@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 final lightTheme = ThemeData(
   brightness: Brightness.light,
   splashColor: Colors.transparent,
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color(0xFF003972),
+    foregroundColor: Colors.white,
+  ),
   textSelectionTheme: TextSelectionThemeData(
     cursorColor: AppColors.defaultAppColor.text100,
     selectionColor: AppColors.defaultAppColor.text300,

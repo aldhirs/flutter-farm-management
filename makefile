@@ -8,4 +8,7 @@ remove_splash:
 	flutter pub run flutter_native_splash:remove --path=splash/splash.yaml
 
 build_all:
+	dart run build_runner build --delete-conflicting-outputs
+
+clean_all:
 	dart run build_runner build

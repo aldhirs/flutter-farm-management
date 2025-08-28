@@ -1,3 +1,4 @@
+import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'app_route_info.freezed.dart';
@@ -30,4 +31,8 @@ abstract class AppRouteInfo with _$AppRouteInfo {
 
   // // home
   const factory AppRouteInfo.home() = Home;
+  const factory AppRouteInfo.account() = Account;
+  const factory AppRouteInfo.draftingScan() = DraftingScan;
+  const factory AppRouteInfo.draftingDetail({BluetoothConnection? connection}) =
+      DraftingDetail;
 }

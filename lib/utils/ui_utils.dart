@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 enum ButtonSize {
-  small(size: 36, padding: 6),
-  medium(size: 44, padding: 10),
-  large(size: 48, padding: 12),
-  extraLarge(size: 56, padding: 16);
+  small(size: 40, padding: 6),
+  medium(size: 50, padding: 10),
+  large(size: 54, padding: 12),
+  extraLarge(size: 60, padding: 16);
 
   const ButtonSize({required this.size, required this.padding});
 
@@ -14,7 +14,7 @@ enum ButtonSize {
 
 enum ButtonType {
   primary(
-    backgroundColor: Color(0xFF351b0a),
+    backgroundColor: Color(0xFF003972),
     textColor: Colors.white,
     borderColor: Colors.transparent,
   ),
@@ -103,7 +103,7 @@ enum TickerViewType {
   ),
   info(
     backgroundColor: Color(0xFFeaf7ff),
-    actionTextColor: Color(0xFF006ad3),
+    actionTextColor: Color(0xFF003972),
     icon: 'assets/icons/ic_ticker_info.svg',
   ),
   danger(

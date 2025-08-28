@@ -149,22 +149,25 @@ class _TextInputFieldState extends State<TextInputField> {
             enabledBorder: OutlineInputBorder(
               borderRadius: _borderRadius,
               borderSide: BorderSide(
+                width: 2,
                 color:
                     widget.textInputState?.borderColor ??
-                    AppColors.current.neutral500,
+                    AppColors.current.neutral700,
               ),
             ),
             border: OutlineInputBorder(
               borderRadius: _borderRadius,
               borderSide: BorderSide(
+                width: 2,
                 color:
                     widget.textInputState?.borderColor ??
-                    AppColors.current.neutral500,
+                    AppColors.current.neutral700,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: _borderRadius,
               borderSide: BorderSide(
+                width: 2,
                 color:
                     widget.textInputState?.borderColor ??
                     AppColors.current.royalNavy500,
@@ -173,6 +176,7 @@ class _TextInputFieldState extends State<TextInputField> {
             errorBorder: OutlineInputBorder(
               borderRadius: _borderRadius,
               borderSide: BorderSide(
+                width: 2,
                 color:
                     widget.textInputState?.borderColor ??
                     AppColors.current.crimson500,
@@ -181,6 +185,7 @@ class _TextInputFieldState extends State<TextInputField> {
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: _borderRadius,
               borderSide: BorderSide(
+                width: 2,
                 color:
                     widget.textInputState?.borderColor ??
                     AppColors.current.crimson500,
@@ -189,6 +194,7 @@ class _TextInputFieldState extends State<TextInputField> {
             disabledBorder: OutlineInputBorder(
               borderRadius: _borderRadius,
               borderSide: BorderSide(
+                width: 2,
                 color:
                     widget.textInputState?.borderColor ??
                     AppColors.current.neutral700,

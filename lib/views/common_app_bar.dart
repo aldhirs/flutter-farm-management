@@ -1,4 +1,5 @@
 import 'package:dartx/dartx.dart';
+import 'package:farm/extensions/bool.dart';
 import 'package:farm/navigation/app_navigator.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leading,
     this.leadingWidth,
     this.backgroundColor,
+    this.foregroundColor,
     this.automaticallyImplyLeading = true,
     this.height,
     this.title,
@@ -32,6 +34,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? title;
   final List<Widget>? actions;
   final Color? backgroundColor;
+  final Color? foregroundColor;
   final Color? surfaceTintColor;
   final Color? shadowColor;
   final double? leadingWidth;
@@ -51,10 +54,11 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: automaticallyImplyLeading,
       leadingWidth: leadingWidth,
       title: titleText?.isNotEmpty == true ? _title() : title,
-      backgroundColor: backgroundColor ?? Colors.transparent,
-      surfaceTintColor: surfaceTintColor ?? Colors.transparent,
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor,
+      surfaceTintColor: surfaceTintColor,
       scrolledUnderElevation: 0.0,
-      forceMaterialTransparency: forceMaterialTransparency ?? true,
+      forceMaterialTransparency: forceMaterialTransparency.defaultTrue(),
       elevation: elevation,
       shadowColor: shadowColor,
       leading:
@@ -71,7 +75,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       alignment: Alignment.topLeft,
       child: Text(
         titleText.orEmpty(),
-        style: TextStyles.body2(),
+        style: TextStyles.heading6().copyWith(color: Colors.white),
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.left,
         maxLines: 1,
@@ -82,10 +86,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget _leading(BuildContext context) {
     return IconButton(
       icon: Assets.icons.icArrowLeft.svg(
-        colorFilter: ColorFilter.mode(
-          AppColors.current.text100,
-          BlendMode.srcIn,
-        ),
+        colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
       ),
       onPressed: onLeadingPressed ?? () => context.read<AppNavigator>().pop(),
     );

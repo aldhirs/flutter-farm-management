@@ -68,13 +68,12 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
     OnLoginPressed event,
     Emitter<LoginState> emit,
   ) async {
-    await navigator.push(const AppRouteInfo.home());
-    // emit(state.copyWith(isButtonLoginPressed: true, loginInvalid: false));
-    // if (state.emailValid && state.password.isNotEmpty) {
-    //   return _loginApi(emit);
-    // } else {
-    //   emit(state.copyWith(isButtonLoginPressed: false, loginInvalid: true));
-    // }
+    emit(state.copyWith(isButtonLoginPressed: true, loginInvalid: false));
+    if (state.emailValid && state.password.isNotEmpty) {
+      return _loginApi(emit);
+    } else {
+      emit(state.copyWith(isButtonLoginPressed: false, loginInvalid: true));
+    }
   }
 
   void _onInputEmailChanged(
@@ -150,6 +149,7 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
         // }
       },
       doOnEventCompleted: () async {
+        await navigator.replaceAll([const AppRouteInfo.home()]);
         await _onClearButtonPressed(emit);
       },
       handleError: false,

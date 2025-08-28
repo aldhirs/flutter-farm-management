@@ -56,7 +56,7 @@ class _WelcomePageState extends BasePageState<WelcomePage, WelcomeBloc> {
                   const SizedBox(height: Dimens.d24),
                   Text(
                     'Selamat datang di Farm House',
-                    style: TextStyles.heading6().copyWith(
+                    style: TextStyles.heading4().copyWith(
                       color: AppColors.current.royalNavy900,
                     ),
                   ),
@@ -73,7 +73,6 @@ class _WelcomePageState extends BasePageState<WelcomePage, WelcomeBloc> {
                       child: _buttons(),
                     ),
                   ),
-                  const SizedBox(height: Dimens.d16),
                 ],
               ),
             ),

@@ -17,11 +17,21 @@ class AppRouter extends RootStackRouter {
   List<AutoRoute> get routes => [
     AutoRoute(
       page: WelcomeRoute.page,
-      initial: true,
+      // initial: true,
       // guards: [FirstLaunchGuard(_firstLaunchAppUseCase, _isLoggedInUseCase)],
     ),
     AutoRoute(page: LoginRoute.page),
-    AutoRoute(page: HomeRoute.page),
+    AutoRoute(
+      page: HomeNavBarRoute.page,
+      // guards: [authGuard()],
+      initial: true,
+      children: [
+        AutoRoute(page: HomeRoute.page),
+        AutoRoute(page: AccountRoute.page),
+      ],
+    ),
+    AutoRoute(page: DraftingScanRoute.page),
+    AutoRoute(page: DraftingDetailRoute.page),
   ];
 
   @override

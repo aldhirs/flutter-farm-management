@@ -1,4 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:farm/features/drafting/detail/drafting_detail_page.dart';
+import 'package:farm/features/drafting/scan/drafting_scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/navigation/base/base_route_info_mapper.dart';
 import 'package:farm/navigation/routes/app_router.gr.dart';
@@ -13,7 +15,12 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       Login(:final messageChangePassword) => LoginRoute(
         messageSuccessChangePassword: messageChangePassword,
       ),
-      Home() => const HomeRoute(),
+      Home() => const HomeNavBarRoute(),
+      DraftingScan() => const DraftingScanRoute(),
+      DraftingDetail(:final connection) => DraftingDetailRoute(
+        connection: connection,
+      ),
+      Account() => const AccountRoute(),
       _ => throw UnimplementedError('Unknown route: $appRouteInfo'),
     };
   }

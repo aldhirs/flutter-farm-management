@@ -99,7 +99,7 @@ class Popup extends StatelessWidget {
           RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: TextStyles.paragraph3(),
+              style: TextStyles.paragraph2(),
               children: description,
             ),
           ),

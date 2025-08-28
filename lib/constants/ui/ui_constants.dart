@@ -9,7 +9,7 @@ class UiConstants {
 
   /// material app
   static const materialAppTitle = 'Farm Apps';
-  static const taskMenuMaterialAppColor = Color(0xFF006AD3);
+  static const taskMenuMaterialAppColor = Color(0xFF003972);
 
   /// orientation
   static const mobileOrientation = [

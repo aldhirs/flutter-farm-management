@@ -1,0 +1,182 @@
+import 'dart:collection';
+
+import 'package:auto_route/auto_route.dart';
+import 'package:farm/base/base.dart';
+import 'package:farm/features/drafting/scan/bloc/drafting_scan_bloc.dart';
+import 'package:farm/features/drafting/scan/bloc/drafting_scan_event.dart';
+import 'package:farm/features/drafting/scan/bloc/drafting_scan_state.dart';
+import 'package:farm/navigation/app_route_info.dart';
+import 'package:farm/resources/resource.dart';
+import 'package:farm/views/view.dart';
+import 'package:farm/widgets/popup/popup.dart';
+import 'package:farm/widgets/toast/toast.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_blue_classic/flutter_blue_classic.dart';
+
+@RoutePage()
+class DraftingScanPage extends StatefulWidget {
+  const DraftingScanPage({super.key});
+
+  @override
+  State<DraftingScanPage> createState() => _DraftingScanPageState();
+}
+
+class _DraftingScanPageState
+    extends BasePageState<DraftingScanPage, DraftingScanBloc> {
+  @override
+  void initState() {
+    super.initState();
+    bloc.add(const Initiated());
+  }
+
+  @override
+  Widget buildPageListeners({required Widget child}) {
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<DraftingScanBloc, DraftingScanState>(
+          listenWhen: (previous, current) =>
+              previous.isError != current.isError,
+          listener: (context, state) {
+            if (state.isError) {
+              ToastHelper().showToast(
+                context: context,
+                message: state.errorMessage,
+                type: ToastType.error,
+              );
+              bloc.add(const ClearError());
+            }
+          },
+        ),
+      ],
+      child: child,
+    );
+  }
+
+  @override
+  Widget buildPage(BuildContext context) {
+    return BlocBuilder<DraftingScanBloc, DraftingScanState>(
+      builder: (context, state) {
+        return CommonScaffold(
+          appBar: CommonAppBar(
+            titleText: 'Scan Drafting',
+            forceMaterialTransparency: false,
+          ),
+          body: ListView(
+            children: [
+              _turnOnBluetoothState(),
+              const Divider(),
+              _scanningResults(),
+            ],
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: _scanningButton(),
+        );
+      },
+    );
+  }
+
+  Widget _turnOnBluetoothState() {
+    return ListTile(
+      title: const Text("Bluetooth"),
+      subtitle: const Text("tekan untuk mengaktifkan"),
+      trailing: BlocSelector<DraftingScanBloc, DraftingScanState, String>(
+        selector: (state) => state.adapterState.name,
+        builder: (context, value) {
+          return Text(value, style: TextStyles.body1());
+        },
+      ),
+      leading: const Icon(Icons.settings_bluetooth),
+      onTap: () => bloc.add(const TurnOnBluetooth()),
+    );
+  }
+
+  Widget _scanningResults() {
+    return BlocProvider.value(
+      value: bloc,
+      child: BlocBuilder<DraftingScanBloc, DraftingScanState>(
+        buildWhen: (previous, current) =>
+            previous.scanResults != current.scanResults ||
+            previous.connectionIndex != current.connectionIndex,
+        builder: (context, state) {
+          if (state.scanResults.isEmpty) {
+            return const Center(child: Text("Perangkat belum ditemukan"));
+          }
+          return Column(
+            children: [
+              for (final (index, result) in state.scanResults.indexed)
+                ListTile(
+                  title: Text("${result.name ?? "???"} (${result.address})"),
+                  subtitle: Text(
+                    "Bondstate: ${result.bondState.name}, Device type: ${result.type.name}",
+                  ),
+                  trailing: index == state.connectionIndex
+                      ? const CircularProgressIndicator()
+                      : Text("${result.rssi} dBm"),
+                  onTap: () {
+                    bloc.add(TryConnection(index: index, device: result));
+                  },
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  BlocBuilder<DraftingScanBloc, DraftingScanState> _scanningButton() {
+    return BlocBuilder<DraftingScanBloc, DraftingScanState>(
+      buildWhen: (previous, current) =>
+          previous.isScanning != current.isScanning,
+      builder: (context, state) {
+        return SizedBox(
+          height: 60, // 👈 custom height
+          width: 160, // 👈 custom width
+          child: FloatingActionButton.extended(
+            backgroundColor: AppColors.current.royalNavy500,
+            onPressed: () {
+              navigator.showAppDialog(
+                useRootNavigator: true,
+                barrierDismissible: false,
+                Popup(
+                  title: 'Mulai Memindai Perangkat?',
+                  description: [
+                    const TextSpan(
+                      text:
+                          "Pastikan alat scanner hewan sudah hidup agar terdeteksi oleh pemindai di aplikasi ini.",
+                    ),
+                  ],
+                  positiveButtonText: "Ya, Pindai",
+                  negativeButtonText: "Tidak Sekarang",
+                  illustration: ClipRRect(
+                    borderRadius: BorderRadius.circular(20), // adjust radius
+                    child: Assets.images.ilToolsConnect.image(
+                      width: Dimens.d200,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  onNegativeButtonPressed: () => navigator.pop(),
+                  onPositiveButtonPressed: () async {
+                    // bloc.add(const StartScanning());
+                    navigator.popAndPush(
+                      const AppRouteInfo.draftingDetail(connection: null),
+                    ); // debug
+                  },
+                ),
+              );
+            },
+            label: Text(
+              state.isScanning ? "Memindai..." : "Mulai Pindai",
+              style: TextStyles.button2().copyWith(color: Colors.white),
+            ),
+            icon: Icon(
+              state.isScanning ? Icons.bluetooth_searching : Icons.bluetooth,
+              color: Colors.white,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
