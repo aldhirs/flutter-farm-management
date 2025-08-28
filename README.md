@@ -1,16 +1,17 @@
-# farm
-
-A new Flutter project.
+# FARM Project Management
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Requirements
 
-A few resources to get you started if this is your first Flutter project:
+- Dart: 3.9.0 or newer
+- Flutter SDK: 3.35.1 or newer
+- Melos: 6.2.0
+- CocoaPods: 1.16.2
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Config and run app
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- cd to root folder of project
+- Run `flutter pub get`
+- Run `make build_all`
+- Run Debug Run for VSCode
