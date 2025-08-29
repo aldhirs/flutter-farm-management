@@ -158,10 +158,11 @@ class _DraftingScanPageState
                   ),
                   onNegativeButtonPressed: () => navigator.pop(),
                   onPositiveButtonPressed: () async {
-                    // bloc.add(const StartScanning());
-                    navigator.popAndPush(
-                      const AppRouteInfo.draftingDetail(connection: null),
-                    ); // debug
+                    navigator.pop();
+                    bloc.add(const StartScanning());
+                    // navigator.popAndPush(
+                    //   const AppRouteInfo.draftingDetail(connection: null),
+                    // ); // bypass-debug
                   },
                 ),
               );

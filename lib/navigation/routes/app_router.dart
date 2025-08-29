@@ -1,5 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:farm/domain/usecases/is_logged_in_use_case.dart';
+import 'package:farm/navigation/middleware/auth_guard.dart';
+import 'package:farm/navigation/middleware/first_launch_guard.dart';
 import 'package:farm/navigation/routes/app_router.gr.dart';
+import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Page,Route')
@@ -8,30 +12,31 @@ class AppRouter extends RootStackRouter {
   @override
   RouteType get defaultRouteType => const RouteType.adaptive();
 
-  // final _firstLaunchAppUseCase = GetIt.instance.get<IsFirstLaunchAppUseCase>();
-  // final _isLoggedInUseCase = GetIt.instance.get<IsLoggedInUseCase>();
+  final _isLoggedInUseCase = GetIt.instance.get<IsLoggedInUseCase>();
 
-  // AuthGuard authGuard() => AuthGuard(_isLoggedInUseCase);
+  FirstLaunchGuard firstLaunchGuard() => FirstLaunchGuard(_isLoggedInUseCase);
+
+  AuthGuard authGuard() => AuthGuard(_isLoggedInUseCase);
 
   @override
   List<AutoRoute> get routes => [
     AutoRoute(
       page: WelcomeRoute.page,
-      // initial: true,
-      // guards: [FirstLaunchGuard(_firstLaunchAppUseCase, _isLoggedInUseCase)],
+      initial: true,
+      guards: [firstLaunchGuard()],
     ),
     AutoRoute(page: LoginRoute.page),
     AutoRoute(
       page: HomeNavBarRoute.page,
-      // guards: [authGuard()],
-      initial: true,
+      guards: [authGuard()],
       children: [
         AutoRoute(page: HomeRoute.page),
         AutoRoute(page: AccountRoute.page),
       ],
     ),
-    AutoRoute(page: DraftingScanRoute.page),
-    AutoRoute(page: DraftingDetailRoute.page),
+    AutoRoute(page: DraftingScanRoute.page, guards: [authGuard()]),
+    AutoRoute(page: DraftingDetailRoute.page, guards: [authGuard()]),
+    AutoRoute(page: DraftingFormRoute.page, guards: [authGuard()]),
   ];
 
   @override

@@ -20,6 +20,7 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       DraftingDetail(:final connection) => DraftingDetailRoute(
         connection: connection,
       ),
+      DraftingForm(:final rfid) => DraftingFormRoute(rfid: rfid),
       Account() => const AccountRoute(),
       _ => throw UnimplementedError('Unknown route: $appRouteInfo'),
     };

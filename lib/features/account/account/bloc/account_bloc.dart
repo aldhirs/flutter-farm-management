@@ -1,7 +1,12 @@
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/entities/auth/user_data.dart';
+import 'package:farm/domain/usecases/get_user_data_use_case.dart';
+import 'package:farm/domain/usecases/logout_use_case.dart';
 import 'package:farm/features/account/account/bloc/account_event.dart';
 import 'package:farm/features/account/account/bloc/account_state.dart';
 import 'package:farm/features/account/account/model/account_menu_item.dart';
+import 'package:farm/helper/run_catching/result.dart';
+import 'package:farm/helper/run_catching/run_catching.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,50 +14,27 @@ import 'package:injectable/injectable.dart';
 
 @Injectable()
 class AccountBloc extends BaseBloc<AccountEvent, AccountState> {
-  // final MeUseCase _meUseCase;
-  // final GetUserDataUseCase _getUserDataUseCase;
-  // final GetAppConfigUseCase _getAppConfigUseCase;
-  // final LogoutUseCase _logoutUseCase;
+  final GetUserDataUseCase _getUserDataUseCase;
+  final LogoutUseCase _logoutUseCase;
 
-  // AccountBloc(
-  //   this._meUseCase,
-  //   this._getUserDataUseCase,
-  //   this._logoutUseCase,
-  //   this._getAppConfigUseCase,
-  // ) : super(const AccountState()) {
-  AccountBloc(
-    // this._meUseCase,
-    // this._getUserDataUseCase,
-    // this._logoutUseCase,
-    // this._getAppConfigUseCase,
-  ) : super(const AccountState()) {
+  AccountBloc(this._getUserDataUseCase, this._logoutUseCase)
+    : super(const AccountState()) {
     on<Initiated>(_initialized, transformer: log());
     on<ClearPopupConfirmation>(_clearPopupConfirmation, transformer: log());
     on<LogoutPressed>(_logoutPressed, transformer: log());
-    on<InboxPressed>(_inboxPressed, transformer: log());
     on<OnLogoutConfirmPressed>(_onLogoutConfirmPressed, transformer: log());
-    on<OnNotificationCount>(_onNotificationCount, transformer: log());
   }
 
   Future<void> _initialized(Initiated event, Emitter<AccountState> emit) async {
-    // final user = switch (runCatching(
-    //   action: () => _getUserDataUseCase.execute(const GetUserDataInput()),
-    // )) {
-    //   ResultSuccess(:final data) => data,
-    //   _ => const UserData(),
-    // };
-
-    // final appConfig = switch (runCatching(
-    //   action: () => _getAppConfigUseCase.execute(const GetAppConfigInput()),
-    // )) {
-    //   ResultSuccess(:final data) => data.data,
-    //   _ => const AppConfig(),
-    // };
-
+    final user = switch (runCatching(
+      action: () => _getUserDataUseCase.execute(const GetUserDataInput()),
+    )) {
+      ResultSuccess(:final data) => data,
+      _ => const UserData(),
+    };
     emit(
       state.copyWith(
-        // packageName: event.packageName.defaultValue(''),
-        // userData: user,
+        userData: user,
         menuItems: [
           AccountMenuItem(
             name: 'Edit Profil',
@@ -88,13 +70,6 @@ class AccountBloc extends BaseBloc<AccountEvent, AccountState> {
     emit(state.copyWith(isShowPopupLogout: true));
   }
 
-  Future<void> _inboxPressed(
-    InboxPressed event,
-    Emitter<AccountState> emit,
-  ) async {
-    // await navigator.pushRoute(const InboxRoute());
-  }
-
   Future<void> _onLogoutConfirmPressed(
     OnLogoutConfirmPressed event,
     Emitter<AccountState> emit,
@@ -103,46 +78,11 @@ class AccountBloc extends BaseBloc<AccountEvent, AccountState> {
     return runBlocCatching(
       handleLoading: false,
       action: () async {
-        // await _logoutUseCase.execute(
-        //   LogoutRequest(email: state.userData.email),
-        // );
+        await _logoutUseCase.execute(const LogoutInput());
       },
       doOnEventCompleted: () async {
         navigator.pushAndPopUntil(const AppRouteInfo.welcome());
       },
     );
-  }
-
-  Future<void> _onMeApi(Emitter<AccountState> emit) async {
-    // return runBlocCatching(
-    //   handleLoading: false,
-    //   action: () async {
-    //     final response = await _meUseCase.execute(const MeRequest(refresh: 0));
-    //     switch (response.result) {
-    //       case DataSuccess(:final data):
-    //         emit(state.copyWith(userData: data));
-    //         break;
-    //       case DataError():
-    //         break;
-    //       case null:
-    //         return;
-    //     }
-    //   },
-    //   doOnEventCompleted: () async {},
-    // );
-  }
-
-  Future<void> _onNotificationCount(
-    OnNotificationCount event,
-    Emitter<AccountState> emit,
-  ) async {
-    // final docPath = UrlConstants.fsInboxCollectionPath('');
-    // _firestore = FirebaseFirestore.instance;
-    // final docRef = _firestore?.collection(docPath).doc(state.userData.username);
-    // final snapshot = await docRef?.get();
-    // if (snapshot != null && snapshot.exists) {
-    //   final jsonData = snapshot.data();
-    //   emit(state.copyWith(notificationCount: jsonData?["unread"] ?? 0));
-    // }
   }
 }

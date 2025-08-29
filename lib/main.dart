@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:farm/app/main_app.dart';
-import 'package:farm/config/app_config.dart';
+import 'package:farm/config/init.dart';
 import 'package:flutter/material.dart';
 
 void main() => runZonedGuarded(_runApp, _reportError);
 
 Future<void> _runApp() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AppInitializer(AppConfig.getInstance()).init();
+  await AppInitializer().init();
   // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MainApp());
 }

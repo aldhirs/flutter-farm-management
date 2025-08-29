@@ -10,6 +10,7 @@ import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/view_utils.dart';
 import 'package:farm/views/view.dart';
 import 'package:farm/widgets/popup/popup.dart';
+import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -206,22 +207,31 @@ class _AccountPageState extends BasePageState<AccountPage, AccountBloc> {
             },
             child: Row(
               children: [
-                AvatarWidget(avatarUrl: ''),
+                const AvatarWidget(avatarUrl: ''),
                 const SizedBox(width: Dimens.d8),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Hend',
-                      // state.userData.name,
-                      style: TextStyles.button3().copyWith(
-                        color: AppColors.current.royalNavy900,
-                      ),
+                    BlocSelector<AccountBloc, AccountState, String>(
+                      selector: (state) => state.userData.username,
+                      builder: (context, value) {
+                        return Text(
+                          value,
+                          style: TextStyles.button3().copyWith(
+                            color: AppColors.current.royalNavy900,
+                          ),
+                        );
+                      },
                     ),
-                    // TagCategory(
-                    //   text: state.userData.displayProfessionName,
-                    //   type: TagCategoryType.royalNavy,
-                    // ),
+                    BlocSelector<AccountBloc, AccountState, String>(
+                      selector: (state) => state.userData.email,
+                      builder: (context, value) {
+                        return TagCategory(
+                          text: value,
+                          type: TagCategoryType.royalNavy,
+                        );
+                      },
+                    ),
                   ],
                 ),
               ],

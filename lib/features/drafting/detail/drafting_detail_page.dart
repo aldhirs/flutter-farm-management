@@ -5,6 +5,8 @@ import 'package:farm/features/drafting/detail/bloc/drafting_detail_bloc.dart';
 import 'package:farm/features/drafting/detail/bloc/drafting_detail_event.dart';
 import 'package:farm/features/drafting/detail/bloc/drafting_detail_state.dart';
 import 'package:farm/features/drafting/detail/widgets/rfid_result_bottom_sheet.dart';
+import 'package:farm/navigation/app_route_info.dart';
+import 'package:farm/navigation/routes/app_router.gr.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/device_utils.dart';
 import 'package:farm/utils/ui_utils.dart';
@@ -46,7 +48,10 @@ class _DraftingDetailPageState
         BlocListener<DraftingDetailBloc, DraftingDetailState>(
           listenWhen: (previous, current) => previous.rfid != current.rfid,
           listener: (context, state) {
-            if (state.rfid.isNotEmpty) {
+            final currentRoute = navigator.getCurrentRouteName();
+            print(currentRoute);
+            if (state.rfid.isNotEmpty &&
+                currentRoute == 'DraftingDetailRoute') {
               navigator.showBottomSheet(
                 RFIDResultBottomSheet(
                   rfid: state.rfid,
@@ -76,15 +81,22 @@ class _DraftingDetailPageState
           Navigator.of(context).pop(result); // manual pop + kirim result
         }
       },
-      child: CommonScaffold(
-        appBar: CommonAppBar(
-          titleText: 'Drafting Hewan',
-          forceMaterialTransparency: false,
-        ),
-        body: ResponsiveWidget(
-          mobile: _contentView(ViewUtils.screenWidth(), false),
-          tabletPotrait: _contentView(ViewUtils.screenWidth() * 0.4, true),
-          tabletLandscape: _contentView(ViewUtils.screenWidth() * 0.3, true),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<DraftingDetailBloc>(
+            create: (BuildContext context) => bloc,
+          ),
+        ],
+        child: CommonScaffold(
+          appBar: CommonAppBar(
+            titleText: 'Drafting Hewan',
+            forceMaterialTransparency: false,
+          ),
+          body: ResponsiveWidget(
+            mobile: _contentView(ViewUtils.screenWidth(), false),
+            tabletPotrait: _contentView(ViewUtils.screenWidth() * 0.4, true),
+            tabletLandscape: _contentView(ViewUtils.screenWidth() * 0.3, true),
+          ),
         ),
       ),
     );
@@ -124,7 +136,7 @@ class _DraftingDetailPageState
           SizedBox(
             width: width,
             child: Text(
-              'Klik mulai untuk memindai hewan dengan alat',
+              'Perangkat telah terhubung, Silakan untuk memindai menggunakan alat secara langsung yang selanjutnya akan ditangkap oleh aplikasi.',
               textAlign: TextAlign.center,
               style: TextStyles.paragraph1(),
             ),
@@ -164,7 +176,8 @@ class _DraftingDetailPageState
   }
 
   void _onSearchResult(String value) {
-    navigator.pop();
+    bloc.add(const BottomsheetDismiss());
+    navigator.popAndPush(AppRouteInfo.draftingForm(rfid: value));
   }
 
   Widget _button() {
@@ -179,11 +192,14 @@ class _DraftingDetailPageState
               fulLWidth: true,
               type: !state.loading ? ButtonType.primary : ButtonType.disabled,
               loading: state.loading,
-              text: ' Mulai Memindai',
+              text: ' Perangkat Terhubung',
               onPressed: () {
                 bloc.add(const StartScanning());
               },
-              leftIcon: const Icon(Icons.barcode_reader, color: Colors.white),
+              leftIcon: const Icon(
+                Icons.bluetooth_connected,
+                color: Colors.white,
+              ),
             );
           },
         ),

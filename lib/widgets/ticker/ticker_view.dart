@@ -37,13 +37,16 @@ class TickerView extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(Dimens.d10),
+              Padding(
+                padding: const EdgeInsetsGeometry.only(left: 16, right: 8),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(Dimens.d10),
+                    ),
+                    child: type.icon,
                   ),
-                  child: SvgGenImage(type.icon).svg(width: Dimens.d48),
                 ),
               ),
               Flexible(
@@ -59,7 +62,7 @@ class TickerView extends StatelessWidget {
                       message,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 5,
-                      style: TextStyles.paragraph3(),
+                      style: TextStyles.paragraph2(),
                     ),
                   ),
                 ),

@@ -99,27 +99,27 @@ enum TickerViewType {
   success(
     backgroundColor: Color(0xFFDCFCE3),
     actionTextColor: Color(0xFF279780),
-    icon: 'assets/icons/ic_ticker_success.svg',
+    icon: Icon(Icons.check_outlined, color: Color(0xFF279780)),
   ),
   info(
     backgroundColor: Color(0xFFeaf7ff),
     actionTextColor: Color(0xFF003972),
-    icon: 'assets/icons/ic_ticker_info.svg',
+    icon: Icon(Icons.info_outline, color: Color(0xFF003972)),
   ),
   danger(
     backgroundColor: Color(0xFFFFE4D7),
     actionTextColor: Color(0xFFFF3838),
-    icon: 'assets/icons/ic_ticker_danger.svg',
+    icon: Icon(Icons.error_outline, color: Color(0xFFFF3838)),
   ),
   warning(
     backgroundColor: Color(0xFFFEF9D1),
     actionTextColor: Color(0xFFA96004),
-    icon: 'assets/icons/ic_ticker_warning.svg',
+    icon: Icon(Icons.warning_outlined, color: Color(0xFFA96004)),
   );
 
   final Color backgroundColor;
   final Color actionTextColor;
-  final String icon;
+  final Widget icon;
 
   const TickerViewType({
     required this.backgroundColor,

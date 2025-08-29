@@ -27,7 +27,7 @@ class RFIDResultBottomSheet extends StatelessWidget {
           const SizedBox(height: 4),
           ClipRRect(
             borderRadius: BorderRadius.circular(20), // adjust radius
-            child: Assets.images.ilCowScanning.image(
+            child: Assets.images.ilRfidResult.image(
               height: Dimens.d200,
               fit: BoxFit.cover,
             ),
@@ -40,11 +40,14 @@ class RFIDResultBottomSheet extends StatelessWidget {
             size: ButtonSize.extraLarge,
             fulLWidth: true,
             type: ButtonType.primary,
-            text: 'Tambahkan ',
+            text: 'Lanjutkan ',
             onPressed: () {
               onTap(rfid);
             },
-            rightIcon: const Icon(Icons.input, color: Colors.white),
+            rightIcon: const Icon(
+              Icons.arrow_circle_right_outlined,
+              color: Colors.white,
+            ),
           ),
           Button(
             fulLWidth: true,

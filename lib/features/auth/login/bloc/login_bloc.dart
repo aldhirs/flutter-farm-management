@@ -2,22 +2,25 @@ import 'dart:async';
 
 import 'package:dartx/dartx.dart';
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/entities/auth/login_request.dart';
+import 'package:farm/domain/usecases/login_use_case.dart';
 import 'package:farm/extensions/string.dart';
 import 'package:farm/features/auth/login/bloc/login_event.dart';
 import 'package:farm/features/auth/login/bloc/login_state.dart';
 import 'package:farm/navigation/app_route_info.dart';
+import 'package:farm/utils/domain_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 @Injectable()
 class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
-  // final LoginUseCase _loginUseCase;
+  final LoginUseCase _loginUseCase;
   // final LogoutUseCase _logoutUseCase;
   // final ForgotPasswordUseCase _forgotPasswordUseCase;
   // final UpdateFcmTokenUseCase _updateFcmTokenUseCase;
 
   LoginBloc(
-    // this._loginUseCase,
+    this._loginUseCase,
     // this._logoutUseCase,
     // this._forgotPasswordUseCase,
     // this._updateFcmTokenUseCase,
@@ -110,61 +113,32 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
   Future<void> _loginApi(Emitter<LoginState> emit) {
     return runBlocCatching(
       action: () async {
-        // final response = await _loginUseCase.execute(
-        //   LoginRequest(
-        //     agent: state.agent,
-        //     deviceId: state.deviceId,
-        //     operationSystem: state.operationSystem,
-        //     source: DeviceUtils.getSource(SourceType.email.source),
-        //     email: state.email,
-        //     captchaType: 1,
-        //     captchaToken: state.captchaToken,
-        //     password: state.password,
-        //   ),
-        // );
-        // switch (response.result) {
-        //   case DataSuccess():
-        //     await _onUpdateFcmToken(emit);
-        //     add(
-        //       SaveRememberMeEmail(email: state.rememberMe ? state.email : ''),
-        //     );
-        //     await navigator.replaceAll([const AppRouteInfo.home()]);
-        //     break;
+        final response = await _loginUseCase.execute(
+          LoginRequest(email: state.email, password: state.password),
+        );
+        switch (response.result) {
+          case DataSuccess():
+            await _onUpdateFcmToken(emit);
+            await navigator.replaceAll([const AppRouteInfo.home()]);
+            break;
 
-        //   case DataError(:final status, :final errorMessage):
-        //     if (status == ServerStatusCodeConstants.securityIssue ||
-        //         status == ServerStatusCodeConstants.turnstileIssue) {
-        //       await navigator.pushRoute(
-        //         LoginOtpRoute(
-        //           emailUser: state.email,
-        //           otpReference: OTPReferenceEnum.captchaLogin.value,
-        //         ),
-        //       );
-        //     } else {
-        //       emit(state.copyWith(respError: errorMessage, loginInvalid: true));
-        //     }
-        //     break;
-        //   case null:
-        //     return;
-        // }
+          case DataError(:final errorMessage):
+            emit(state.copyWith(respError: errorMessage, loginInvalid: true));
+          case null:
+            return;
+        }
       },
       doOnEventCompleted: () async {
-        await navigator.replaceAll([const AppRouteInfo.home()]);
         await _onClearButtonPressed(emit);
       },
       handleError: false,
       doOnError: (e) async {
-        if (exceptionMessageMapper.isNoInternet(e) ||
-            exceptionMessageMapper.isCantConnectHost(e)) {
-          emit(state.copyWith(loginInvalid: true));
-        } else {
-          emit(
-            state.copyWith(
-              respError: exceptionMessageMapper.map(e),
-              loginInvalid: true,
-            ),
-          );
-        }
+        emit(
+          state.copyWith(
+            respError: exceptionMessageMapper.map(e),
+            loginInvalid: true,
+          ),
+        );
       },
     );
   }
