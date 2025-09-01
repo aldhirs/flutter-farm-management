@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base_page_state.dart';
 import 'package:farm/constants/enum_constants.dart';
+import 'package:farm/constants/env_constants.dart';
 import 'package:farm/features/welcome/bloc/welcome_bloc.dart';
 import 'package:farm/features/welcome/bloc/welcome_event.dart';
 import 'package:farm/features/welcome/bloc/welcome_state.dart';
@@ -81,7 +82,7 @@ class _WelcomePageState extends BasePageState<WelcomePage, WelcomeBloc>
       child: SlideTransition(
         position: _slideTitle,
         child: Text(
-          'Selamat datang di AGRISATWA',
+          'Selamat datang di ${EnvConstants.appName}',
           style: TextStyles.heading4().copyWith(
             color: AppColors.current.royalNavy900,
           ),

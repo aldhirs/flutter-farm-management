@@ -1,11 +1,21 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dartx/dartx.dart';
+import 'package:farm/app/bloc/app_bloc.dart';
+import 'package:farm/app/bloc/app_event.dart';
+import 'package:farm/app/bloc/app_state.dart';
 import 'package:farm/base/base_page_state.dart';
+import 'package:farm/extensions/string.dart';
 import 'package:farm/features/home/home/bloc/home_bloc.dart';
 import 'package:farm/features/home/home/widgets/quick_action_card.dart';
 import 'package:farm/features/home/home/widgets/stat_card.dart';
 import 'package:farm/resources/resource.dart';
+import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/views/view.dart';
+import 'package:farm/widgets/dropdownview/dropdown_model.dart';
+import 'package:farm/widgets/dropdownview/dropdown_view_bottomsheet.dart';
+import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
 class HomePage extends StatefulWidget {
@@ -38,109 +48,206 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
   }
 
   @override
-  Widget buildPage(BuildContext context) {
-    return CommonScaffold(
-      backgroundColor: AppColors.current.neutral400,
-      appBar: CommonAppBar(
-        automaticallyImplyLeading: false,
-        titleSpacing: NavigationToolbar.kMiddleSpacing,
-        forceMaterialTransparency: false,
-        title: Text(
-          'Beranda',
-          style: TextStyles.heading6().copyWith(color: Colors.white),
+  Widget buildPageListeners({required Widget child}) {
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<AppBloc, AppState>(
+          listenWhen: (previous, current) =>
+              previous.showProjects != current.showProjects,
+          listener: (context, state) async {
+            if (!state.showProjects) {
+              return;
+            }
+            navigator.showBottomSheet(
+              DropdownViewBottomsheet(
+                title: 'Pilih Feedlot',
+                searchHint: '',
+                items: ValueNotifier<List<DropdownCheckboxModel>>(
+                  state.projects
+                      .map(
+                        (item) => DropdownCheckboxModel(
+                          text: item.name,
+                          selected: item.id == state.selectedProject?.id,
+                        ),
+                      )
+                      .toList(),
+                ),
+                navigator: navigator,
+                onDismiss: () {},
+                onChoose: (value) {
+                  final selected = value.where((item) => item.selected).first;
+                  final selectedProject = state.projects
+                      .where((item) => item.name == selected.text)
+                      .first;
+                  appBloc.add(SelectedProject(project: selectedProject));
+                },
+
+                dropdownType: DropdownTypeEnum.single,
+                dismissible: true,
+              ),
+              onDismiss: () {
+                appBloc.add(const DismissProjects());
+              },
+            );
+          },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              // TODO: handle notifications
-            },
+      ],
+      child: child,
+    );
+  }
+
+  @override
+  Widget buildPage(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AppBloc>(create: (BuildContext context) => appBloc),
+      ],
+      child: CommonScaffold(
+        backgroundColor: AppColors.current.neutral400,
+        appBar: CommonAppBar(
+          automaticallyImplyLeading: false,
+          titleSpacing: NavigationToolbar.kMiddleSpacing,
+          forceMaterialTransparency: false,
+          title: Text(
+            'Beranda',
+            style: TextStyles.heading6().copyWith(color: Colors.white),
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _fadeSlide(
-              fade: _fadeStats,
-              slide: _slideStats,
-              child: const Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: [
-                  StatCard(
-                    title: "Drafting Total",
-                    count: "120",
-                    color: Colors.green,
-                    icon: Icons.pets,
-                  ),
-                  StatCard(
-                    title: "Rooms",
-                    count: "12",
-                    color: Colors.blue,
-                    icon: Icons.meeting_room,
-                  ),
-                  StatCard(
-                    title: "Available",
-                    count: "5",
-                    color: Colors.orange,
-                    icon: Icons.check_circle,
-                  ),
-                  StatCard(
-                    title: "Sales",
-                    count: "30",
-                    color: Colors.red,
-                    icon: Icons.shopping_cart,
-                  ),
-                ],
-              ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications),
+              onPressed: () {
+                // TODO: handle notifications
+              },
             ),
-            const SizedBox(height: 20),
-
-            _fadeSlide(
-              fade: _fadeShortcutTitle,
-              slide: _slideShortcutTitle,
-              child: Text("Jalan Pintas", style: TextStyles.heading6()),
-            ),
-
-            const SizedBox(height: 10),
-            // 🔹 Step 3 — Quick actions
-            _fadeSlide(
-              fade: _fadeQuickActions,
-              slide: _slideQuickActions,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: QuickActionCard(
-                      icon: Icons.list_alt,
-                      label: "Drafting",
-                      onTap: () {},
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: QuickActionCard(
-                      icon: Icons.sell,
-                      label: "Sales",
-                      onTap: () {},
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: QuickActionCard(
-                      icon: Icons.barcode_reader,
-                      label: "Gun Connect",
-                      onTap: () {},
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
           ],
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _fadeSlide(
+                fade: _fadeStats,
+                slide: _slideStats,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Selamat datang, Anda berada pada:',
+                      style: TextStyles.heading6(),
+                    ),
+                    const SizedBox(height: 8),
+                    BlocProvider.value(
+                      value: appBloc,
+                      child: BlocBuilder<AppBloc, AppState>(
+                        buildWhen: (p, c) =>
+                            p.selectedProject != c.selectedProject,
+                        builder: (context, state) {
+                          final selectedProject = state.selectedProject?.name;
+                          return InkWell(
+                            onTap: () {
+                              appBloc.add(const GetProjects());
+                            },
+                            child: TagCategory(
+                              text: selectedProject
+                                  .defaultValue('Belum dipilih')
+                                  .orEmpty(),
+                              type: selectedProject?.isNotEmpty == true
+                                  ? TagCategoryType.mintSolid
+                                  : TagCategoryType.crismon,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Klik untuk mengganti Feedlot',
+                      style: TextStyles.body3(),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              _fadeSlide(
+                fade: _fadeStats,
+                slide: _slideStats,
+                child: const Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: [
+                    StatCard(
+                      title: "Drafting Total",
+                      count: "120",
+                      color: Colors.green,
+                      icon: Icons.pets,
+                    ),
+                    StatCard(
+                      title: "Rooms",
+                      count: "12",
+                      color: Colors.blue,
+                      icon: Icons.meeting_room,
+                    ),
+                    StatCard(
+                      title: "Available",
+                      count: "5",
+                      color: Colors.orange,
+                      icon: Icons.check_circle,
+                    ),
+                    StatCard(
+                      title: "Sales",
+                      count: "30",
+                      color: Colors.red,
+                      icon: Icons.shopping_cart,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              _fadeSlide(
+                fade: _fadeShortcutTitle,
+                slide: _slideShortcutTitle,
+                child: Text("Jalan Pintas", style: TextStyles.heading6()),
+              ),
+
+              const SizedBox(height: 10),
+              // 🔹 Step 3 — Quick actions
+              _fadeSlide(
+                fade: _fadeQuickActions,
+                slide: _slideQuickActions,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: QuickActionCard(
+                        icon: Icons.list_alt,
+                        label: "Drafting",
+                        onTap: () {},
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: QuickActionCard(
+                        icon: Icons.sell,
+                        label: "Sales",
+                        onTap: () {},
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: QuickActionCard(
+                        icon: Icons.barcode_reader,
+                        label: "Gun Connect",
+                        onTap: () {},
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

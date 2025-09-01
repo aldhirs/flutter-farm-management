@@ -1,3 +1,4 @@
+import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:farm/app/bloc/app_bloc.dart';
 import 'package:farm/app/bloc/app_event.dart';
 import 'package:farm/app/bloc/app_state.dart';
@@ -6,6 +7,7 @@ import 'package:farm/constants/ui/device_constants.dart';
 import 'package:farm/constants/ui/ui_constants.dart';
 import 'package:farm/navigation/routes/app_router.dart';
 import 'package:farm/resources/resource.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,6 +34,14 @@ class _MainAppState extends BasePageState<MainApp, AppBloc> {
     bloc.add(const AppInitiated());
   }
 
+  List<NavigatorObserver> getNavigationObservers() {
+    final List<NavigatorObserver> navigatorObservers = [];
+    if (kDebugMode || kProfileMode) {
+      navigatorObservers.add(ChuckerFlutter.navigatorObserver);
+    }
+    return navigatorObservers;
+  }
+
   // This widget is the root of your application.
   @override
   Widget buildPage(BuildContext context) {
@@ -46,6 +56,11 @@ class _MainAppState extends BasePageState<MainApp, AppBloc> {
             previous.isDarkTheme != current.isDarkTheme,
         builder: (context, state) {
           return MaterialApp.router(
+            // showPerformanceOverlay: true, // FPS and GPU
+            // checkerboardRasterCacheImages: true,
+            // checkerboardOffscreenLayers: true,
+            // showSemanticsDebugger: true,
+            // debugShowMaterialGrid: true,
             builder: (context, child) {
               final MediaQueryData data = MediaQuery.of(context);
 
@@ -60,7 +75,9 @@ class _MainAppState extends BasePageState<MainApp, AppBloc> {
             theme: lightTheme,
             darkTheme: darkTheme,
             debugShowCheckedModeBanner: true,
-            routerDelegate: _appRouter.delegate(),
+            routerDelegate: _appRouter.delegate(
+              navigatorObservers: () => getNavigationObservers(),
+            ),
             routeInformationParser: _appRouter.defaultRouteParser(),
           );
         },

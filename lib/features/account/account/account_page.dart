@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base_page_state.dart';
+import 'package:farm/constants/env_constants.dart';
 import 'package:farm/features/account/account/bloc/account_bloc.dart';
 import 'package:farm/features/account/account/bloc/account_event.dart';
 import 'package:farm/features/account/account/bloc/account_state.dart';
@@ -119,12 +120,10 @@ class _AccountPageState extends BasePageState<AccountPage, AccountBloc> {
                   _avatar(),
                   const SizedBox(height: Dimens.d8),
                   _listFirstMenuItems(),
-                  const SizedBox(height: Dimens.d8),
-                  _listSecondMenuItems(),
                   const SizedBox(height: Dimens.d20),
                   Center(
                     child: Text(
-                      'Keamanan',
+                      EnvConstants.appName,
                       style: TextStyles.body2().copyWith(
                         color: AppColors.current.text300,
                       ),
@@ -153,40 +152,10 @@ class _AccountPageState extends BasePageState<AccountPage, AccountBloc> {
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             padding: const EdgeInsets.all(Dimens.d8),
-            itemCount: state.menuItems
-                .where((item) => item.section == 1)
-                .length,
+            itemCount: state.menuItems.length,
             itemBuilder: (BuildContext context, int index) {
-              var firstSectionMenu = state.menuItems
-                  .where((item) => item.section == 1)
-                  .toList();
+              final firstSectionMenu = state.menuItems.toList();
               return ListItemWidget(menuItem: firstSectionMenu[index]);
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  BlocBuilder<AccountBloc, AccountState> _listSecondMenuItems() {
-    return BlocBuilder<AccountBloc, AccountState>(
-      builder: (context, state) {
-        return Container(
-          color: Colors.white,
-          child: ListView.separated(
-            separatorBuilder: (context, index) =>
-                Divider(color: AppColors.current.neutral500),
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(Dimens.d8),
-            itemCount: state.menuItems
-                .where((item) => item.section == 2)
-                .length,
-            itemBuilder: (BuildContext context, int index) {
-              var secondSectionMenu = state.menuItems
-                  .where((item) => item.section == 2)
-                  .toList();
-              return ListItemWidget(menuItem: secondSectionMenu[index]);
             },
           ),
         );

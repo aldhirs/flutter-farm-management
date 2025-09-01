@@ -9,3 +9,11 @@ DomainState<T> responseMapper<T>(DataResponse<T> response) {
     return DomainState.error(response.message);
   }
 }
+
+DomainState<List<T>> responseListMapper<T>(DataListResponse<T> response) {
+  if (response.status?.defaultFalse() == true) {
+    return DomainState.success(response.data ?? <T>[], response.message);
+  } else {
+    return DomainState.error(response.message);
+  }
+}

@@ -1,8 +1,8 @@
 import 'package:dartx/dartx.dart';
 import 'package:dio/dio.dart';
+import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/constants/server/server_status_code_constants.dart';
-import 'package:farm/domain/repositories/mapper/data_response_mapper.dart';
-import 'package:farm/domain/entities/model/data_response.dart';
+import 'package:farm/domain/repositories/mapper/base/base_success_response_mapper.dart';
 import 'package:farm/utils/typedef.dart';
 
 import '../../exception_mapper/dio_exception_mapper.dart';
@@ -16,19 +16,13 @@ class RestApiClient {
   RestApiClient({
     this.baseUrl = '',
     this.interceptors = const [],
-    // this.errorResponseMapperType =
-    //     ResponseMapperConstants.defaultErrorResponseMapperType,
-    // this.successResponseMapperType =
-    //     ResponseMapperConstants.defaultSuccessResponseMapperType,
-    // this.connectTimeout = ServerTimeoutConstants.connectTimeout,
-    // this.sendTimeout = ServerTimeoutConstants.sendTimeout,
-    // this.receiveTimeout = ServerTimeoutConstants.receiveTimeout,
+    this.successResponseMapperType = SuccessResponseMapperType.dataJsonObject,
   }) : _dio = DioBuilder.createDio(
          options: BaseOptions(
            baseUrl: baseUrl,
-           //  connectTimeout: connectTimeout,
-           //  sendTimeout: sendTimeout,
-           //  receiveTimeout: receiveTimeout,
+           connectTimeout: const Duration(seconds: 3600),
+           sendTimeout: const Duration(seconds: 3600),
+           receiveTimeout: const Duration(seconds: 3600),
          ),
        ) {
     final sortedInterceptors =
@@ -44,13 +38,15 @@ class RestApiClient {
   final String baseUrl;
   final List<Interceptor> interceptors;
   final Dio _dio;
+  final SuccessResponseMapperType successResponseMapperType;
 
-  Future<DataResponse<D>> request<T, D>({
+  Future<T> request<T, D>({
     required RestMethod method,
     required String path,
     Map<String, dynamic>? queryParameters,
     dynamic body,
     Decoder<D>? decoder,
+    SuccessResponseMapperType? successResponseMapperType,
     Map<String, dynamic>? headers,
     String? contentType,
     ResponseType? responseType,
@@ -82,7 +78,9 @@ class RestApiClient {
           response: response,
         );
       }
-      return DataResponseMapper<D>().map(response.data, decoder);
+      return BaseSuccessResponseMapper<D, T>.fromType(
+        successResponseMapperType ?? this.successResponseMapperType,
+      ).map(response.data, decoder);
     } catch (error) {
       throw DioExceptionMapper().map(error);
     }

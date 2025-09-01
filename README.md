@@ -15,3 +15,7 @@
 - Run `flutter pub get`
 - Run `make build_all`
 - Run Debug Run for VSCode
+
+
+Catatan:
+- sebelum drafting scan, perlu pilih project / feedlot dulu

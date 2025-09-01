@@ -51,9 +51,9 @@ class DraftingDetailBloc
     Emitter<DraftingDetailState> emit,
   ) async {
     emit(state.copyWith(loading: true));
-    // debug
+    // bypass-debug
     Future.delayed(const Duration(seconds: 1), () {
-      add(RFIDChanged(rfid: DateTime.now().millisecondsSinceEpoch.toString()));
+      add(RFIDChanged(rfid: '9820453751206567'));
     });
   }
 

@@ -2,6 +2,7 @@ class SharedPreferenceKeys {
   const SharedPreferenceKeys._();
 
   static const accessToken = 'accessToken';
+  static const project = 'project';
   static const userData = 'userData';
   static const fcmToken = 'fcmToken';
   static const isDarkMode = 'isDarkMode';

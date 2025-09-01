@@ -16,6 +16,7 @@ import 'package:farm/widgets/buttons/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
+import 'package:vibration/vibration.dart';
 
 @RoutePage()
 class DraftingDetailPage extends StatefulWidget {
@@ -47,11 +48,14 @@ class _DraftingDetailPageState
       listeners: [
         BlocListener<DraftingDetailBloc, DraftingDetailState>(
           listenWhen: (previous, current) => previous.rfid != current.rfid,
-          listener: (context, state) {
+          listener: (context, state) async {
             final currentRoute = navigator.getCurrentRouteName();
             print(currentRoute);
             if (state.rfid.isNotEmpty &&
                 currentRoute == 'DraftingDetailRoute') {
+              if (await Vibration.hasVibrator()) {
+                Vibration.vibrate();
+              }
               navigator.showBottomSheet(
                 RFIDResultBottomSheet(
                   rfid: state.rfid,

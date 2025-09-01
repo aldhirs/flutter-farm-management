@@ -5,6 +5,7 @@ import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_event.dart';
 import 'package:farm/navigation/app_navigator_impl.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
+import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()
@@ -42,7 +43,15 @@ class _HomeNavBarPageState
           floatingActionButton: FloatingActionButton.large(
             backgroundColor: AppColors.current.royalNavy500,
             onPressed: () async {
-              await navigator.push(const AppRouteInfo.draftingScan());
+              if (appBloc.state.selectedProject == null) {
+                ToastHelper().showToast(
+                  context: context,
+                  message: 'Pilih Feedlot terlebih dahulu',
+                  type: ToastType.info,
+                );
+              } else {
+                await navigator.push(const AppRouteInfo.draftingScan());
+              }
             },
             shape: const CircleBorder(),
             child: const Icon(Icons.barcode_reader, color: Colors.white),

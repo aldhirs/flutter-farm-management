@@ -5,6 +5,8 @@ import 'package:farm/constants/duration_constants.dart';
 import 'package:farm/constants/server/server_status_code_constants.dart';
 import 'package:farm/helper/function/function.dart';
 import 'package:farm/navigation/app_navigator.dart';
+import 'package:farm/widgets/popup/popup.dart';
+import 'package:flutter/material.dart';
 
 // import '../utils/app_will_pop_scope/app_will_pop_scope.dart';
 
@@ -69,34 +71,50 @@ class ExceptionHandler {
 
   Future<void> _showErrorDialog({
     required String message,
-    Func0<void>? onPressed,
+    Function()? onPressed,
     bool isRefreshTokenFailed = false,
   }) async {
-    // await navigator
-    //     .showDialog(
-    //       AppPopupInfo.confirmDialog(message: message, onPressed: onPressed),
-    //     )
-    //     .then((value) {
-    //       if (isRefreshTokenFailed) {
-    //         listener.onRefreshTokenFailed();
-    //       }
-    //     });
+    await navigator.showAppDialog(
+      useRootNavigator: true,
+      barrierDismissible: false,
+      Popup(
+        title: 'Terjadi kesalahan',
+        description: [TextSpan(text: message)],
+        positiveButtonText: "Mengerti",
+        onNegativeButtonPressed: () => navigator.pop(),
+        onPositiveButtonPressed: () {
+          if (isRefreshTokenFailed) {
+            listener.onRefreshTokenFailed();
+          } else {
+            // if (onPressed != null) {
+            //   onPressed.call();
+            // } else {
+            navigator.pop();
+            // }
+          }
+        },
+      ),
+    );
   }
 
   Future<void> _showErrorUnauthorized() async {
-    // await navigator.showAppDialog(
-    //   useRootNavigator: true,
-    //   barrierDismissible: false,
-    //   Popup(
-    //     title: S.current.unauthorized_title,
-    //     description: [TextSpan(text: S.current.unauthorized_desc)],
-    //     positiveButtonText: S.current.understand,
-    //     illustration: Assets.images.ilUnauthorized.svg(width: Dimens.d180),
-    //     onPositiveButtonPressed: () async {
-    //       listener.onRefreshTokenFailed();
-    //     },
-    //   ),
-    // );
+    await navigator.showAppDialog(
+      useRootNavigator: true,
+      barrierDismissible: false,
+      Popup(
+        title: 'Session Berakhir',
+        description: [
+          TextSpan(
+            text:
+                'Sesi Anda telah habis. Silakan login \nkembali untuk memulai aktivitas anda.',
+          ),
+        ],
+        positiveButtonText: 'Mengerti',
+        onPositiveButtonPressed: () async {
+          listener.onRefreshTokenFailed();
+        },
+      ),
+    );
   }
 
   Future<void> _showErrorDialogWithRetry({

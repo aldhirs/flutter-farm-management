@@ -4,6 +4,7 @@ import 'package:farm/utils/log_utils.dart';
 class EnvConstants {
   const EnvConstants._();
 
+  static const appName = 'AGRISATWA';
   static const flavorKey = 'FLAVOR';
   static const appBasicAuthNameKey = 'APP_BASIC_AUTH_NAME';
   static const appBasicAuthPasswordKey = 'APP_BASIC_AUTH_PASSWORD';

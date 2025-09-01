@@ -36,19 +36,19 @@ class AccountBloc extends BaseBloc<AccountEvent, AccountState> {
       state.copyWith(
         userData: user,
         menuItems: [
-          AccountMenuItem(
-            name: 'Edit Profil',
-            icon: const Icon(Icons.account_box),
-            section: 1,
-            action: () {},
-          ),
+          // AccountMenuItem(
+          //   name: 'Edit Profil',
+          //   icon: const Icon(Icons.account_box),
+          //   section: 1,
+          //   action: () {},
+          // ),
           AccountMenuItem(
             name: 'Keluar',
             icon: const Icon(Icons.logout),
             action: () {
               add(const LogoutPressed());
             },
-            section: 2,
+            section: 1,
           ),
         ],
       ),

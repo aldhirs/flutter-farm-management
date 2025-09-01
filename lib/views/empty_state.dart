@@ -106,7 +106,7 @@ class EmptyState extends StatelessWidget {
             ),
           ),
           Visibility(
-            visible: buttonText?.isNotEmpty == true || onPressed != null,
+            visible: buttonText?.isNotEmpty == true,
             child: Column(
               children: [
                 const SizedBox(height: Dimens.d16),

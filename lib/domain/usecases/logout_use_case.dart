@@ -1,5 +1,5 @@
 import 'package:farm/domain/base/base.dart';
-import 'package:farm/domain/repositories/auth_repository.dart';
+import 'package:farm/domain/repositories/repository.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
@@ -9,7 +9,7 @@ part 'logout_use_case.freezed.dart';
 class LogoutUseCase extends BaseFutureUseCase<LogoutInput, LogoutOutput> {
   const LogoutUseCase(this._repository);
 
-  final AuthRepository _repository;
+  final Repository _repository;
 
   @protected
   @override

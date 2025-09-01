@@ -1,0 +1,97 @@
+import 'package:dartx/dartx.dart';
+import 'package:farm/domain/entities/auth/login_request.dart';
+import 'package:farm/domain/entities/auth/user_data.dart';
+import 'package:farm/domain/entities/barn/barn.dart';
+import 'package:farm/domain/entities/barn/barn_request.dart';
+import 'package:farm/domain/entities/cattle/cattle.dart';
+import 'package:farm/domain/entities/cattle/cattle_form_request.dart';
+import 'package:farm/domain/entities/cattle/cattle_request.dart';
+import 'package:farm/domain/entities/general/empty_response.dart';
+import 'package:farm/domain/entities/level/level.dart';
+import 'package:farm/domain/entities/level/level_request.dart';
+import 'package:farm/domain/entities/pen/pen.dart';
+import 'package:farm/domain/entities/pen/pen_request.dart';
+import 'package:farm/domain/entities/project/project.dart';
+import 'package:farm/domain/entities/project/project_request.dart';
+import 'package:farm/domain/repositories/repository.dart';
+import 'package:farm/domain/entities/model/data_response.dart';
+import 'package:farm/domain/repositories/source/api/api_service.dart';
+import 'package:farm/domain/repositories/source/preference/app_preferences.dart';
+import 'package:injectable/injectable.dart';
+
+@LazySingleton(as: Repository)
+class RepositoryImpl implements Repository {
+  RepositoryImpl(this._apiService, this._appPreferences);
+
+  final ApiService _apiService;
+  final AppPreferences _appPreferences;
+
+  @override
+  bool get isLoggedIn => _appPreferences.getAccessToken?.isNotEmpty == true;
+
+  @override
+  Future<DataResponse<UserData>> login(LoginRequest request) async {
+    final response = await _apiService.login(request);
+    await _saveUserAndToken(response.data);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<Cattle>> cattleByRFID(CattleRequest request) async {
+    final response = await _apiService.cattleByRFID(request);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<void>> cattleUpdate(CattleFormRequest request) async {
+    final response = await _apiService.cattleUpdate(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<Project>> projects(ProjectRequest request) async {
+    final response = await _apiService.projects(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<Barn>> barns(BarnRequest request) async {
+    final response = await _apiService.barns(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<Pen>> pens(PenRequest request) async {
+    final response = await _apiService.pens(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<Level>> levels(LevelRequest request) async {
+    final response = await _apiService.levels(request);
+    return response;
+  }
+
+  @override
+  UserData getUserDataPreference() =>
+      _appPreferences.userData ?? const UserData();
+
+  @override
+  Future<void> logout() async {
+    // TODO
+    // await _authApiService.logout(request);
+    await _appPreferences.clearCurrentUserData();
+  }
+
+  @override
+  String getUserToken() => _appPreferences.getAccessToken.orEmpty();
+
+  // save user and token to shared preference after login success
+  Future<List<dynamic>> _saveUserAndToken(UserData? data) async {
+    return Future.wait([
+      _appPreferences.saveUserData(data ?? const UserData()),
+      if (data != null && data.token.isNotEmpty)
+        _appPreferences.saveAccessToken(data.token),
+    ]);
+  }
+}

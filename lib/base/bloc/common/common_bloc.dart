@@ -1,13 +1,15 @@
 import 'dart:async';
 
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/usecases/logout_use_case.dart';
+import 'package:farm/navigation/app_route_info.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 @Injectable()
 class CommonBloc extends BaseBloc<CommonEvent, CommonState> {
-  // final ClearUserDataUseCase _clearUserDataUseCase;
-  CommonBloc() : super(const CommonState()) {
+  final LogoutUseCase _logoutUseCase;
+  CommonBloc(this._logoutUseCase) : super(const CommonState()) {
     on<LoadingVisibilityEmitted>(
       _onLoadingVisibilityEmitted,
       transformer: log(),
@@ -51,9 +53,9 @@ class CommonBloc extends BaseBloc<CommonEvent, CommonState> {
   ) {
     return runBlocCatching(
       action: () async {
-        // await _clearUserDataUseCase.execute(const ClearUserDataInput());
-        // navigator.popUntilRoot(useRootNavigator: true);
-        // await navigator.replace(const AppRouteInfo.welcome());
+        await _logoutUseCase.execute(const LogoutInput());
+        navigator.popUntilRoot(useRootNavigator: true);
+        await navigator.replace(const AppRouteInfo.welcome());
       },
     );
   }

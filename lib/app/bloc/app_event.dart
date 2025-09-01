@@ -1,4 +1,5 @@
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/entities/project/project.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'app_event.freezed.dart';
@@ -13,6 +14,30 @@ abstract class IsLoggedInStatusChanged extends AppEvent
   const factory IsLoggedInStatusChanged({required bool isLoggedIn}) =
       _IsLoggedInStatusChanged;
   const IsLoggedInStatusChanged._();
+}
+
+@freezed
+abstract class GetProjects extends AppEvent with _$GetProjects {
+  const factory GetProjects() = _GetProjects;
+  const GetProjects._();
+}
+
+@freezed
+abstract class ShowProjects extends AppEvent with _$ShowProjects {
+  const factory ShowProjects() = _ShowProjects;
+  const ShowProjects._();
+}
+
+@freezed
+abstract class DismissProjects extends AppEvent with _$DismissProjects {
+  const factory DismissProjects() = _DismissProjects;
+  const DismissProjects._();
+}
+
+@freezed
+abstract class SelectedProject extends AppEvent with _$SelectedProject {
+  const factory SelectedProject({Project? project}) = _SelectedProject;
+  const SelectedProject._();
 }
 
 @freezed

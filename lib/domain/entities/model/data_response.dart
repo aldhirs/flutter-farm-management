@@ -28,3 +28,30 @@ class DataResponse<T> {
   final int? page;
   final int? per_page;
 }
+
+@JsonSerializable(genericArgumentFactories: true)
+class DataListResponse<T> {
+  DataListResponse({
+    @JsonKey(name: 'status') this.status,
+    @JsonKey(name: 'message') this.message,
+    @JsonKey(name: 'total_page') this.total_page,
+    @JsonKey(name: 'per_page') this.per_page,
+    @JsonKey(name: 'page') this.page,
+    @JsonKey(name: 'total') this.total,
+    @JsonKey(name: 'data') this.data,
+  });
+
+  // ignore: avoid-dynamic
+  factory DataListResponse.fromJson(
+    Map<String, dynamic> json,
+    T Function(dynamic) fromJsonT,
+  ) => _$DataListResponseFromJson(json, fromJsonT);
+
+  final bool? status;
+  final String? message;
+  final int? total_page;
+  final int? per_page;
+  final int? total;
+  final int? page;
+  final List<T>? data;
+}

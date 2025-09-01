@@ -29,7 +29,7 @@ class ToastHelper {
         showAction,
       ),
       gravity: ToastGravity.BOTTOM,
-      toastDuration: Duration(seconds: Dimens.d2.toInt()),
+      toastDuration: const Duration(seconds: 5),
     );
   }
 
@@ -95,7 +95,7 @@ class CustomToastWidget extends StatelessWidget {
           const SizedBox(width: Dimens.d8),
           Expanded(
             child: RichText(
-              text: TextSpan(text: message, style: TextStyles.paragraph3()),
+              text: TextSpan(text: message, style: TextStyles.paragraph2()),
             ),
           ),
           const SizedBox(width: Dimens.d8),
