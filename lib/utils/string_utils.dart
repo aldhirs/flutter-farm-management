@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:farm/constants/date_constant.dart';
+import 'package:intl/intl.dart';
+
 extension StringExtensions on String {
   String plus(String other) {
     return this + other;
@@ -64,6 +67,17 @@ extension StringExtensions on String {
       return this;
     } else {
       return this[0] + substring(1).toLowerCase();
+    }
+  }
+
+  DateTime parseToDate({
+    String format = DateConstant.DATE_FULL_MONTH,
+    String locale = 'id',
+  }) {
+    try {
+      return DateFormat(format, locale).parse(this);
+    } catch (e) {
+      return DateTime(int.parse(this));
     }
   }
 }

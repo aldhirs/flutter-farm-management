@@ -12,3 +12,12 @@ build_all:
 
 clean_all:
 	dart run build_runner build
+
+build_apk_dev:
+	flutter build apk --debug
+
+build_apk_release:
+	flutter build apk --release
+
+	
+	

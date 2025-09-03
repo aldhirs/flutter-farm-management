@@ -4,9 +4,7 @@ import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/features/drafting/detail/bloc/drafting_detail_bloc.dart';
 import 'package:farm/features/drafting/detail/bloc/drafting_detail_event.dart';
 import 'package:farm/features/drafting/detail/bloc/drafting_detail_state.dart';
-import 'package:farm/features/drafting/detail/widgets/rfid_result_bottom_sheet.dart';
 import 'package:farm/navigation/app_route_info.dart';
-import 'package:farm/navigation/routes/app_router.gr.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/device_utils.dart';
 import 'package:farm/utils/ui_utils.dart';
@@ -50,21 +48,11 @@ class _DraftingDetailPageState
           listenWhen: (previous, current) => previous.rfid != current.rfid,
           listener: (context, state) async {
             final currentRoute = navigator.getCurrentRouteName();
-            print(currentRoute);
             if (state.rfid.isNotEmpty &&
                 currentRoute == 'DraftingDetailRoute') {
               if (await Vibration.hasVibrator()) {
                 Vibration.vibrate();
               }
-              navigator.showBottomSheet(
-                RFIDResultBottomSheet(
-                  rfid: state.rfid,
-                  onTap: _onSearchResult,
-                  onDismiss: () => navigator.pop(),
-                ),
-                isScrollControlled: true,
-                onDismiss: () => bloc.add(const BottomsheetDismiss()),
-              );
             }
           },
         ),
@@ -106,52 +94,129 @@ class _DraftingDetailPageState
     );
   }
 
+  Widget _emptyState(DraftingDetailState state, double width, bool isTablet) {
+    return Column(
+      mainAxisSize: !isTablet ? MainAxisSize.min : MainAxisSize.max,
+      children: [
+        SizedBox(height: isTablet ? Dimens.d64 : 0),
+        SizedBox(
+          width: DeviceUtils.getDeviceType() == DeviceType.mobile
+              ? width * 0.7
+              : width,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20), // adjust radius
+            child: Assets.images.ilCowScanning.image(
+              height: Dimens.d240,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Container(
+          width: width,
+          padding: const EdgeInsets.only(top: Dimens.d16),
+          child: Text(
+            'Drafting',
+            textAlign: TextAlign.center,
+            style: TextStyles.heading4().copyWith(
+              color: AppColors.current.royalNavy900,
+            ),
+          ),
+        ),
+        SizedBox(
+          width: width,
+          child: Text(
+            'Perangkat telah terhubung, Silakan untuk memindai menggunakan alat secara langsung yang selanjutnya akan ditangkap oleh aplikasi.',
+            textAlign: TextAlign.center,
+            style: TextStyles.paragraph1(),
+          ),
+        ),
+        Column(
+          children: [
+            const SizedBox(height: Dimens.d16),
+            _button(),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _received(DraftingDetailState state, double width, bool isTablet) {
+    return Column(
+      mainAxisSize: !isTablet ? MainAxisSize.min : MainAxisSize.max,
+      children: [
+        SizedBox(height: isTablet ? Dimens.d64 : 0),
+        SizedBox(
+          width: DeviceUtils.getDeviceType() == DeviceType.mobile
+              ? width * 0.7
+              : width,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20), // adjust radius
+            child: Assets.images.ilRfidResult.image(
+              height: Dimens.d200,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Container(
+          width: width,
+          padding: const EdgeInsets.only(top: Dimens.d16),
+          child: Text(
+            'RFID Diterima',
+            textAlign: TextAlign.center,
+            style: TextStyles.heading4().copyWith(
+              color: AppColors.current.mint800,
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+        Text("Identitas", style: TextStyles.paragraph2()),
+        Text(state.rfid, style: TextStyles.heading3()),
+        const SizedBox(height: 16),
+        Column(
+          children: [
+            const SizedBox(height: Dimens.d16),
+            Button(
+              size: ButtonSize.extraLarge,
+              fulLWidth: true,
+              type: ButtonType.primary,
+              text: 'Lanjutkan ',
+              onPressed: () {
+                _onSearchResult(state.rfid);
+              },
+              rightIcon: const Icon(
+                Icons.arrow_circle_right_outlined,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Button(
+              fulLWidth: true,
+              type: ButtonType.ghost,
+              text: 'Nanti, Pindai Ulang',
+              onPressed: () {
+                bloc.add(const BottomsheetDismiss());
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget _contentView(double width, bool isTablet) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: Dimens.d16),
       alignment: Alignment.center,
-      child: Column(
-        mainAxisSize: !isTablet ? MainAxisSize.min : MainAxisSize.max,
-        children: [
-          SizedBox(height: isTablet ? Dimens.d64 : 0),
-          SizedBox(
-            width: DeviceUtils.getDeviceType() == DeviceType.mobile
-                ? width * 0.7
-                : width,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20), // adjust radius
-              child: Assets.images.ilCowScanning.image(
-                height: Dimens.d240,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Container(
-            width: width,
-            padding: const EdgeInsets.only(top: Dimens.d16),
-            child: Text(
-              'Drafting',
-              textAlign: TextAlign.center,
-              style: TextStyles.heading4().copyWith(
-                color: AppColors.current.royalNavy900,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: width,
-            child: Text(
-              'Perangkat telah terhubung, Silakan untuk memindai menggunakan alat secara langsung yang selanjutnya akan ditangkap oleh aplikasi.',
-              textAlign: TextAlign.center,
-              style: TextStyles.paragraph1(),
-            ),
-          ),
-          Column(
-            children: [
-              const SizedBox(height: Dimens.d16),
-              _button(),
-            ],
-          ),
-        ],
+      child: BlocProvider.value(
+        value: bloc,
+        child: BlocBuilder<DraftingDetailBloc, DraftingDetailState>(
+          buildWhen: (p, c) => p.rfid != c.rfid,
+          builder: (context, state) {
+            return state.rfid.isNotEmpty
+                ? _received(state, width, isTablet)
+                : _emptyState(state, width, isTablet);
+          },
+        ),
       ),
     );
   }
@@ -181,7 +246,7 @@ class _DraftingDetailPageState
 
   void _onSearchResult(String value) {
     bloc.add(const BottomsheetDismiss());
-    navigator.popAndPush(AppRouteInfo.draftingForm(rfid: value));
+    navigator.push(AppRouteInfo.draftingForm(rfid: value));
   }
 
   Widget _button() {

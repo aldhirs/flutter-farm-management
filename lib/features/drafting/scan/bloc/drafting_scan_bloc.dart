@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:farm/base/base.dart';
-import 'package:farm/features/drafting/detail/drafting_detail_page.dart';
 import 'package:farm/features/drafting/scan/bloc/drafting_scan_event.dart';
 import 'package:farm/features/drafting/scan/bloc/drafting_scan_state.dart';
 import 'package:farm/navigation/app_route_info.dart';
-import 'package:farm/navigation/routes/app_router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';

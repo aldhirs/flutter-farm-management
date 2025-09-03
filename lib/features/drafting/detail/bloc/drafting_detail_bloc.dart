@@ -39,7 +39,8 @@ class DraftingDetailBloc
     _connection = event.connection;
     try {
       _readSubscription = _connection?.input?.listen((event) {
-        add(RFIDChanged(rfid: utf8.decode(event)));
+        final rfid = utf8.decode(event).replaceAll(RegExp(r'\s+'), '');
+        add(RFIDChanged(rfid: rfid));
       });
     } catch (e) {
       if (kDebugMode) print(e);

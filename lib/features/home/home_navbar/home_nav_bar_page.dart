@@ -5,6 +5,7 @@ import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_event.dart';
 import 'package:farm/navigation/app_navigator_impl.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
+import 'package:farm/widgets/popup/popup.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 
@@ -41,13 +42,24 @@ class _HomeNavBarPageState
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
           floatingActionButton: FloatingActionButton.large(
-            backgroundColor: AppColors.current.royalNavy500,
+            backgroundColor: AppColors.current.mint700,
             onPressed: () async {
               if (appBloc.state.selectedProject == null) {
-                ToastHelper().showToast(
-                  context: context,
-                  message: 'Pilih Feedlot terlebih dahulu',
-                  type: ToastType.info,
+                navigator.showAppDialog(
+                  useRootNavigator: true,
+                  barrierDismissible: false,
+                  Popup(
+                    title: 'Pilih Feedlot terlebih dahulu',
+                    description: [
+                      const TextSpan(
+                        text: "harap pilih feedlot terlebih dahulu.",
+                      ),
+                    ],
+                    positiveButtonText: "Mengerti",
+                    onPositiveButtonPressed: () async {
+                      navigator.pop();
+                    },
+                  ),
                 );
               } else {
                 await navigator.push(const AppRouteInfo.draftingScan());
@@ -67,7 +79,7 @@ class _HomeNavBarPageState
                   icon: Icon(
                     Icons.home,
                     color: tabsRouter.activeIndex == 0
-                        ? AppColors.current.royalNavy500
+                        ? AppColors.current.mint700
                         : AppColors.current.neutral800,
                   ),
                   onPressed: () => tabsRouter.setActiveIndex(0),
@@ -77,7 +89,7 @@ class _HomeNavBarPageState
                   icon: Icon(
                     Icons.settings,
                     color: tabsRouter.activeIndex == 1
-                        ? AppColors.current.royalNavy500
+                        ? AppColors.current.mint700
                         : AppColors.current.neutral800,
                   ),
                   onPressed: () => tabsRouter.setActiveIndex(1),

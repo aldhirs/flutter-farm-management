@@ -5,12 +5,15 @@ import 'package:farm/features/drafting/form/bloc/drafting_form_bloc.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_event.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_state.dart';
 import 'package:farm/features/drafting/form/model/list_item.dart';
-import 'package:farm/features/drafting/form/widgets/identity_form_bottom_sheet.dart';
+import 'package:farm/features/drafting/form/widgets/identity_form_widget.dart';
+import 'package:farm/features/drafting/form/widgets/growth_form_widget.dart';
+import 'package:farm/features/drafting/form/widgets/medical_form_widget.dart';
+import 'package:farm/features/drafting/form/widgets/treatment_form_widget.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/utils/view_utils.dart';
 import 'package:farm/views/view.dart';
-import 'package:farm/widgets/buttons/button.dart';
+import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -76,7 +79,10 @@ class _DraftingFormPageState
     return BlocProvider.value(
       value: bloc,
       child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
-        buildWhen: (p, c) => p.cattle != c.cattle || p.loading != c.loading,
+        buildWhen: (p, c) =>
+            p.cattle != c.cattle ||
+            p.loading != c.loading ||
+            p.listItems != c.listItems,
         builder: (context, state) {
           if (state.errorMessage.isNotEmpty == true) {
             return _errorWidget();
@@ -92,8 +98,16 @@ class _DraftingFormPageState
                   const SizedBox(height: 24),
                   Text('Perbarui Data', style: TextStyles.body1()),
                   const SizedBox(height: 8),
-                  _identityFormWidget(),
-                  _weightFormWidget(),
+                  const TickerView(
+                    type: TickerViewType.warning,
+                    message:
+                        "Data hanya akan tersimpan bila formulir dilanjutkan. Menutup formulir akan membatalkan data yang telah diisi.",
+                  ),
+                  const SizedBox(height: 8),
+                  IdentityFormWidget(bloc: bloc, navigator: navigator),
+                  GrowthFormWidget(bloc: bloc, navigator: navigator),
+                  TreatmentFormWidget(bloc: bloc, navigator: navigator),
+                  MedicalFormWidget(bloc: bloc, navigator: navigator),
                 ],
               ),
             ),
@@ -154,119 +168,6 @@ class _DraftingFormPageState
             },
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _identityFormWidget() {
-    return BlocProvider.value(
-      value: bloc,
-      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
-        buildWhen: (p, c) =>
-            p.isIdentitySuccess != c.isIdentitySuccess ||
-            p.loading != c.loading,
-        builder: (context, state) {
-          return InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: () {
-              navigator.showBottomSheet(
-                IdentityFormBottomSheet(
-                  bloc: bloc,
-                  onDismiss: () {
-                    navigator.pop();
-                  },
-                ),
-                isScrollControlled: true,
-              );
-            },
-            child: Card(
-              elevation: 0.3,
-              color: state.isIdentitySuccess
-                  ? AppColors.current.mint200
-                  : AppColors.current.neutral200,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsetsGeometry.symmetric(
-                  vertical: 24,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.pets),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text("Identitas", style: TextStyles.body1()),
-                    ),
-                    Icon(
-                      state.isIdentitySuccess
-                          ? Icons.check_circle_outlined
-                          : Icons.circle_outlined,
-                      color: AppColors.current.neutral800,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _weightFormWidget() {
-    return BlocProvider.value(
-      value: bloc,
-      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
-        buildWhen: (p, c) =>
-            p.isGrowthSuccess != c.isGrowthSuccess || p.loading != c.loading,
-        builder: (context, state) {
-          return InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: () {
-              navigator.showBottomSheet(
-                IdentityFormBottomSheet(
-                  bloc: bloc,
-                  onDismiss: () {
-                    navigator.pop();
-                  },
-                ),
-                isScrollControlled: true,
-              );
-            },
-            child: Card(
-              elevation: 0.3,
-              color: state.isGrowthSuccess
-                  ? AppColors.current.mint200
-                  : AppColors.current.neutral200,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsetsGeometry.symmetric(
-                  vertical: 24,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.scale_outlined),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text("Timbang Sapi", style: TextStyles.body1()),
-                    ),
-                    Icon(
-                      state.isGrowthSuccess
-                          ? Icons.check_circle_outlined
-                          : Icons.circle_outlined,
-                      color: AppColors.current.neutral800,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
       ),
     );
   }

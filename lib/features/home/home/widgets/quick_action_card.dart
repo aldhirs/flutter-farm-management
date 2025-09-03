@@ -31,11 +31,7 @@ class QuickActionCard extends StatelessWidget {
               CircleAvatar(
                 radius: 24,
                 backgroundColor: AppColors.current.neutral400,
-                child: Icon(
-                  icon,
-                  size: 28,
-                  color: AppColors.current.royalNavy500,
-                ),
+                child: Icon(icon, size: 28, color: AppColors.current.mint700),
               ),
               const SizedBox(height: 8),
               Text(

@@ -18,7 +18,7 @@ class CircularLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final finalColor = color ?? AppColors.current.royalNavy500;
+    final finalColor = color ?? AppColors.current.mint700;
     return SizedBox(
       width: size.size,
       height: size.size,

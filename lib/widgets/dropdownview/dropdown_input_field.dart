@@ -131,7 +131,7 @@ class _DropdownInputFieldState extends State<DropdownInputField> {
             alignLabelWithHint: true,
             labelStyle: TextStyles.label1().copyWith(
               color: (widget.isShowDropdown.defaultFalse()
-                  ? AppColors.current.royalNavy500
+                  ? AppColors.current.mint700
                   : AppColors.current.text300),
             ),
             labelText: widget.label,
@@ -146,7 +146,7 @@ class _DropdownInputFieldState extends State<DropdownInputField> {
               borderRadius: _borderRadius,
               borderSide: BorderSide(
                 color: (widget.isShowDropdown.defaultFalse()
-                    ? AppColors.current.royalNavy500
+                    ? AppColors.current.mint700
                     : AppColors.current.neutral500),
               ),
             ),
@@ -154,7 +154,7 @@ class _DropdownInputFieldState extends State<DropdownInputField> {
               borderRadius: _borderRadius,
               borderSide: BorderSide(
                 color: (widget.isShowDropdown.defaultFalse()
-                    ? AppColors.current.royalNavy500
+                    ? AppColors.current.mint700
                     : AppColors.current.neutral500),
               ),
             ),
@@ -162,7 +162,7 @@ class _DropdownInputFieldState extends State<DropdownInputField> {
               borderRadius: _borderRadius,
               borderSide: BorderSide(
                 color: (widget.isShowDropdown.defaultFalse()
-                    ? AppColors.current.royalNavy500
+                    ? AppColors.current.mint700
                     : AppColors.current.neutral500),
               ),
             ),
@@ -170,7 +170,7 @@ class _DropdownInputFieldState extends State<DropdownInputField> {
               borderRadius: _borderRadius,
               borderSide: BorderSide(
                 color: (widget.isShowDropdown.defaultFalse()
-                    ? AppColors.current.royalNavy500
+                    ? AppColors.current.mint700
                     : AppColors.current.neutral500),
               ),
             ),
@@ -178,7 +178,7 @@ class _DropdownInputFieldState extends State<DropdownInputField> {
               borderRadius: _borderRadius,
               borderSide: BorderSide(
                 color: (widget.isShowDropdown.defaultFalse()
-                    ? AppColors.current.royalNavy500
+                    ? AppColors.current.mint700
                     : AppColors.current.neutral500),
               ),
             ),
@@ -312,7 +312,7 @@ enum DropdownInputState {
         return AppColors.current.neutral500;
       case DropdownInputState.filled:
       case DropdownInputState.active:
-        return AppColors.current.royalNavy500;
+        return AppColors.current.mint700;
       case DropdownInputState.error:
         return AppColors.current.crimson500;
       case DropdownInputState.disabled:
@@ -326,7 +326,7 @@ enum DropdownInputState {
         return AppColors.current.text300;
       case DropdownInputState.filled:
       case DropdownInputState.active:
-        return AppColors.current.royalNavy500;
+        return AppColors.current.mint700;
       case DropdownInputState.error:
         return AppColors.current.crimson500;
       case DropdownInputState.disabled:

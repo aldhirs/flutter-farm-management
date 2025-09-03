@@ -26,7 +26,7 @@ class CheckboxButton extends StatelessWidget {
           if (!isEnabled) {
             return AppColors.current.neutral300; // warna disable
           }
-          return value ? AppColors.current.royalNavy500 : Colors.white;
+          return value ? AppColors.current.mint700 : Colors.white;
         }),
         side: BorderSide(
           width: Dimens.d1,

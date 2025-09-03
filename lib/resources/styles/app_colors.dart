@@ -178,8 +178,8 @@ class AppColors {
   final Color surface;
 
   static const defaultAppColor = AppColors(
-    primaryColor: Color(0xFF003972),
-    cursorColor: Color(0xFF003972),
+    primaryColor: Color(0xFF047475),
+    cursorColor: Color(0xFF047475),
     persianBlue600: Color(0xFF191B99),
     persianBlue700: Color(0xFF111280),
     persianBlue200: Color(0xFFEBEDFE),
@@ -257,7 +257,7 @@ class AppColors {
     royalNavy100: Color(0xFFeaf7ff),
     royalNavy300: Color(0xFF60b8f1),
     royalNavy400: Color(0xFF3997e4),
-    royalNavy500: Color(0xFF003972),
+    royalNavy500: Color(0xFF047475),
     royalNavy600: Color(0xFF0052b5),
     royalNavy700: Color(0xFF003d97),
     royalNavy900: Color(0xFF001e65),
@@ -265,8 +265,8 @@ class AppColors {
   );
 
   static const darkThemeColor = AppColors(
-    primaryColor: Color(0xFF003972),
-    cursorColor: Color(0xFF003972),
+    primaryColor: Color(0xFF047475),
+    cursorColor: Color(0xFF047475),
     persianBlue600: Color(0xFF191B99),
     persianBlue700: Color(0xFF111280),
     persianBlue200: Color(0xFFEBEDFE),
@@ -344,7 +344,7 @@ class AppColors {
     royalNavy100: Color(0xFFeaf7ff),
     royalNavy300: Color(0xFF60b8f1),
     royalNavy400: Color(0xFF3997e4),
-    royalNavy500: Color(0xFF003972),
+    royalNavy500: Color(0xFF047475),
     royalNavy600: Color(0xFF0052b5),
     royalNavy700: Color(0xFF003d97),
     royalNavy900: Color(0xFF001e65),
@@ -450,7 +450,7 @@ class AppColors {
     return AppColors(
       primaryColor: primaryColor ?? this.primaryColor,
       cursorColor: cursorColor ?? this.cursorColor,
-      royalNavy500: royalNavy500 ?? this.royalNavy500,
+      royalNavy500: royalNavy500 ?? this.mint700,
       persianBlue600: persianBlue600 ?? this.persianBlue600,
       persianBlue200: persianBlue200 ?? this.persianBlue200,
       neutral100: neutral100 ?? this.neutral100,

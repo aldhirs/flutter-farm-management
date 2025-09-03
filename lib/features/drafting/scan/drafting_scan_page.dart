@@ -128,47 +128,25 @@ class _DraftingScanPageState
   BlocBuilder<DraftingScanBloc, DraftingScanState> _scanningButton() {
     return BlocBuilder<DraftingScanBloc, DraftingScanState>(
       buildWhen: (previous, current) =>
-          previous.isScanning != current.isScanning,
+          previous.isScanning != current.isScanning ||
+          previous.adapterState != current.adapterState,
       builder: (context, state) {
+        var text = state.isScanning ? "Memindai..." : "Mulai Pindai";
+        final isBluetoothOn = state.adapterState == BluetoothAdapterState.on;
+        if (!isBluetoothOn) {
+          text = "Hidupkan Bluetooth";
+        }
+
         return SizedBox(
           height: 60, // 👈 custom height
-          width: 160, // 👈 custom width
+          width: 210, // 👈 custom width
           child: FloatingActionButton.extended(
-            backgroundColor: AppColors.current.royalNavy500,
+            backgroundColor: AppColors.current.mint700,
             onPressed: () {
-              navigator.showAppDialog(
-                useRootNavigator: true,
-                barrierDismissible: false,
-                Popup(
-                  title: 'Mulai Memindai Perangkat?',
-                  description: [
-                    const TextSpan(
-                      text:
-                          "Pastikan alat scanner hewan sudah hidup agar terdeteksi oleh pemindai di aplikasi ini.",
-                    ),
-                  ],
-                  positiveButtonText: "Ya, Pindai",
-                  negativeButtonText: "Tidak Sekarang",
-                  illustration: ClipRRect(
-                    borderRadius: BorderRadius.circular(20), // adjust radius
-                    child: Assets.images.ilToolsConnect.image(
-                      width: Dimens.d200,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  onNegativeButtonPressed: () => navigator.pop(),
-                  onPositiveButtonPressed: () async {
-                    navigator.pop();
-                    // bloc.add(const StartScanning());
-                    navigator.popAndPush(
-                      const AppRouteInfo.draftingDetail(connection: null),
-                    ); // bypass-debug
-                  },
-                ),
-              );
+              _onScanningClicked.call(isBluetoothOn);
             },
             label: Text(
-              state.isScanning ? "Memindai..." : "Mulai Pindai",
+              text,
               style: TextStyles.button2().copyWith(color: Colors.white),
             ),
             icon: Icon(
@@ -178,6 +156,43 @@ class _DraftingScanPageState
           ),
         );
       },
+    );
+  }
+
+  void _onScanningClicked(bool isTurnOn) {
+    if (!isTurnOn) {
+      bloc.add(const TurnOnBluetooth());
+      return;
+    }
+    navigator.showAppDialog(
+      useRootNavigator: true,
+      barrierDismissible: false,
+      Popup(
+        title: 'Mulai Memindai Perangkat?',
+        description: [
+          const TextSpan(
+            text:
+                "Pastikan alat scanner hewan sudah hidup agar terdeteksi oleh pemindai di aplikasi ini.",
+          ),
+        ],
+        positiveButtonText: "Ya, Pindai",
+        negativeButtonText: "Tidak Sekarang",
+        illustration: ClipRRect(
+          borderRadius: BorderRadius.circular(20), // adjust radius
+          child: Assets.images.ilToolsConnect.image(
+            width: Dimens.d200,
+            fit: BoxFit.cover,
+          ),
+        ),
+        onNegativeButtonPressed: () => navigator.pop(),
+        onPositiveButtonPressed: () async {
+          navigator.pop();
+          bloc.add(const StartScanning());
+          // navigator.popAndPush(
+          //   const AppRouteInfo.draftingDetail(connection: null),
+          // ); // bypass-debug
+        },
+      ),
     );
   }
 }

@@ -14,7 +14,7 @@ enum ButtonSize {
 
 enum ButtonType {
   primary(
-    backgroundColor: Color(0xFF003972),
+    backgroundColor: Color(0xFF047475),
     textColor: Colors.white,
     borderColor: Colors.transparent,
   ),
@@ -103,8 +103,8 @@ enum TickerViewType {
   ),
   info(
     backgroundColor: Color(0xFFeaf7ff),
-    actionTextColor: Color(0xFF003972),
-    icon: Icon(Icons.info_outline, color: Color(0xFF003972)),
+    actionTextColor: Color(0xFF047475),
+    icon: Icon(Icons.info_outline, color: Color(0xFF047475)),
   ),
   danger(
     backgroundColor: Color(0xFFFFE4D7),

@@ -135,7 +135,7 @@ class _TextInputFieldState extends State<TextInputField> {
               color:
                   widget.textInputState?.labelColor ??
                   (_focusNode.hasFocus
-                      ? AppColors.current.royalNavy500
+                      ? AppColors.current.mint700
                       : AppColors.current.text300),
             ),
             labelText: _focusNode.hasFocus ? widget.label : widget.hintText,
@@ -170,7 +170,7 @@ class _TextInputFieldState extends State<TextInputField> {
                 width: 2,
                 color:
                     widget.textInputState?.borderColor ??
-                    AppColors.current.royalNavy500,
+                    AppColors.current.mint700,
               ),
             ),
             errorBorder: OutlineInputBorder(
@@ -334,7 +334,7 @@ enum TextInputState {
         return AppColors.current.neutral500;
       case TextInputState.filled:
       case TextInputState.active:
-        return AppColors.current.royalNavy500;
+        return AppColors.current.mint700;
       case TextInputState.error:
         return AppColors.current.crimson500;
       case TextInputState.disabled:
@@ -348,7 +348,7 @@ enum TextInputState {
         return AppColors.current.text300;
       case TextInputState.filled:
       case TextInputState.active:
-        return AppColors.current.royalNavy500;
+        return AppColors.current.mint700;
       case TextInputState.error:
         return AppColors.current.crimson500;
       case TextInputState.disabled:

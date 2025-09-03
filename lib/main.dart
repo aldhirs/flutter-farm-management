@@ -4,6 +4,7 @@ import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:farm/app/main_app.dart';
 import 'package:farm/config/init.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() => runZonedGuarded(_runApp, _reportError);
 
@@ -12,6 +13,8 @@ Future<void> _runApp() async {
   await AppInitializer().init();
   // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   ChuckerFlutter.showNotification = false;
+  // inisialisasi untuk locale Indonesia
+  await initializeDateFormatting('id_ID', null);
   runApp(const MainApp());
 }
 

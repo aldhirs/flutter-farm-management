@@ -6,14 +6,21 @@ import 'package:farm/domain/entities/barn/barn_request.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/cattle/cattle_form_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_request.dart';
-import 'package:farm/domain/entities/general/empty_response.dart';
+import 'package:farm/domain/entities/growth/growth.dart';
+import 'package:farm/domain/entities/growth/growth_form_request.dart';
 import 'package:farm/domain/entities/level/level.dart';
 import 'package:farm/domain/entities/level/level_request.dart';
+import 'package:farm/domain/entities/medical/medical_form_request.dart';
+import 'package:farm/domain/entities/medical/medical_type.dart';
+import 'package:farm/domain/entities/medical/medical_type_request.dart';
 import 'package:farm/domain/entities/model/data_response.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
+import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
+import 'package:farm/domain/entities/treatment/treatment_type.dart';
+import 'package:farm/domain/entities/treatment/treatment_type_request.dart';
 import 'package:farm/domain/repositories/source/source.dart';
 import 'package:injectable/injectable.dart';
 
@@ -93,6 +100,76 @@ class ApiService {
       queryParameters: request.toJson(),
       successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
       decoder: Level.fromJson,
+    );
+  }
+
+  Future<DataListResponse<TreatmentType>> treatmentTypes(
+    TreatmentTypeRequest request,
+  ) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/treatment/type',
+      queryParameters: request.toJson(),
+      successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: TreatmentType.fromJson,
+    );
+  }
+
+  Future<DataListResponse<MedicalType>> medicalTypes(
+    MedicalTypeRequest request,
+  ) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/medical/type',
+      queryParameters: request.toJson(),
+      successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: MedicalType.fromJson,
+    );
+  }
+
+  Future<DataResponse<Growth>> growthCreate(GrowthFormRequest request) async {
+    const Map<String, dynamic> queryParameters = {};
+    return _authAppServerApiClient.request(
+      method: RestMethod.post,
+      path: '/v1/growth',
+      queryParameters: queryParameters,
+      body: request.toJson(),
+      decoder: Growth.fromJson,
+    );
+  }
+
+  Future<DataResponse<void>> growthUpdate(GrowthFormRequest request) async {
+    const Map<String, dynamic> queryParameters = {};
+    return _authAppServerApiClient.request(
+      method: RestMethod.put,
+      path: '/v1/growth',
+      queryParameters: queryParameters,
+      body: request.toJson(),
+      decoder: (_) => null,
+    );
+  }
+
+  Future<DataResponse<void>> treatmentCreate(
+    TreatmentFormRequest request,
+  ) async {
+    const Map<String, dynamic> queryParameters = {};
+    return _authAppServerApiClient.request(
+      method: RestMethod.post,
+      path: '/v1/treatment',
+      queryParameters: queryParameters,
+      body: request.toJson(),
+      decoder: (_) => null,
+    );
+  }
+
+  Future<DataResponse<void>> medicalCreate(MedicalFormRequest request) async {
+    const Map<String, dynamic> queryParameters = {};
+    return _authAppServerApiClient.request(
+      method: RestMethod.post,
+      path: '/v1/medical',
+      queryParameters: queryParameters,
+      body: request.toJson(),
+      decoder: (_) => null,
     );
   }
 }

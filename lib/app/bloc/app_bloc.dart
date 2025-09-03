@@ -19,6 +19,7 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
   AppBloc(this._projectsUseCase, this._userDataUseCase, this._appPreferences)
     : super(const AppState()) {
     on<AppInitiated>(_onAppInitiated, transformer: log());
+    on<Clear>(_onClear, transformer: log());
     on<IsLoggedInStatusChanged>(_onIsLoggedInStatusChanged, transformer: log());
     on<GetProjects>(_getProjects, transformer: log());
     on<SelectedProject>(_selectedProject, transformer: log());
@@ -42,12 +43,18 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
     AppInitiated event,
     Emitter<AppState> emit,
   ) async {
+    await _userData(emit);
     emit(
       state.copyWith(
         selectedProject: _appPreferences.project,
         showProjects: false,
       ),
     );
+  }
+
+  Future<void> _onClear(Clear event, Emitter<AppState> emit) async {
+    _appPreferences.clearCurrentUserData();
+    emit(state.copyWith(selectedProject: null, showProjects: false));
   }
 
   Future<void> _selectedProject(

@@ -57,3 +57,9 @@ abstract class AppInitiated extends AppEvent with _$AppInitiated {
   const factory AppInitiated() = _AppInitiated;
   const AppInitiated._();
 }
+
+@freezed
+abstract class Clear extends AppEvent with _$Clear {
+  const factory Clear() = _Clear;
+  const Clear._();
+}

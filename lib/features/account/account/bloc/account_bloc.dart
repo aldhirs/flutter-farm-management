@@ -1,3 +1,4 @@
+import 'package:farm/app/bloc/app_event.dart';
 import 'package:farm/base/base.dart';
 import 'package:farm/domain/entities/auth/user_data.dart';
 import 'package:farm/domain/usecases/get_user_data_use_case.dart';
@@ -36,12 +37,6 @@ class AccountBloc extends BaseBloc<AccountEvent, AccountState> {
       state.copyWith(
         userData: user,
         menuItems: [
-          // AccountMenuItem(
-          //   name: 'Edit Profil',
-          //   icon: const Icon(Icons.account_box),
-          //   section: 1,
-          //   action: () {},
-          // ),
           AccountMenuItem(
             name: 'Keluar',
             icon: const Icon(Icons.logout),

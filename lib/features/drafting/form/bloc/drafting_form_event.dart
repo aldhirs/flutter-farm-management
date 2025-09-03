@@ -1,7 +1,9 @@
 import 'package:farm/base/base.dart';
 import 'package:farm/domain/entities/barn/barn.dart';
 import 'package:farm/domain/entities/level/level.dart';
+import 'package:farm/domain/entities/medical/medical_type.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
+import 'package:farm/domain/entities/treatment/treatment_type.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -24,6 +26,20 @@ abstract class IdentityInit extends DraftingFormEvent with _$IdentityInit {
   const factory IdentityInit() = _IdentityInit;
 
   const IdentityInit._();
+}
+
+@freezed
+abstract class TreatmentInit extends DraftingFormEvent with _$TreatmentInit {
+  const factory TreatmentInit() = _TreatmentInit;
+
+  const TreatmentInit._();
+}
+
+@freezed
+abstract class MedicalInit extends DraftingFormEvent with _$MedicalInit {
+  const factory MedicalInit() = _MedicalInit;
+
+  const MedicalInit._();
 }
 
 @freezed
@@ -98,6 +114,24 @@ abstract class LevelChanged extends DraftingFormEvent with _$LevelChanged {
 }
 
 @freezed
+abstract class TreatmentTypeChanged extends DraftingFormEvent
+    with _$TreatmentTypeChanged {
+  const factory TreatmentTypeChanged({required TreatmentType value}) =
+      _TreatmentTypeChanged;
+
+  const TreatmentTypeChanged._();
+}
+
+@freezed
+abstract class MedicalTypeChanged extends DraftingFormEvent
+    with _$MedicalTypeChanged {
+  const factory MedicalTypeChanged({required MedicalType value}) =
+      _MedicalTypeChanged;
+
+  const MedicalTypeChanged._();
+}
+
+@freezed
 abstract class GetPens extends DraftingFormEvent with _$GetPens {
   const factory GetPens({required String barnId}) = _GetPens;
 
@@ -110,4 +144,77 @@ abstract class OnSubmitIdentity extends DraftingFormEvent
   const factory OnSubmitIdentity() = _OnSubmitIdentity;
 
   const OnSubmitIdentity._();
+}
+
+@freezed
+abstract class OnSubmitGrowth extends DraftingFormEvent with _$OnSubmitGrowth {
+  const factory OnSubmitGrowth() = _OnSubmitGrowth;
+
+  const OnSubmitGrowth._();
+}
+
+@freezed
+abstract class OnSubmitTreatment extends DraftingFormEvent
+    with _$OnSubmitTreatment {
+  const factory OnSubmitTreatment() = _OnSubmitTreatment;
+
+  const OnSubmitTreatment._();
+}
+
+@freezed
+abstract class OnSubmitMedical extends DraftingFormEvent
+    with _$OnSubmitMedical {
+  const factory OnSubmitMedical() = _OnSubmitMedical;
+
+  const OnSubmitMedical._();
+}
+
+@freezed
+abstract class WeightChanged extends DraftingFormEvent with _$WeightChanged {
+  const factory WeightChanged({required String value}) = _WeightChanged;
+
+  const WeightChanged._();
+}
+
+@freezed
+abstract class TreatmentDateChanged extends DraftingFormEvent
+    with _$TreatmentDateChanged {
+  const factory TreatmentDateChanged({DateTime? value}) = _TreatmentDateChanged;
+
+  const TreatmentDateChanged._();
+}
+
+@freezed
+abstract class TreatmentNoteChanged extends DraftingFormEvent
+    with _$TreatmentNoteChanged {
+  const factory TreatmentNoteChanged({required String value}) =
+      _TreatmentNoteChanged;
+
+  const TreatmentNoteChanged._();
+}
+
+@freezed
+abstract class InfectionChanged extends DraftingFormEvent
+    with _$InfectionChanged {
+  const factory InfectionChanged({required bool value}) = _InfectionChanged;
+
+  const InfectionChanged._();
+}
+
+@freezed
+abstract class MedicalNoteChanged extends DraftingFormEvent
+    with _$MedicalNoteChanged {
+  const factory MedicalNoteChanged({required String value}) =
+      _MedicalNoteChanged;
+
+  const MedicalNoteChanged._();
+}
+
+@freezed
+abstract class MedicalStatusChanged extends DraftingFormEvent
+    with _$MedicalStatusChanged {
+  const factory MedicalStatusChanged({required String value}) =
+      _MedicalStatusChanged;
+
+  const MedicalStatusChanged._();
 }

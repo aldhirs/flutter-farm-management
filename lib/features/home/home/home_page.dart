@@ -12,6 +12,7 @@ import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/views/view.dart';
 import 'package:farm/widgets/dropdownview/dropdown_model.dart';
+import 'package:farm/widgets/dropdownview/dropdown_view.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_bottomsheet.dart';
 import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
   late final Animation<Offset> _slideShortcutTitle;
   late final Animation<double> _fadeQuickActions;
   late final Animation<Offset> _slideQuickActions;
+  String? selectedValue = "Option 1";
 
   @override
   void initState() {
@@ -108,18 +110,42 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
           automaticallyImplyLeading: false,
           titleSpacing: NavigationToolbar.kMiddleSpacing,
           forceMaterialTransparency: false,
-          title: Text(
-            'Beranda',
-            style: TextStyles.heading6().copyWith(color: Colors.white),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.notifications),
-              onPressed: () {
-                // TODO: handle notifications
+          title: BlocProvider.value(
+            value: appBloc,
+            child: BlocBuilder<AppBloc, AppState>(
+              buildWhen: (p, c) => p.selectedProject != c.selectedProject,
+              builder: (context, state) {
+                final selectedProject = state.selectedProject?.name;
+                return InkWell(
+                  onTap: () {
+                    appBloc.add(const GetProjects());
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.feed_outlined),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          selectedProject
+                              .defaultValue('Belum dipilih')
+                              .orEmpty(),
+                          style: TextStyles.body1().copyWith(
+                            color: Colors.white,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          softWrap: false,
+                        ),
+                      ),
+                      const Icon(Icons.arrow_drop_down),
+                    ],
+                  ),
+                );
               },
             ),
-          ],
+          ),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),

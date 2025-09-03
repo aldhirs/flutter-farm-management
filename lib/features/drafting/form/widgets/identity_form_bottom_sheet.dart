@@ -1,6 +1,5 @@
 import 'package:dartx/dartx.dart';
 import 'package:farm/constants/enum_constants.dart';
-import 'package:farm/extensions/bool.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_bloc.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_event.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_state.dart';
@@ -15,7 +14,6 @@ import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 class IdentityFormBottomSheet extends StatefulWidget {
   const IdentityFormBottomSheet({
@@ -34,17 +32,20 @@ class IdentityFormBottomSheet extends StatefulWidget {
 
 class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
   final TextEditingController _earTagController = TextEditingController();
+  final TextEditingController _penController = TextEditingController();
 
   @override
   void initState() {
     widget.bloc.add(const IdentityInit());
     _earTagController.text = widget.bloc.state.earTag.orEmpty();
+    _penController.text = widget.bloc.state.selectedPen?.id ?? "";
     super.initState();
   }
 
   @override
   void dispose() {
     _earTagController.dispose();
+    _penController.dispose();
     super.dispose();
   }
 
@@ -158,6 +159,7 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
                   .where((item) => item.name == value.first)
                   .first;
               widget.bloc.add(BarnChanged(barn: selected));
+              _penController.text = "";
             },
           );
         },
@@ -171,6 +173,7 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
       child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
         builder: (context, state) {
           return DropdownViewField(
+            controller: _penController,
             title: 'Pilih Pen',
             items: ValueNotifier<List<DropdownCheckboxModel>>(
               state.pens

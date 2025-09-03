@@ -6,13 +6,20 @@ import 'package:farm/domain/entities/barn/barn_request.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/cattle/cattle_form_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_request.dart';
-import 'package:farm/domain/entities/general/empty_response.dart';
+import 'package:farm/domain/entities/growth/growth.dart';
+import 'package:farm/domain/entities/growth/growth_form_request.dart';
 import 'package:farm/domain/entities/level/level.dart';
 import 'package:farm/domain/entities/level/level_request.dart';
+import 'package:farm/domain/entities/medical/medical_form_request.dart';
+import 'package:farm/domain/entities/medical/medical_type.dart';
+import 'package:farm/domain/entities/medical/medical_type_request.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
+import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
+import 'package:farm/domain/entities/treatment/treatment_type.dart';
+import 'package:farm/domain/entities/treatment/treatment_type_request.dart';
 import 'package:farm/domain/repositories/repository.dart';
 import 'package:farm/domain/entities/model/data_response.dart';
 import 'package:farm/domain/repositories/source/api/api_service.dart';
@@ -49,6 +56,32 @@ class RepositoryImpl implements Repository {
   }
 
   @override
+  Future<DataResponse<Growth>> growthCreate(GrowthFormRequest request) async {
+    final response = await _apiService.growthCreate(request);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<void>> growthUpdate(GrowthFormRequest request) async {
+    final response = await _apiService.growthUpdate(request);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<void>> treatmentCreate(
+    TreatmentFormRequest request,
+  ) async {
+    final response = await _apiService.treatmentCreate(request);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<void>> medicalCreate(MedicalFormRequest request) async {
+    final response = await _apiService.medicalCreate(request);
+    return response;
+  }
+
+  @override
   Future<DataListResponse<Project>> projects(ProjectRequest request) async {
     final response = await _apiService.projects(request);
     return response;
@@ -63,6 +96,22 @@ class RepositoryImpl implements Repository {
   @override
   Future<DataListResponse<Pen>> pens(PenRequest request) async {
     final response = await _apiService.pens(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<MedicalType>> medicalTypes(
+    MedicalTypeRequest request,
+  ) async {
+    final response = await _apiService.medicalTypes(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<TreatmentType>> treatmentTypes(
+    TreatmentTypeRequest request,
+  ) async {
+    final response = await _apiService.treatmentTypes(request);
     return response;
   }
 

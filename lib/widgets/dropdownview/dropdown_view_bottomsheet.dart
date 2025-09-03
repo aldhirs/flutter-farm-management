@@ -234,10 +234,7 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
 
     switch (widget.sheetSize) {
       case BottomSheetSize.full:
-        return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.9,
-          child: content,
-        );
+        return SizedBox(height: ViewUtils.screenHeight() * 0.9, child: content);
       case BottomSheetSize.half:
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.5,
@@ -282,7 +279,7 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(widget.title, style: TextStyles.body1()),
+            Text(widget.title, style: TextStyles.heading5()),
             if (DropdownTypeEnum.getEnum(widget.dropdownType.value) ==
                 DropdownTypeEnum.multiple)
               TextButton(
@@ -290,7 +287,7 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
                 child: Text(
                   'Reset',
                   style: TextStyles.label2().copyWith(
-                    color: AppColors.current.royalNavy500,
+                    color: AppColors.current.mint700,
                   ),
                 ),
               ),
@@ -300,7 +297,7 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
                 child: Text(
                   'Tutup',
                   style: TextStyles.label2().copyWith(
-                    color: AppColors.current.royalNavy500,
+                    color: AppColors.current.mint700,
                   ),
                 ),
               ),
@@ -336,7 +333,7 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
         }
 
         return SizedBox(
-          height: value.length > 12 ? ViewUtils.screenHeight() * 0.35 : null,
+          height: value.length > 7 ? ViewUtils.screenHeight() * 0.78 : null,
           child: ListView.separated(
             shrinkWrap: true,
             physics: const AlwaysScrollableScrollPhysics(),
@@ -376,6 +373,8 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
                               visible: selectedItem.notes.isNotEmpty,
                               child: Text(
                                 selectedItem.notes,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
                                 style: TextStyles.label4(),
                               ),
                             ),
@@ -383,10 +382,7 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
                         ),
                       ),
                       if (selected)
-                        Icon(
-                          Icons.check,
-                          color: AppColors.current.royalNavy500,
-                        ),
+                        Icon(Icons.check, color: AppColors.current.mint700),
                     ],
                   ),
                 ),
@@ -425,9 +421,7 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
         return Column(
           children: [
             SizedBox(
-              height: value.length > 12
-                  ? ViewUtils.screenHeight() * 0.35
-                  : null,
+              height: value.length > 12 ? ViewUtils.screenHeight() * 0.8 : null,
               child: ListView.separated(
                 shrinkWrap: true,
                 physics: const AlwaysScrollableScrollPhysics(),

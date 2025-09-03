@@ -56,11 +56,6 @@ class _MainAppState extends BasePageState<MainApp, AppBloc> {
             previous.isDarkTheme != current.isDarkTheme,
         builder: (context, state) {
           return MaterialApp.router(
-            // showPerformanceOverlay: true, // FPS and GPU
-            // checkerboardRasterCacheImages: true,
-            // checkerboardOffscreenLayers: true,
-            // showSemanticsDebugger: true,
-            // debugShowMaterialGrid: true,
             builder: (context, child) {
               final MediaQueryData data = MediaQuery.of(context);
 

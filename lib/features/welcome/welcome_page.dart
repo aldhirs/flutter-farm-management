@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:auto_route/auto_route.dart';
+import 'package:farm/app/bloc/app_event.dart';
 import 'package:farm/base/base_page_state.dart';
 import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/constants/env_constants.dart';
@@ -41,6 +42,7 @@ class _WelcomePageState extends BasePageState<WelcomePage, WelcomeBloc>
   void initState() {
     super.initState();
     bloc.add(const Initiated());
+    appBloc.add(const Clear());
 
     _initAnimation();
   }
