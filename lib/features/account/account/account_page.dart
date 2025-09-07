@@ -187,7 +187,7 @@ class _AccountPageState extends BasePageState<AccountPage, AccountBloc> {
                         return Text(
                           value,
                           style: TextStyles.button3().copyWith(
-                            color: AppColors.current.royalNavy900,
+                            color: AppColors.current.mint800,
                           ),
                         );
                       },
@@ -197,7 +197,7 @@ class _AccountPageState extends BasePageState<AccountPage, AccountBloc> {
                       builder: (context, value) {
                         return TagCategory(
                           text: value,
-                          type: TagCategoryType.royalNavy,
+                          type: TagCategoryType.mintSolid,
                         );
                       },
                     ),

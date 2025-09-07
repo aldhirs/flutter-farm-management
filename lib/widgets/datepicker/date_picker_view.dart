@@ -100,7 +100,7 @@ class _DatePickerViewState extends State<DatePickerView> {
                   "Reset",
                   style: TextStyles.label1().copyWith(
                     color: dateHasChanged
-                        ? AppColors.current.royalNavy500
+                        ? AppColors.current.mint700
                         : AppColors.current.text300,
                   ),
                 ),
@@ -117,7 +117,7 @@ class _DatePickerViewState extends State<DatePickerView> {
               height: _itemExtent,
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.current.royalNavy100,
+                  color: AppColors.current.mint200,
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
               ),
@@ -239,7 +239,7 @@ class _DatePickerViewState extends State<DatePickerView> {
           int index = items.indexOf(item);
           Color itemColor = Colors.black;
           if (index == selectedIndex) {
-            itemColor = AppColors.current.royalNavy500;
+            itemColor = AppColors.current.mint700;
           } else if (index == selectedIndex - 1 || index == selectedIndex + 1) {
             itemColor = AppColors.current.text300;
           } else if (index >= selectedIndex - 1 || index <= items.length - 1) {

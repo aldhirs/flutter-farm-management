@@ -172,7 +172,7 @@ class Popup extends StatelessWidget {
                 title.orEmpty(),
                 textAlign: TextAlign.center,
                 style: TextStyles.body1().copyWith(
-                  color: AppColors.current.royalNavy900,
+                  color: AppColors.current.mint800,
                 ),
               ),
               Expanded(
@@ -227,7 +227,7 @@ class Popup extends StatelessWidget {
             title.orEmpty(),
             textAlign: TextAlign.center,
             style: TextStyles.body1().copyWith(
-              color: AppColors.current.royalNavy900,
+              color: AppColors.current.mint800,
             ),
           ),
         ],

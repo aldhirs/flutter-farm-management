@@ -86,7 +86,7 @@ class _WelcomePageState extends BasePageState<WelcomePage, WelcomeBloc>
         child: Text(
           'Selamat datang di ${EnvConstants.appName}',
           style: TextStyles.heading4().copyWith(
-            color: AppColors.current.royalNavy900,
+            color: AppColors.current.mint800,
           ),
         ),
       ),

@@ -18,6 +18,8 @@ import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
+import 'package:farm/domain/entities/sales/sales.dart';
+import 'package:farm/domain/entities/sales/sales_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_type.dart';
 import 'package:farm/domain/entities/treatment/treatment_type_request.dart';
@@ -170,6 +172,16 @@ class ApiService {
       queryParameters: queryParameters,
       body: request.toJson(),
       decoder: (_) => null,
+    );
+  }
+
+  Future<DataListResponse<Sales>> sales(SalesRequest request) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/sales',
+      queryParameters: request.toJson(),
+      successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: Sales.fromJson,
     );
   }
 }

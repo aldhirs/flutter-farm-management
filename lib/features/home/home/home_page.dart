@@ -8,11 +8,11 @@ import 'package:farm/extensions/string.dart';
 import 'package:farm/features/home/home/bloc/home_bloc.dart';
 import 'package:farm/features/home/home/widgets/quick_action_card.dart';
 import 'package:farm/features/home/home/widgets/stat_card.dart';
+import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/views/view.dart';
 import 'package:farm/widgets/dropdownview/dropdown_model.dart';
-import 'package:farm/widgets/dropdownview/dropdown_view.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_bottomsheet.dart';
 import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:flutter/material.dart';
@@ -159,7 +159,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Selamat datang, Anda berada pada:',
+                      'Selamat datang, Anda berada pada feedlot:',
                       style: TextStyles.heading6(),
                     ),
                     const SizedBox(height: 8),
@@ -249,15 +249,16 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                       child: QuickActionCard(
                         icon: Icons.list_alt,
                         label: "Drafting",
-                        onTap: () {},
+                        onTap: () =>
+                            navigator.push(const AppRouteInfo.draftingScan()),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: QuickActionCard(
                         icon: Icons.sell,
-                        label: "Sales",
-                        onTap: () {},
+                        label: "Penjualan",
+                        onTap: () => navigator.push(const AppRouteInfo.sales()),
                       ),
                     ),
                     const SizedBox(width: 12),

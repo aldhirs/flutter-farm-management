@@ -83,7 +83,7 @@ class EmptyState extends StatelessWidget {
                 title.orEmpty(),
                 textAlign: TextAlign.center,
                 style: TextStyles.heading4().copyWith(
-                  color: colorTitle ?? AppColors.current.royalNavy900,
+                  color: colorTitle ?? AppColors.current.mint800,
                 ),
               ),
             ),

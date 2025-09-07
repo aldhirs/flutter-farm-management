@@ -185,7 +185,7 @@ class _DatePickerInputFieldState extends State<DatePickerInputWidget> {
             alignLabelWithHint: true,
             labelStyle: TextStyles.label1().copyWith(
               color: (widget.isShowDatePicker.defaultFalse()
-                  ? AppColors.current.royalNavy500
+                  ? AppColors.current.mint700
                   : AppColors.current.text300),
             ),
             labelText: widget.label,
@@ -204,7 +204,7 @@ class _DatePickerInputFieldState extends State<DatePickerInputWidget> {
               borderRadius: _borderRadius,
               borderSide: BorderSide(
                 color: (widget.isShowDatePicker.defaultFalse()
-                    ? AppColors.current.royalNavy500
+                    ? AppColors.current.mint700
                     : AppColors.current.neutral500),
               ),
             ),
@@ -212,7 +212,7 @@ class _DatePickerInputFieldState extends State<DatePickerInputWidget> {
               borderRadius: _borderRadius,
               borderSide: BorderSide(
                 color: (widget.isShowDatePicker.defaultFalse()
-                    ? AppColors.current.royalNavy500
+                    ? AppColors.current.mint700
                     : AppColors.current.neutral500),
               ),
             ),
@@ -220,7 +220,7 @@ class _DatePickerInputFieldState extends State<DatePickerInputWidget> {
               borderRadius: _borderRadius,
               borderSide: BorderSide(
                 color: (widget.isShowDatePicker.defaultFalse()
-                    ? AppColors.current.royalNavy500
+                    ? AppColors.current.mint700
                     : AppColors.current.neutral500),
               ),
             ),
@@ -228,7 +228,7 @@ class _DatePickerInputFieldState extends State<DatePickerInputWidget> {
               borderRadius: _borderRadius,
               borderSide: BorderSide(
                 color: (widget.isShowDatePicker.defaultFalse()
-                    ? AppColors.current.royalNavy500
+                    ? AppColors.current.mint700
                     : AppColors.current.neutral500),
               ),
             ),
@@ -236,7 +236,7 @@ class _DatePickerInputFieldState extends State<DatePickerInputWidget> {
               borderRadius: _borderRadius,
               borderSide: BorderSide(
                 color: (widget.isShowDatePicker.defaultFalse()
-                    ? AppColors.current.royalNavy500
+                    ? AppColors.current.mint700
                     : AppColors.current.neutral500),
               ),
             ),
@@ -359,7 +359,7 @@ enum DatePickerInputState {
         return AppColors.current.neutral500;
       case DatePickerInputState.filled:
       case DatePickerInputState.active:
-        return AppColors.current.royalNavy500;
+        return AppColors.current.mint700;
       case DatePickerInputState.error:
         return AppColors.current.crimson500;
       case DatePickerInputState.disabled:
@@ -373,7 +373,7 @@ enum DatePickerInputState {
         return AppColors.current.text300;
       case DatePickerInputState.filled:
       case DatePickerInputState.active:
-        return AppColors.current.royalNavy500;
+        return AppColors.current.mint700;
       case DatePickerInputState.error:
         return AppColors.current.crimson500;
       case DatePickerInputState.disabled:

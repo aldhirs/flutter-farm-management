@@ -14,3 +14,11 @@ const medicalStatusMap = {
   'unresolved': 'Belum Terselesaikan',
   'cancelled': 'Dibatalkan',
 };
+
+const salesStatusMap = {
+  '': 'Semua',
+  'draft': 'Draf',
+  'issued': 'Sudah Terbit',
+  'completed': 'Selesai',
+  'cancelled': 'Dibatalkan',
+};

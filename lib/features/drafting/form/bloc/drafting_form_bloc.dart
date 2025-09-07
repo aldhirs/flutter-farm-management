@@ -403,12 +403,8 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
           id: cattle.id,
           barn_id: state.selectedBarn?.id ?? '',
           pen_id: state.selectedPen?.id ?? '',
-          supplier_id: cattle.id_supplier,
-          breed_id: cattle.id_breed,
           ear_tag: state.earTag.orEmpty(),
           level_id: state.selectedLevel?.id ?? 0,
-          reception_id: cattle.reception?.id ?? '',
-          status: cattle.status,
         );
         final response = await _cattleUpdateUseCase.execute(payload);
         switch (response.result) {

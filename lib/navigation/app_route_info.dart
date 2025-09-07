@@ -17,4 +17,5 @@ abstract class AppRouteInfo with _$AppRouteInfo {
       DraftingDetail;
   const factory AppRouteInfo.draftingForm({required String rfid}) =
       DraftingForm;
+  const factory AppRouteInfo.sales() = Sales;
 }

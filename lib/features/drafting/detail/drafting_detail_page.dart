@@ -81,7 +81,7 @@ class _DraftingDetailPageState
         ],
         child: CommonScaffold(
           appBar: CommonAppBar(
-            titleText: 'Drafting Hewan',
+            titleText: 'Drafting Sapi',
             forceMaterialTransparency: false,
           ),
           body: ResponsiveWidget(
@@ -111,6 +111,7 @@ class _DraftingDetailPageState
             ),
           ),
         ),
+        const SizedBox(height: 8),
         Container(
           width: width,
           padding: const EdgeInsets.only(top: Dimens.d16),
@@ -118,10 +119,11 @@ class _DraftingDetailPageState
             'Drafting',
             textAlign: TextAlign.center,
             style: TextStyles.heading4().copyWith(
-              color: AppColors.current.royalNavy900,
+              color: AppColors.current.mint800,
             ),
           ),
         ),
+        const SizedBox(height: 16),
         SizedBox(
           width: width,
           child: Text(
@@ -130,6 +132,7 @@ class _DraftingDetailPageState
             style: TextStyles.paragraph1(),
           ),
         ),
+        const SizedBox(height: 16),
         Column(
           children: [
             const SizedBox(height: Dimens.d16),
@@ -157,6 +160,7 @@ class _DraftingDetailPageState
             ),
           ),
         ),
+        const SizedBox(height: 8),
         Container(
           width: width,
           padding: const EdgeInsets.only(top: Dimens.d16),
@@ -169,8 +173,17 @@ class _DraftingDetailPageState
           ),
         ),
         const SizedBox(height: 24),
-        Text("Identitas", style: TextStyles.paragraph2()),
-        Text(state.rfid, style: TextStyles.heading3()),
+        Text("RFID", style: TextStyles.paragraph2()),
+        Text(state.rfid, style: TextStyles.heading4()),
+        const SizedBox(height: 16),
+        SizedBox(
+          width: width,
+          child: Text(
+            'Silakan tekan tombol Lanjutkan untuk melakukan proses input data sapi.',
+            textAlign: TextAlign.center,
+            style: TextStyles.paragraph1(),
+          ),
+        ),
         const SizedBox(height: 16),
         Column(
           children: [

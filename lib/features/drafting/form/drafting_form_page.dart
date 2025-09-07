@@ -62,7 +62,7 @@ class _DraftingFormPageState
   Widget buildPage(BuildContext context) {
     return CommonScaffold(
       appBar: CommonAppBar(
-        titleText: 'Input Drafting Hewan',
+        titleText: 'Input Drafting Sapi',
         forceMaterialTransparency: false,
       ),
       body: ResponsiveWidget(
@@ -173,16 +173,18 @@ class _DraftingFormPageState
   }
 
   Widget _finishButton() {
+    final isNotFound = bloc.state.errorMessage != 'record not found';
     return FloatingActionButton.extended(
       backgroundColor: AppColors.current.eucalyptus700,
-      onPressed: () {
-        navigator.pop();
-      },
+      onPressed: () => navigator.pop(),
       label: Text(
-        'Selesai',
+        !isNotFound ? 'Selesai' : 'Kembali',
         style: TextStyles.button2().copyWith(color: Colors.white),
       ),
-      icon: const Icon(Icons.done, color: Colors.white),
+      icon: Icon(
+        !isNotFound ? Icons.done : Icons.chevron_left,
+        color: Colors.white,
+      ),
     );
   }
 }

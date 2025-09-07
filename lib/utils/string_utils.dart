@@ -80,4 +80,19 @@ extension StringExtensions on String {
       return DateTime(int.parse(this));
     }
   }
+
+  String formatDateString({
+    String format = DateConstant.DATE_FULL_MONTH,
+    String newFormat = DateConstant.DATE_YEAR_FIRST,
+  }) {
+    if (isEmpty) {
+      return this;
+    }
+
+    final inputFormat = DateFormat(format, 'id_ID');
+    final dateTime = inputFormat.parse(this);
+
+    final output = DateFormat(newFormat, 'id_ID').format(dateTime);
+    return output;
+  }
 }
