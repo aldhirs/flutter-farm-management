@@ -1,5 +1,6 @@
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:farm/domain/entities/sales/sales.dart';
 
 part 'app_route_info.freezed.dart';
 
@@ -17,5 +18,6 @@ abstract class AppRouteInfo with _$AppRouteInfo {
       DraftingDetail;
   const factory AppRouteInfo.draftingForm({required String rfid}) =
       DraftingForm;
-  const factory AppRouteInfo.sales() = Sales;
+  const factory AppRouteInfo.sales() = SalesPage;
+  const factory AppRouteInfo.salesItem({required Sales item}) = SalesItemPage;
 }

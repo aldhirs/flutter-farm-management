@@ -22,3 +22,15 @@ const salesStatusMap = {
   'completed': 'Selesai',
   'cancelled': 'Dibatalkan',
 };
+
+const cattleStatusMap = {
+  'available': 'Tersedia',
+  'unavailable': 'Tidak Tersedia',
+  'booked': 'Dipesan',
+  'sold': 'Terjual',
+  'lost': 'Hilang',
+  'sick': 'Sakit',
+  'mutating': 'Sedang dimutasi',
+};
+
+const salesItemStatusMap = {'available': 'Tersedia', 'booked': 'Dipesan'};

@@ -22,7 +22,8 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       ),
       DraftingForm(:final rfid) => DraftingFormRoute(rfid: rfid),
       Account() => const AccountRoute(),
-      Sales() => const SalesRoute(),
+      SalesPage() => const SalesRoute(),
+      SalesItemPage(:final item) => SalesItemsRoute(item: item),
       _ => throw UnimplementedError('Unknown route: $appRouteInfo'),
     };
   }

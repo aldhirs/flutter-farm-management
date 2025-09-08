@@ -1,18 +1,15 @@
-import 'package:dartx/dartx.dart';
-import 'package:farm/constants/date_constant.dart';
-import 'package:farm/domain/entities/sales/sales.dart';
+import 'package:farm/domain/entities/sales/sales_item.dart';
 import 'package:farm/extensions/string.dart';
 import 'package:farm/resources/styles/app_colors.dart';
 import 'package:farm/resources/styles/text_styles.dart';
-import 'package:farm/utils/string_utils.dart';
 import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:flutter/material.dart';
 
 class ItemWidget extends StatelessWidget {
-  final Sales sale;
+  final SalesItem item;
   final VoidCallback onTap;
 
-  const ItemWidget({super.key, required this.sale, required this.onTap});
+  const ItemWidget({super.key, required this.item, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -34,62 +31,33 @@ class ItemWidget extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.teal.shade100,
-                    child: Text(
-                      sale.customer_detail?.name.isNotEmpty == true
-                          ? (sale.customer_detail?.name)
-                                .defaultValue('-')
-                                .substring(0, 1)
-                          : '',
-                      style: TextStyles.body1(),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          (sale.customer_detail?.name).orEmpty(),
-                          style: TextStyles.heading5(),
-                        ),
+                        Text(item.ear_tag, style: TextStyles.heading5()),
                         const SizedBox(height: 4),
-                        Text(
-                          (sale.customer_detail?.id).orEmpty(),
-                          style: TextStyles.label3(),
-                        ),
+                        Text(item.rfid, style: TextStyles.label3()),
                       ],
                     ),
                   ),
                   TagCategory(
-                    text: sale.statusLabel(),
-                    type: TagCategoryType.crismon,
+                    text: item.statusLabel(),
+                    type: TagCategoryType.mint,
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
 
               // Divider
               Divider(color: Colors.grey.shade300),
 
               // Info items
               const SizedBox(height: 8),
-              _buildDetail(
-                Icons.category_outlined,
-                (sale.customer_detail?.type).orEmpty(),
-              ),
-              _buildDetail(
-                Icons.calendar_today_outlined,
-                sale.created_at
-                    .formatDateString(
-                      format: DateConstant.UTC,
-                      newFormat: DateConstant.DATETIME_FULL_MONTH,
-                    )
-                    .defaultValue('-'),
-              ),
-              _buildChip(Icons.key_outlined, (sale.id).defaultValue('-')),
+              _buildDetail(Icons.scale_outlined, '${item.actual_weight} KG'),
+              _buildDetail(Icons.flag, 'Sapi: ${item.cattleStatusLabel()}'),
+              _buildChip(Icons.key_outlined, item.id.defaultValue('-')),
             ],
           ),
         ),

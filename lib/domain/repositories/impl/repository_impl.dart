@@ -18,6 +18,8 @@ import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
+import 'package:farm/domain/entities/sales/sales_item.dart';
+import 'package:farm/domain/entities/sales/sales_item_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_type.dart';
@@ -126,6 +128,14 @@ class RepositoryImpl implements Repository {
   @override
   Future<DataListResponse<Sales>> sales(SalesRequest request) async {
     final response = await _apiService.sales(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<SalesItem>> salesItems(
+    SalesItemRequest request,
+  ) async {
+    final response = await _apiService.salesItems(request);
     return response;
   }
 

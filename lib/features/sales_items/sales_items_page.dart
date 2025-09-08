@@ -1,25 +1,27 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base_page_state.dart';
-import 'package:farm/features/sales/bloc/sales_bloc.dart';
-import 'package:farm/features/sales/bloc/sales_event.dart';
-import 'package:farm/features/sales/bloc/sales_state.dart';
-import 'package:farm/features/sales/widgets/filter_bottom_sheet.dart';
-import 'package:farm/features/sales/widgets/item_widget.dart';
-import 'package:farm/navigation/app_route_info.dart';
+import 'package:farm/domain/entities/sales/sales.dart';
+import 'package:farm/features/sales_items/bloc/sales_items_bloc.dart';
+import 'package:farm/features/sales_items/bloc/sales_items_event.dart';
+import 'package:farm/features/sales_items/bloc/sales_items_state.dart';
+import 'package:farm/features/sales_items/widgets/detail_bottom_sheet.dart';
+import 'package:farm/features/sales_items/widgets/item_widget.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/views/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
-class SalesPage extends StatefulWidget {
-  const SalesPage({super.key});
+class SalesItemsPage extends StatefulWidget {
+  const SalesItemsPage({super.key, required this.item});
+
+  final Sales item;
 
   @override
   State<StatefulWidget> createState() => _SalesPageState();
 }
 
-class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
+class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
     with SingleTickerProviderStateMixin {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
@@ -27,7 +29,7 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
   @override
   void initState() {
     super.initState();
-    bloc.add(const Initiated());
+    bloc.add(Initiated(item: widget.item));
 
     // Listen scroll untuk load more
     _scrollController.addListener(() {
@@ -35,7 +37,7 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
           _scrollController.position.maxScrollExtent - 200) {
         // kurang dari 200px dari bawah, load more
         if (!bloc.state.isLoadMore && bloc.state.hasMore) {
-          bloc.add(const LoadMoreSales());
+          bloc.add(const LoadMore());
         }
       }
     });
@@ -49,16 +51,16 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
 
   @override
   Widget buildPage(BuildContext context) {
-    return BlocBuilder<SalesBloc, SalesState>(
+    return BlocBuilder<SalesItemsBloc, SalesItemsState>(
       builder: (context, state) {
         return CommonScaffold(
           appBar: CommonAppBar(
-            titleText: 'Daftar Penjualan',
+            titleText: 'Penjualan #${widget.item.customer_detail?.name}',
             forceMaterialTransparency: false,
             actions: [
               IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.filter_list_alt),
+                onPressed: () => _onShowInfo(),
+                icon: const Icon(Icons.info_outline_rounded),
               ),
             ],
           ),
@@ -74,9 +76,9 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
   Widget _listWidget() {
     return BlocProvider.value(
       value: bloc,
-      child: BlocBuilder<SalesBloc, SalesState>(
+      child: BlocBuilder<SalesItemsBloc, SalesItemsState>(
         buildWhen: (p, c) =>
-            p.sales != c.sales ||
+            p.salesItems != c.salesItems ||
             p.errorMessage != c.errorMessage ||
             p.isLoadMore != c.isLoadMore,
         builder: (context, state) {
@@ -90,27 +92,23 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
             backgroundColor: AppColors.current.mint700,
             strokeWidth: 2.0,
             onRefresh: () async {
-              bloc.add(const LoadSales());
+              bloc.add(const Load());
             },
             // Pull from top to show refresh indicator.
             child: ListView.builder(
               controller: _scrollController,
-              itemCount: state.sales.length + (state.isLoadMore ? 1 : 0),
+              itemCount: state.salesItems.length + (state.isLoadMore ? 1 : 0),
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                if (index >= state.sales.length) {
+                if (index >= state.salesItems.length) {
                   // tampilkan indikator loading di bawah
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
                     child: Center(child: CircularProgressIndicator()),
                   );
                 }
-                final item = state.sales[index];
-                return ItemWidget(
-                  sale: item,
-                  onTap: () =>
-                      navigator.push(AppRouteInfo.salesItem(item: item)),
-                );
+                final item = state.salesItems[index];
+                return ItemWidget(item: item, onTap: () {});
               },
             ),
           );
@@ -122,19 +120,12 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
   Widget _filterButton() {
     return FloatingActionButton.extended(
       backgroundColor: AppColors.current.eucalyptus700,
-      onPressed: () => navigator.showBottomSheet(
-        FilterBottomSheet(
-          bloc: bloc,
-          onDismiss: () {
-            navigator.pop();
-          },
-        ),
-      ),
+      onPressed: () => _onShowInfo(),
       label: Text(
-        'Filter',
+        'Tambah Data',
         style: TextStyles.button2().copyWith(color: Colors.white),
       ),
-      icon: const Icon(Icons.filter_list_alt, color: Colors.white),
+      icon: const Icon(Icons.add, color: Colors.white),
     );
   }
 
@@ -152,8 +143,19 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
       isButtonFullWidth: true,
       leftIconButton: const Icon(Icons.refresh, color: Colors.white),
       onPressed: () async {
-        bloc.add(const LoadSales());
+        bloc.add(const Load());
       },
+    );
+  }
+
+  void _onShowInfo() {
+    navigator.showBottomSheet(
+      DetailBottomSheet(
+        item: widget.item,
+        onDismiss: () {
+          navigator.pop();
+        },
+      ),
     );
   }
 }

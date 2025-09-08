@@ -15,7 +15,7 @@ class UrlConstants {
       case Flavor.develop:
         return 'http://192.168.1.6:8080/api';
       case Flavor.staging:
-        return 'https://api.staging.xxx';
+        return 'https://api.agrisatwa.teknoduct.com/api';
       case Flavor.production:
         return 'https://api.xxx';
     }
