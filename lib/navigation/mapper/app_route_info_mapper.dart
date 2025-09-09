@@ -1,6 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:farm/features/drafting/detail/drafting_detail_page.dart';
-import 'package:farm/features/drafting/scan/drafting_scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/navigation/base/base_route_info_mapper.dart';
 import 'package:farm/navigation/routes/app_router.gr.dart';
@@ -24,6 +22,7 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       Account() => const AccountRoute(),
       SalesPage() => const SalesRoute(),
       SalesItemPage(:final item) => SalesItemsRoute(item: item),
+      SalesItemFormPage(:final item) => SalesItemFormRoute(item: item),
       _ => throw UnimplementedError('Unknown route: $appRouteInfo'),
     };
   }

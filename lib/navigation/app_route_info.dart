@@ -20,4 +20,6 @@ abstract class AppRouteInfo with _$AppRouteInfo {
       DraftingForm;
   const factory AppRouteInfo.sales() = SalesPage;
   const factory AppRouteInfo.salesItem({required Sales item}) = SalesItemPage;
+  const factory AppRouteInfo.salesItemForm({required Sales item}) =
+      SalesItemFormPage;
 }

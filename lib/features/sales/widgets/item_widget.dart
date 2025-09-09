@@ -65,7 +65,7 @@ class ItemWidget extends StatelessWidget {
                   ),
                   TagCategory(
                     text: sale.statusLabel(),
-                    type: TagCategoryType.crismon,
+                    type: sale.statusType(),
                   ),
                 ],
               ),

@@ -156,7 +156,7 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
             dropdownType: DropdownTypeEnum.single,
             onSelectedItems: (List<String> value) {
               final selected = state.barns
-                  .where((item) => item.name == value.first)
+                  .where((item) => item.id == value.first)
                   .first;
               widget.bloc.add(BarnChanged(barn: selected));
               _penController.text = "";
@@ -194,7 +194,7 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
             emptyStateMessage: 'Pilih kandang terlebih dahulu.',
             onSelectedItems: (List<String> value) {
               final selected = state.pens
-                  .where((item) => item.name == value.first)
+                  .where((item) => item.id == value.first)
                   .first;
               widget.bloc.add(PenChanged(pen: selected));
             },
@@ -228,7 +228,7 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
             dropdownType: DropdownTypeEnum.single,
             onSelectedItems: (List<String> value) {
               final selected = state.levels
-                  .where((item) => item.name == value.first)
+                  .where((item) => item.id == value.first)
                   .first;
               widget.bloc.add(LevelChanged(value: selected));
             },

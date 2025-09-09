@@ -6,6 +6,13 @@ enum SuccessResponseMapperType { dataJsonObject, dataJsonArray }
 
 enum BottomSheetSize { full, half, fitContent }
 
+const DRAFT = 'draft';
+const ISSUED = 'issued';
+const COMPLETED = 'completed';
+const CANCELLED = 'cancelled';
+const AVAILABLE = 'available';
+const BOOKED = 'booked';
+
 const medicalStatusMap = {
   'draft': 'Draf',
   'diagnosed': 'Terdeteksi',
@@ -17,10 +24,10 @@ const medicalStatusMap = {
 
 const salesStatusMap = {
   '': 'Semua',
-  'draft': 'Draf',
-  'issued': 'Sudah Terbit',
-  'completed': 'Selesai',
-  'cancelled': 'Dibatalkan',
+  DRAFT: 'Draf',
+  ISSUED: 'Sudah Terbit',
+  COMPLETED: 'Selesai',
+  CANCELLED: 'Dibatalkan',
 };
 
 const cattleStatusMap = {
@@ -33,4 +40,4 @@ const cattleStatusMap = {
   'mutating': 'Sedang dimutasi',
 };
 
-const salesItemStatusMap = {'available': 'Tersedia', 'booked': 'Dipesan'};
+const salesItemStatusMap = {AVAILABLE: 'Tersedia', BOOKED: 'Dipesan'};

@@ -1,6 +1,7 @@
 import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/base/base.dart';
 import 'package:farm/domain/entities/customer/customer.dart';
+import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'sales.freezed.dart';
@@ -29,5 +30,23 @@ abstract class Sales extends BaseOutput with _$Sales {
     return salesStatusMap.entries
         .firstWhere((item) => item.key == status)
         .value;
+  }
+
+  bool isDraft() {
+    return status == DRAFT;
+  }
+
+  TagCategoryType statusType() {
+    switch (status) {
+      case DRAFT:
+        return TagCategoryType.gamboge;
+      case ISSUED:
+        return TagCategoryType.eucalyptus;
+      case COMPLETED:
+        return TagCategoryType.eucalyptus;
+      case CANCELLED:
+        return TagCategoryType.crismon;
+    }
+    return TagCategoryType.plain;
   }
 }

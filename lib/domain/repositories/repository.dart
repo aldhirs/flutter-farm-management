@@ -4,8 +4,8 @@ import 'package:farm/domain/entities/barn/barn.dart';
 import 'package:farm/domain/entities/barn/barn_request.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/cattle/cattle_form_request.dart';
+import 'package:farm/domain/entities/cattle/cattle_list_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_request.dart';
-import 'package:farm/domain/entities/general/empty_response.dart';
 import 'package:farm/domain/entities/growth/growth.dart';
 import 'package:farm/domain/entities/growth/growth_form_request.dart';
 import 'package:farm/domain/entities/level/level.dart';
@@ -20,7 +20,9 @@ import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
+import 'package:farm/domain/entities/sales/sales_item_delete_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
+import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_type.dart';
@@ -40,6 +42,7 @@ abstract class Repository {
     MedicalTypeRequest request,
   );
 
+  Future<DataListResponse<Cattle>> cattles(CattleListRequest request);
   Future<DataResponse<Cattle>> cattleByRFID(CattleRequest request);
   Future<DataResponse<void>> cattleUpdate(CattleFormRequest request);
   Future<DataResponse<Growth>> growthCreate(GrowthFormRequest request);
@@ -49,6 +52,8 @@ abstract class Repository {
 
   Future<DataListResponse<Sales>> sales(SalesRequest request);
   Future<DataListResponse<SalesItem>> salesItems(SalesItemRequest request);
+  Future<DataResponse<void>> salesItemSave(SalesItemSaveRequest request);
+  Future<DataResponse<void>> salesItemDelete(SalesItemDeleteRequest request);
 
   Future<void> logout();
   UserData getUserDataPreference();

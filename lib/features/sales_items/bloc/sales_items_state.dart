@@ -13,6 +13,9 @@ abstract class SalesItemsState extends BaseBlocState with _$SalesItemsState {
     @Default('') String errorMessage,
     @Default(false) bool isLoadMore,
     @Default(false) bool hasMore,
+    @Default(false) bool isEditMode,
+    @Default('') String successMessage,
+    @Default([]) List<SalesItem> selectedItems,
   }) = _SalesItemsState;
   const SalesItemsState._();
 }

@@ -203,28 +203,28 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                   runSpacing: 12,
                   children: [
                     StatCard(
-                      title: "Drafting Total",
+                      title: "Drafting",
                       count: "120",
                       color: Colors.green,
                       icon: Icons.pets,
                     ),
                     StatCard(
-                      title: "Rooms",
-                      count: "12",
-                      color: Colors.blue,
-                      icon: Icons.meeting_room,
-                    ),
-                    StatCard(
-                      title: "Available",
+                      title: "Sapi Sakit",
                       count: "5",
                       color: Colors.orange,
-                      icon: Icons.check_circle,
+                      icon: Icons.sick_outlined,
                     ),
                     StatCard(
-                      title: "Sales",
+                      title: "Draf Penjualan",
                       count: "30",
                       color: Colors.red,
                       icon: Icons.shopping_cart,
+                    ),
+                    StatCard(
+                      title: "Draf Mutasi",
+                      count: "30",
+                      color: Colors.red,
+                      icon: Icons.multiline_chart,
                     ),
                   ],
                 ),
@@ -264,8 +264,8 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                     const SizedBox(width: 12),
                     Expanded(
                       child: QuickActionCard(
-                        icon: Icons.barcode_reader,
-                        label: "Gun Connect",
+                        icon: Icons.multiline_chart,
+                        label: "Mutasi",
                         onTap: () {},
                       ),
                     ),

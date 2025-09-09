@@ -1,6 +1,8 @@
 import 'package:dartx/dartx.dart';
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/entities/sales/sales_item_delete_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
+import 'package:farm/domain/usecases/sales_item_delete_use_case.dart';
 import 'package:farm/domain/usecases/sales_items_use_case.dart';
 import 'package:farm/features/sales_items/bloc/sales_items_event.dart';
 import 'package:farm/features/sales_items/bloc/sales_items_state.dart';
@@ -11,11 +13,16 @@ import 'package:injectable/injectable.dart';
 @Injectable()
 class SalesItemsBloc extends BaseBloc<SalesItemsEvent, SalesItemsState> {
   final SalesItemsUseCase _salesItemsUseCase;
+  final SalesItemDeleteUseCase _salesItemDeleteUseCase;
   final limit = 8;
-  SalesItemsBloc(this._salesItemsUseCase) : super(const SalesItemsState()) {
+  SalesItemsBloc(this._salesItemsUseCase, this._salesItemDeleteUseCase)
+    : super(const SalesItemsState()) {
     on<Initiated>(_initialized, transformer: log());
     on<Load>(_load, transformer: log());
     on<LoadMore>(_loadMore, transformer: log());
+    on<EditModeToggled>(_onEditModeToggled, transformer: log());
+    on<ItemSelectionToggled>(_onItemSelectionToggled, transformer: log());
+    on<DeleteSalesItems>(_onDeleteSalesItems, transformer: log());
   }
 
   Future<void> _initialized(
@@ -57,7 +64,6 @@ class SalesItemsBloc extends BaseBloc<SalesItemsEvent, SalesItemsState> {
         final response = await _salesItemsUseCase.execute(req);
         switch (response.result) {
           case DataSuccess(:final data):
-            final errorMessage = data.isEmpty ? 'Data tidak ditemukan' : '';
             var items = data;
             if (isLoadMore) {
               items = [...state.salesItems, ...data];
@@ -65,7 +71,8 @@ class SalesItemsBloc extends BaseBloc<SalesItemsEvent, SalesItemsState> {
             emit(
               state.copyWith(
                 salesItems: items,
-                errorMessage: errorMessage,
+                isEditMode: false,
+                selectedItems: [],
                 hasMore: (response.total_page ?? 1) > (response.page ?? 1),
                 isLoadMore: false,
               ),
@@ -96,5 +103,64 @@ class SalesItemsBloc extends BaseBloc<SalesItemsEvent, SalesItemsState> {
       return false;
     }
     return true;
+  }
+
+  void _onEditModeToggled(
+    EditModeToggled event,
+    Emitter<SalesItemsState> emit,
+  ) {
+    emit(state.copyWith(isEditMode: !state.isEditMode, selectedItems: []));
+  }
+
+  void _onItemSelectionToggled(
+    ItemSelectionToggled event,
+    Emitter<SalesItemsState> emit,
+  ) {
+    final updated = [...state.selectedItems];
+    if (updated.contains(event.item)) {
+      updated.remove(event.item);
+    } else {
+      updated.add(event.item);
+    }
+    emit(state.copyWith(selectedItems: updated));
+  }
+
+  Future<void> _onDeleteSalesItems(
+    DeleteSalesItems event,
+    Emitter<SalesItemsState> emit,
+  ) async {
+    await _deleteApi(emit);
+  }
+
+  Future<void> _deleteApi(Emitter<SalesItemsState> emit) {
+    return runBlocCatching(
+      handleLoading: true,
+      action: () async {
+        final req = SalesItemDeleteRequest(
+          sale_id: state.sales.id,
+          items: state.selectedItems,
+        );
+        final response = await _salesItemDeleteUseCase.execute(req);
+        switch (response.result) {
+          case DataSuccess(:final data):
+            emit(
+              state.copyWith(
+                successMessage: 'Item penjualan berhasil dihapus.',
+              ),
+            );
+            add(const Load());
+            break;
+          case DataError(:final errorMessage):
+            emit(state.copyWith(errorMessage: errorMessage.orEmpty()));
+          case null:
+            return;
+        }
+      },
+      doOnEventCompleted: () async {},
+      handleError: false,
+      doOnError: (e) async {
+        emit(state.copyWith(errorMessage: exceptionMessageMapper.map(e)));
+      },
+    );
   }
 }

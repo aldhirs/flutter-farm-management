@@ -5,6 +5,7 @@ import 'package:farm/domain/entities/barn/barn.dart';
 import 'package:farm/domain/entities/barn/barn_request.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/cattle/cattle_form_request.dart';
+import 'package:farm/domain/entities/cattle/cattle_list_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_request.dart';
 import 'package:farm/domain/entities/growth/growth.dart';
 import 'package:farm/domain/entities/growth/growth_form_request.dart';
@@ -20,7 +21,9 @@ import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
+import 'package:farm/domain/entities/sales/sales_item_delete_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
+import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_type.dart';
@@ -43,6 +46,16 @@ class ApiService {
       queryParameters: queryParameters,
       body: request.toJson(),
       decoder: UserData.fromJson,
+    );
+  }
+
+  Future<DataListResponse<Cattle>> cattles(CattleListRequest request) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/cattle',
+      queryParameters: request.toJson(),
+      successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: Cattle.fromJson,
     );
   }
 
@@ -196,6 +209,26 @@ class ApiService {
       queryParameters: request.toJson(),
       successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
       decoder: SalesItem.fromJson,
+    );
+  }
+
+  Future<DataResponse<void>> salesItemSave(SalesItemSaveRequest request) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.post,
+      path: '/v1/sales-item/bulk-create',
+      body: request.toJson(),
+      decoder: (_) => null,
+    );
+  }
+
+  Future<DataResponse<void>> salesItemDelete(
+    SalesItemDeleteRequest request,
+  ) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.delete,
+      path: '/v1/sales-item',
+      body: request.toJson(),
+      decoder: (_) => null,
     );
   }
 }

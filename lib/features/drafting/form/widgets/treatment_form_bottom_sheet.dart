@@ -184,7 +184,7 @@ class _TreatmentFormBottomSheetState extends State<TreatmentFormBottomSheet> {
             dropdownType: DropdownTypeEnum.single,
             onSelectedItems: (List<String> value) {
               final selected = state.treatmentTypes
-                  .where((item) => item.name == value.first)
+                  .where((item) => item.id == value.first)
                   .first;
               widget.bloc.add(TreatmentTypeChanged(value: selected));
             },

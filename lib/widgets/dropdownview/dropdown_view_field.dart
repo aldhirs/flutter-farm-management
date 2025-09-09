@@ -129,9 +129,7 @@ class _DropdownViewFieldState extends State<DropdownViewField> {
     final selectedItems = items.where((item) => item.selected).toList();
     widget.items.value = items;
 
-    widget.onSelectedItems.call(
-      selectedItems.map((item) => item.text).toList(),
-    );
+    widget.onSelectedItems.call(selectedItems.map((item) => item.id).toList());
 
     if (selectedItems.isNotEmpty) {
       _controller.text = widget.dropdownType == DropdownTypeEnum.single

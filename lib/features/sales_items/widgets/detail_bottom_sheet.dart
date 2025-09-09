@@ -1,18 +1,11 @@
 import 'package:dartx/dartx_io.dart';
 import 'package:farm/constants/date_constant.dart';
-import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/extensions/string.dart';
-import 'package:farm/features/sales/bloc/sales_bloc.dart';
-import 'package:farm/features/sales/bloc/sales_event.dart';
-import 'package:farm/features/sales/bloc/sales_state.dart';
 import 'package:farm/resources/resource.dart';
-import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/utils/string_utils.dart';
-import 'package:farm/widgets/dropdownview/dropdown_model.dart';
-import 'package:farm/widgets/dropdownview/dropdown_view_field.dart';
+import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DetailBottomSheet extends StatefulWidget {
   const DetailBottomSheet({
@@ -36,8 +29,13 @@ class _DetailBottomSheetState extends State<DetailBottomSheet> {
       alignment: Alignment.topLeft,
       child: Column(
         spacing: Dimens.d8,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Informasi Penjualan", style: TextStyles.heading5()),
+          Padding(
+            padding: const EdgeInsetsGeometry.only(left: 16, right: 16),
+            child: Text("Informasi Penjualan", style: TextStyles.heading5()),
+          ),
           const SizedBox(height: 12),
           _item('ID', (widget.item.id).orEmpty()),
           _item(
@@ -55,7 +53,11 @@ class _DetailBottomSheetState extends State<DetailBottomSheet> {
             'Tipe Pelanggan',
             (widget.item.customer_detail?.type).orEmpty(),
           ),
-          _item('Status', (widget.item.statusLabel()).orEmpty()),
+          _itemChip(
+            'Status',
+            (widget.item.statusLabel()).orEmpty(),
+            widget.item.statusType(),
+          ),
           const SizedBox(height: 24),
         ],
       ),
@@ -67,6 +69,20 @@ class _DetailBottomSheetState extends State<DetailBottomSheet> {
       visualDensity: const VisualDensity(horizontal: 0, vertical: -3),
       title: Text(name, style: TextStyles.label2()),
       subtitle: Text(value, style: TextStyles.heading6()),
+    );
+  }
+
+  Widget _itemChip(String name, String value, TagCategoryType type) {
+    return Padding(
+      padding: const EdgeInsetsGeometry.only(left: 16, right: 16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(name, style: TextStyles.label2()),
+          TagCategory(text: value, type: type),
+        ],
+      ),
     );
   }
 }

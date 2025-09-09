@@ -39,6 +39,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: DraftingFormRoute.page, guards: [authGuard()]),
     AutoRoute(page: SalesRoute.page, guards: [authGuard()]),
     AutoRoute(page: SalesItemsRoute.page, guards: [authGuard()]),
+    AutoRoute(page: SalesItemFormRoute.page, guards: [authGuard()]),
   ];
 
   @override

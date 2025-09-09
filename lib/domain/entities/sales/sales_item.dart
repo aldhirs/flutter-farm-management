@@ -1,5 +1,6 @@
 import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/base/base.dart';
+import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'sales_item.freezed.dart';
@@ -13,6 +14,9 @@ abstract class SalesItem extends BaseOutput with _$SalesItem {
     @Default('') String id_cattle,
     @Default('') String rfid,
     @Default('') String ear_tag,
+    @Default('') String barn_name,
+    @Default('') String pen_name,
+    @Default('') String barn_category,
     @Default(0) int actual_weight,
     @Default('') String cattle_status,
     @Default('') String status,
@@ -32,5 +36,15 @@ abstract class SalesItem extends BaseOutput with _$SalesItem {
   String cattleStatusLabel() {
     if (cattle_status.isEmpty) return '-';
     return cattleStatusMap[cattle_status] ?? cattle_status;
+  }
+
+  TagCategoryType statusType() {
+    switch (status) {
+      case AVAILABLE:
+        return TagCategoryType.eucalyptus;
+      case BOOKED:
+        return TagCategoryType.crismon;
+    }
+    return TagCategoryType.plain;
   }
 }

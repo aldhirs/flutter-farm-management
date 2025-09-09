@@ -5,6 +5,7 @@ import 'package:farm/domain/entities/barn/barn.dart';
 import 'package:farm/domain/entities/barn/barn_request.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/cattle/cattle_form_request.dart';
+import 'package:farm/domain/entities/cattle/cattle_list_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_request.dart';
 import 'package:farm/domain/entities/growth/growth.dart';
 import 'package:farm/domain/entities/growth/growth_form_request.dart';
@@ -19,7 +20,9 @@ import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
+import 'package:farm/domain/entities/sales/sales_item_delete_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
+import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_type.dart';
@@ -44,6 +47,12 @@ class RepositoryImpl implements Repository {
   Future<DataResponse<UserData>> login(LoginRequest request) async {
     final response = await _apiService.login(request);
     await _saveUserAndToken(response.data);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<Cattle>> cattles(CattleListRequest request) async {
+    final response = await _apiService.cattles(request);
     return response;
   }
 
@@ -136,6 +145,20 @@ class RepositoryImpl implements Repository {
     SalesItemRequest request,
   ) async {
     final response = await _apiService.salesItems(request);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<void>> salesItemSave(SalesItemSaveRequest request) async {
+    final response = await _apiService.salesItemSave(request);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<void>> salesItemDelete(
+    SalesItemDeleteRequest request,
+  ) async {
+    final response = await _apiService.salesItemDelete(request);
     return response;
   }
 

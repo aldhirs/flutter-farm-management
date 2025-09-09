@@ -1,6 +1,4 @@
 import 'package:farm/domain/base/base.dart';
-import 'package:farm/domain/entities/auth/login_request.dart';
-import 'package:farm/domain/entities/auth/user_data.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/cattle/cattle_request.dart';
 import 'package:farm/domain/repositories/repository.dart';

@@ -182,7 +182,7 @@ class _MedicalFormBottomSheetState extends State<MedicalFormBottomSheet> {
             dropdownType: DropdownTypeEnum.single,
             onSelectedItems: (List<String> value) {
               final selected = state.medicalTypes
-                  .where((item) => item.name == value.first)
+                  .where((item) => item.id == value.first)
                   .first;
               widget.bloc.add(MedicalTypeChanged(value: selected));
             },

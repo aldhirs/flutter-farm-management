@@ -44,20 +44,14 @@ class ItemWidget extends StatelessWidget {
                   ),
                   TagCategory(
                     text: item.statusLabel(),
-                    type: TagCategoryType.mint,
+                    type: item.statusType(),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-
-              // Divider
-              Divider(color: Colors.grey.shade300),
 
               // Info items
               const SizedBox(height: 8),
               _buildDetail(Icons.scale_outlined, '${item.actual_weight} KG'),
-              _buildDetail(Icons.flag, 'Sapi: ${item.cattleStatusLabel()}'),
-              _buildChip(Icons.key_outlined, item.id.defaultValue('-')),
             ],
           ),
         ),
@@ -73,19 +67,6 @@ class ItemWidget extends StatelessWidget {
           Icon(icon, size: 20, color: Colors.grey.shade600),
           const SizedBox(width: 10),
           Expanded(child: Text(text, style: const TextStyle(fontSize: 14))),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChip(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          Icon(icon, size: 20, color: Colors.grey.shade600),
-          const SizedBox(width: 10),
-          TagCategory(text: text, type: TagCategoryType.plain),
         ],
       ),
     );
