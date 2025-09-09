@@ -23,6 +23,11 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       SalesPage() => const SalesRoute(),
       SalesItemPage(:final item) => SalesItemsRoute(item: item),
       SalesItemFormPage(:final item) => SalesItemFormRoute(item: item),
+      ScanPages(:final route, :final sales) =>
+        sales != null
+            ? ScanRoute(destinationRoute: route, sales: sales)
+            : ScanRoute(destinationRoute: route),
+      PenDrafting() => const PenDraftingRoute(),
       _ => throw UnimplementedError('Unknown route: $appRouteInfo'),
     };
   }

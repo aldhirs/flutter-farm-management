@@ -36,7 +36,10 @@ class ItemWidget extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(item.ear_tag, style: TextStyles.heading5()),
+                        Text(
+                          item.ear_tag.defaultValue('-'),
+                          style: TextStyles.heading5(),
+                        ),
                         const SizedBox(height: 4),
                         Text(item.rfid, style: TextStyles.label3()),
                       ],

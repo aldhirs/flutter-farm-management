@@ -21,9 +21,12 @@ class ItemWidget extends StatelessWidget {
       splashColor: AppColors.current.mint400.withValues(alpha: 120),
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        elevation: 0,
-        color: AppColors.current.neutral200,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: AppColors.current.neutral300, width: 1.0),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        elevation: 2,
+        color: Colors.white,
         shadowColor: Colors.black12,
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -69,11 +72,6 @@ class ItemWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-
-              // Divider
-              Divider(color: Colors.grey.shade300),
-
               // Info items
               const SizedBox(height: 8),
               _buildDetail(

@@ -2,11 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base_page_state.dart';
 import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_bloc.dart';
 import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_event.dart';
+import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_navigator_impl.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/widgets/popup/popup.dart';
-import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()
@@ -62,7 +62,9 @@ class _HomeNavBarPageState
                   ),
                 );
               } else {
-                await navigator.push(const AppRouteInfo.draftingScan());
+                await navigator.push(
+                  const AppRouteInfo.scan(route: DEST_DRAFTING_DETAIL),
+                );
               }
             },
             shape: const CircleBorder(),

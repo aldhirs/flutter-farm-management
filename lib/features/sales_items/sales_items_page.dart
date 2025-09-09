@@ -6,6 +6,7 @@ import 'package:farm/features/sales_items/bloc/sales_items_event.dart';
 import 'package:farm/features/sales_items/bloc/sales_items_state.dart';
 import 'package:farm/features/sales_items/widgets/detail_bottom_sheet.dart';
 import 'package:farm/features/sales_items/widgets/item_widget.dart';
+import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/views/view.dart';
@@ -279,7 +280,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
 
   void _addNew() async {
     final result = await navigator.push(
-      AppRouteInfo.salesItemForm(item: widget.item),
+      AppRouteInfo.scan(route: DEST_SALES_ITEM, sales: widget.item),
     );
     if (result != null) {
       bloc.add(const Load());

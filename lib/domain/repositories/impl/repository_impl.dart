@@ -6,6 +6,7 @@ import 'package:farm/domain/entities/barn/barn_request.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/cattle/cattle_form_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_list_request.dart';
+import 'package:farm/domain/entities/cattle/cattle_pen_to_pen_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_request.dart';
 import 'package:farm/domain/entities/growth/growth.dart';
 import 'package:farm/domain/entities/growth/growth_form_request.dart';
@@ -59,6 +60,14 @@ class RepositoryImpl implements Repository {
   @override
   Future<DataResponse<Cattle>> cattleByRFID(CattleRequest request) async {
     final response = await _apiService.cattleByRFID(request);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<void>> cattleMovePenToPen(
+    CattlePenToPenRequest request,
+  ) async {
+    final response = await _apiService.cattleMovePenToPen(request);
     return response;
   }
 

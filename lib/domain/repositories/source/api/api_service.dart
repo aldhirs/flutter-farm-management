@@ -6,6 +6,7 @@ import 'package:farm/domain/entities/barn/barn_request.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/cattle/cattle_form_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_list_request.dart';
+import 'package:farm/domain/entities/cattle/cattle_pen_to_pen_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_request.dart';
 import 'package:farm/domain/entities/growth/growth.dart';
 import 'package:farm/domain/entities/growth/growth_form_request.dart';
@@ -56,6 +57,17 @@ class ApiService {
       queryParameters: request.toJson(),
       successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
       decoder: Cattle.fromJson,
+    );
+  }
+
+  Future<DataResponse<void>> cattleMovePenToPen(
+    CattlePenToPenRequest request,
+  ) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.post,
+      path: '/v1/cattle/move-pen-to-pen',
+      body: request.toJson(),
+      decoder: (_) => null,
     );
   }
 

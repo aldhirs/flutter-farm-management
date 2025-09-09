@@ -1,6 +1,4 @@
 import 'package:farm/domain/base/base.dart';
-import 'package:farm/domain/entities/barn/barn.dart';
-import 'package:farm/domain/entities/barn/barn_request.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/repositories/repository.dart';
@@ -22,7 +20,11 @@ class PensUseCase extends BaseFutureUseCase<PenRequest, PensOutput> {
   Future<PensOutput> buildUseCase(PenRequest input) async {
     final response = await _repository.pens(input);
     final result = responseListMapper(response);
-    return PensOutput(result: result);
+    return PensOutput(
+      result: result,
+      page: response.page,
+      total_page: response.total_page,
+    );
   }
 }
 
@@ -30,5 +32,9 @@ class PensUseCase extends BaseFutureUseCase<PenRequest, PensOutput> {
 abstract class PensOutput extends BaseOutput with _$PensOutput {
   const PensOutput._();
 
-  const factory PensOutput({DomainState<List<Pen>>? result}) = _PensOutput;
+  const factory PensOutput({
+    DomainState<List<Pen>>? result,
+    int? total_page,
+    int? page,
+  }) = _PensOutput;
 }

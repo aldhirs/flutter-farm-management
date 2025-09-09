@@ -1,5 +1,6 @@
 import 'package:dartx/dartx.dart';
 import 'package:farm/constants/enum_constants.dart';
+import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_bloc.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_event.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_state.dart';
@@ -9,6 +10,7 @@ import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/widgets/buttons/button.dart';
 import 'package:farm/widgets/dropdownview/dropdown_model.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_field.dart';
+import 'package:farm/widgets/dropdownview/dropdown_view_pen_field.dart';
 import 'package:farm/widgets/inputs/text_input_field.dart';
 import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
@@ -172,18 +174,14 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
       value: widget.bloc,
       child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
         builder: (context, state) {
-          return DropdownViewField(
+          return DropdownViewPenField(
             controller: _penController,
-            title: 'Pilih Pen',
-            items: ValueNotifier<List<DropdownCheckboxModel>>(
+            title: 'Pen Tujuan',
+            items: ValueNotifier<List<Pen>>(
               state.pens
                   .map(
-                    (item) => DropdownCheckboxModel(
-                      id: item.id,
-                      text: item.name,
+                    (item) => item.copyWith(
                       selected: item.id == state.selectedPen?.id,
-                      notes: 'Kapasitas: ${item.cattle_count}/${item.capacity}',
-                      color: item.cattleToCapacityColor(),
                     ),
                   )
                   .toList(),
@@ -191,12 +189,9 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
             navigator: widget.bloc.navigator,
             dropdownType: DropdownTypeEnum.single,
             sheetSize: BottomSheetSize.full,
-            emptyStateMessage: 'Pilih kandang terlebih dahulu.',
-            onSelectedItems: (List<String> value) {
-              final selected = state.pens
-                  .where((item) => item.id == value.first)
-                  .first;
-              widget.bloc.add(PenChanged(pen: selected));
+            emptyStateMessage: 'Silakan pilih pen terlebih dahulu.',
+            onSelectedItems: (List<Pen> value) {
+              widget.bloc.add(PenChanged(pen: value.first));
             },
           );
         },

@@ -15,6 +15,7 @@ abstract class Pen extends BaseOutput with _$Pen {
     @JsonKey(name: 'capacity') @Default(0) int capacity,
     @JsonKey(name: 'cattle_count') @Default(0) int cattle_count,
     @JsonKey(name: 'created_at') @Default('') String created_at,
+    @Default(false) bool selected,
   }) = _Pen;
   const Pen._();
   factory Pen.fromJson(Map<String, dynamic> json) => _$PenFromJson(json);
@@ -36,6 +37,23 @@ abstract class Pen extends BaseOutput with _$Pen {
     } else {
       // 97 → 100% : solid red
       return Colors.red;
+    }
+  }
+
+  double getPercentage() {
+    final int total = capacity;
+    final int filled = cattle_count;
+    return total > 0 ? filled / total : 0.0;
+  }
+
+  Color getGradientColor() {
+    final percentage = getPercentage();
+    if (percentage < 0.5) {
+      return Colors.green.shade400;
+    } else if (percentage < 0.8) {
+      return Colors.orange.shade400;
+    } else {
+      return Colors.red.shade500;
     }
   }
 }

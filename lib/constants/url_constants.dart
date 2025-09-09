@@ -13,7 +13,8 @@ class UrlConstants {
   static String get appBaseUrl {
     switch (EnvConstants.flavor) {
       case Flavor.develop:
-        return 'http://192.168.1.6:8080/api';
+        return 'https://api.agrisatwa.teknoduct.com/api';
+      //'http://192.168.1.6:8080/api';
       case Flavor.staging:
         return 'https://api.agrisatwa.teknoduct.com/api';
       case Flavor.production:

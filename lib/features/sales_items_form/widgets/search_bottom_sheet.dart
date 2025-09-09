@@ -1,4 +1,5 @@
 import 'package:farm/constants/enum_constants.dart';
+import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/features/sales_items_form/bloc/sales_item_form_bloc.dart';
 import 'package:farm/features/sales_items_form/bloc/sales_item_form_event.dart';
 import 'package:farm/features/sales_items_form/bloc/sales_item_form_state.dart';
@@ -8,6 +9,7 @@ import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/widgets/buttons/button.dart';
 import 'package:farm/widgets/dropdownview/dropdown_model.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_field.dart';
+import 'package:farm/widgets/dropdownview/dropdown_view_pen_field.dart';
 import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -140,18 +142,14 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       value: widget.bloc,
       child: BlocBuilder<SalesItemFormBloc, SalesItemFormState>(
         builder: (context, state) {
-          return DropdownViewField(
+          return DropdownViewPenField(
             controller: _penController,
-            title: 'Pilih Pen',
-            items: ValueNotifier<List<DropdownCheckboxModel>>(
+            title: 'Pen Tujuan',
+            items: ValueNotifier<List<Pen>>(
               state.pens
                   .map(
-                    (item) => DropdownCheckboxModel(
-                      id: item.id,
-                      text: item.name,
+                    (item) => item.copyWith(
                       selected: item.id == state.selectedPen?.id,
-                      notes: 'Kapasitas: ${item.cattle_count}/${item.capacity}',
-                      color: item.cattleToCapacityColor(),
                     ),
                   )
                   .toList(),
@@ -159,12 +157,9 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
             navigator: widget.bloc.navigator,
             dropdownType: DropdownTypeEnum.single,
             sheetSize: BottomSheetSize.full,
-            emptyStateMessage: 'Pilih kandang terlebih dahulu.',
-            onSelectedItems: (List<String> value) {
-              final selected = state.pens
-                  .where((item) => item.id == value.first)
-                  .first;
-              widget.bloc.add(PenChanged(pen: selected));
+            emptyStateMessage: 'Silakan pilih kandang terlebih dahulu.',
+            onSelectedItems: (List<Pen> value) {
+              widget.bloc.add(PenChanged(pen: value.first));
             },
           );
         },

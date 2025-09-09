@@ -8,6 +8,7 @@ import 'package:farm/extensions/string.dart';
 import 'package:farm/features/home/home/bloc/home_bloc.dart';
 import 'package:farm/features/home/home/widgets/quick_action_card.dart';
 import 'package:farm/features/home/home/widgets/stat_card.dart';
+import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
@@ -234,7 +235,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
               _fadeSlide(
                 fade: _fadeShortcutTitle,
                 slide: _slideShortcutTitle,
-                child: Text("Jalan Pintas", style: TextStyles.heading6()),
+                child: Text("Menu", style: TextStyles.heading6()),
               ),
 
               const SizedBox(height: 10),
@@ -249,8 +250,9 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                       child: QuickActionCard(
                         icon: Icons.list_alt,
                         label: "Drafting",
-                        onTap: () =>
-                            navigator.push(const AppRouteInfo.draftingScan()),
+                        onTap: () => navigator.push(
+                          const AppRouteInfo.scan(route: DEST_DRAFTING_DETAIL),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -261,7 +263,16 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                         onTap: () => navigator.push(const AppRouteInfo.sales()),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              _fadeSlide(
+                fade: _fadeQuickActions,
+                slide: _slideQuickActions,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
                     Expanded(
                       child: QuickActionCard(
                         icon: Icons.multiline_chart,
@@ -269,10 +280,19 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                         onTap: () {},
                       ),
                     ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: QuickActionCard(
+                        icon: Icons.change_circle_outlined,
+                        label: "Pen Drafting",
+                        onTap: () =>
+                            navigator.push(const AppRouteInfo.penDrafting()),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 62),
             ],
           ),
         ),

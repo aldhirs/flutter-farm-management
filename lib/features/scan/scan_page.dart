@@ -1,13 +1,11 @@
-/// @DEPRECATED
-/// move to scan_page.dart
-
 import 'dart:collection';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base.dart';
-import 'package:farm/features/drafting/scan/bloc/drafting_scan_bloc.dart';
-import 'package:farm/features/drafting/scan/bloc/drafting_scan_event.dart';
-import 'package:farm/features/drafting/scan/bloc/drafting_scan_state.dart';
+import 'package:farm/domain/entities/sales/sales.dart';
+import 'package:farm/features/scan/bloc/scan_bloc.dart';
+import 'package:farm/features/scan/bloc/scan_event.dart';
+import 'package:farm/features/scan/bloc/scan_state.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/views/view.dart';
@@ -17,27 +15,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 
+const DEST_DRAFTING_DETAIL = 'drafting_detail';
+const DEST_SALES_ITEM = 'sales_item';
+
 @RoutePage()
-class DraftingScanPage extends StatefulWidget {
-  const DraftingScanPage({super.key});
+class ScanPage extends StatefulWidget {
+  const ScanPage({
+    super.key,
+    required this.destinationRoute,
+    this.sales = const Sales(),
+  });
+
+  final String destinationRoute;
+  final Sales sales;
 
   @override
-  State<DraftingScanPage> createState() => _DraftingScanPageState();
+  State<ScanPage> createState() => _ScanPageState();
 }
 
-class _DraftingScanPageState
-    extends BasePageState<DraftingScanPage, DraftingScanBloc> {
+class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
   @override
   void initState() {
     super.initState();
-    bloc.add(const Initiated());
+    bloc.add(Initiated(sales: widget.sales, route: widget.destinationRoute));
   }
 
   @override
   Widget buildPageListeners({required Widget child}) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<DraftingScanBloc, DraftingScanState>(
+        BlocListener<ScanBloc, ScanState>(
           listenWhen: (previous, current) =>
               previous.isError != current.isError,
           listener: (context, state) {
@@ -58,25 +65,33 @@ class _DraftingScanPageState
 
   @override
   Widget buildPage(BuildContext context) {
-    return BlocBuilder<DraftingScanBloc, DraftingScanState>(
-      builder: (context, state) {
-        return CommonScaffold(
-          appBar: CommonAppBar(
-            titleText: 'Scan Drafting',
-            forceMaterialTransparency: false,
-          ),
-          body: ListView(
-            children: [
-              _turnOnBluetoothState(),
-              const Divider(),
-              _scanningResults(),
-            ],
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: _scanningButton(),
-        );
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          navigator.pop(result: true);
+        }
       },
+      child: BlocBuilder<ScanBloc, ScanState>(
+        builder: (context, state) {
+          return CommonScaffold(
+            appBar: CommonAppBar(
+              titleText: 'Hubungkan Bluetooth',
+              forceMaterialTransparency: false,
+            ),
+            body: ListView(
+              children: [
+                _turnOnBluetoothState(),
+                const Divider(),
+                _scanningResults(),
+              ],
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: _scanningButton(),
+          );
+        },
+      ),
     );
   }
 
@@ -84,7 +99,7 @@ class _DraftingScanPageState
     return ListTile(
       title: const Text("Bluetooth"),
       subtitle: const Text("tekan untuk mengaktifkan"),
-      trailing: BlocSelector<DraftingScanBloc, DraftingScanState, String>(
+      trailing: BlocSelector<ScanBloc, ScanState, String>(
         selector: (state) => state.adapterState.name,
         builder: (context, value) {
           return Text(value, style: TextStyles.body1());
@@ -98,7 +113,7 @@ class _DraftingScanPageState
   Widget _scanningResults() {
     return BlocProvider.value(
       value: bloc,
-      child: BlocBuilder<DraftingScanBloc, DraftingScanState>(
+      child: BlocBuilder<ScanBloc, ScanState>(
         buildWhen: (previous, current) =>
             previous.scanResults != current.scanResults ||
             previous.connectionIndex != current.connectionIndex,
@@ -128,8 +143,8 @@ class _DraftingScanPageState
     );
   }
 
-  BlocBuilder<DraftingScanBloc, DraftingScanState> _scanningButton() {
-    return BlocBuilder<DraftingScanBloc, DraftingScanState>(
+  BlocBuilder<ScanBloc, ScanState> _scanningButton() {
+    return BlocBuilder<ScanBloc, ScanState>(
       buildWhen: (previous, current) =>
           previous.isScanning != current.isScanning ||
           previous.adapterState != current.adapterState,
@@ -191,9 +206,16 @@ class _DraftingScanPageState
         onPositiveButtonPressed: () async {
           navigator.pop();
           // bloc.add(const StartScanning());
-          navigator.popAndPush(
-            const AppRouteInfo.draftingDetail(connection: null),
-          ); // bypass-debug
+          // bypass-debug
+          switch (widget.destinationRoute) {
+            case DEST_DRAFTING_DETAIL:
+              navigator.popAndPush(const AppRouteInfo.draftingDetail());
+            case DEST_SALES_ITEM:
+              navigator.popAndPush(
+                AppRouteInfo.salesItemForm(item: widget.sales),
+              );
+          }
+          // bypass-debug
         },
       ),
     );

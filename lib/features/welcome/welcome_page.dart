@@ -110,10 +110,16 @@ class _WelcomePageState extends BasePageState<WelcomePage, WelcomeBloc>
             height: ViewUtils.screenHeight(),
             padding: const EdgeInsets.all(Dimens.d16),
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: _getImageBackground(context),
-                fit: BoxFit.cover,
-              ),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withAlpha(20),
+                  spreadRadius: 2,
+                  blurRadius: 3,
+                  offset: const Offset(0, 0), // changes position of shadow
+                ),
+              ],
+              borderRadius: BorderRadius.circular(Dimens.d12),
             ),
             child: Center(
               child: Column(
@@ -150,7 +156,7 @@ class _WelcomePageState extends BasePageState<WelcomePage, WelcomeBloc>
   }
 
   AssetImage _getImageBackground(BuildContext context) {
-    var assetImage = const AssetImage('assets/images/welcome/bg_mobile.jpg');
+    var assetImage = const AssetImage('assets/images/welcome/bg_mobile.png');
     if (DeviceUtils.getDeviceTypeOf(context) == DeviceType.tabletPortrait) {
       assetImage = const AssetImage(
         'assets/images/welcome/bg_tablet_portrait.webp',

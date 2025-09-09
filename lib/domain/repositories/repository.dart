@@ -5,6 +5,7 @@ import 'package:farm/domain/entities/barn/barn_request.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/cattle/cattle_form_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_list_request.dart';
+import 'package:farm/domain/entities/cattle/cattle_pen_to_pen_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_request.dart';
 import 'package:farm/domain/entities/growth/growth.dart';
 import 'package:farm/domain/entities/growth/growth_form_request.dart';
@@ -45,6 +46,7 @@ abstract class Repository {
   Future<DataListResponse<Cattle>> cattles(CattleListRequest request);
   Future<DataResponse<Cattle>> cattleByRFID(CattleRequest request);
   Future<DataResponse<void>> cattleUpdate(CattleFormRequest request);
+  Future<DataResponse<void>> cattleMovePenToPen(CattlePenToPenRequest request);
   Future<DataResponse<Growth>> growthCreate(GrowthFormRequest request);
   Future<DataResponse<void>> growthUpdate(GrowthFormRequest request);
   Future<DataResponse<void>> treatmentCreate(TreatmentFormRequest request);

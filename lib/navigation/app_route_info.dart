@@ -22,4 +22,7 @@ abstract class AppRouteInfo with _$AppRouteInfo {
   const factory AppRouteInfo.salesItem({required Sales item}) = SalesItemPage;
   const factory AppRouteInfo.salesItemForm({required Sales item}) =
       SalesItemFormPage;
+  const factory AppRouteInfo.scan({required String route, Sales? sales}) =
+      ScanPages;
+  const factory AppRouteInfo.penDrafting() = PenDrafting;
 }
