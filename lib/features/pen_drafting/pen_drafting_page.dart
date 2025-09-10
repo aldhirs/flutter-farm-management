@@ -6,9 +6,9 @@ import 'package:farm/features/pen_drafting/bloc/pen_drafting_state.dart';
 import 'package:farm/features/pen_drafting/widgets/change_bottom_sheet.dart';
 import 'package:farm/features/pen_drafting/widgets/filter_bottom_sheet.dart';
 import 'package:farm/features/pen_drafting/widgets/item_widget.dart';
+import 'package:farm/features/pen_drafting/widgets/detail_bottom_sheet.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/views/view.dart';
-import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -57,23 +57,22 @@ class _PenDraftingPageState
           appBar: CommonAppBar(
             titleText: 'Daftar Pen Drafting',
             forceMaterialTransparency: false,
-            // actions: [
-            //   IconButton(
-            //     onPressed: () => navigator.showBottomSheet(
-            //       FilterBottomSheet(
-            //         bloc: bloc,
-            //         onDismiss: () {
-            //           navigator.pop();
-            //         },
-            //       ),
-            //     ),
-            //     icon: const Icon(Icons.filter_list_alt),
-            //   ),
-            // ],
+            actions: [
+              IconButton(
+                onPressed: () => navigator.showBottomSheet(
+                  DetailBottomSheet(
+                    onDismiss: () {
+                      navigator.pop();
+                    },
+                  ),
+                ),
+                icon: const Icon(Icons.info_outline),
+              ),
+            ],
           ),
-          // floatingActionButtonLocation:
-          //     FloatingActionButtonLocation.centerFloat,
-          // floatingActionButton: _changeButton(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: _filterButton(),
           body: _listWidget(),
         );
       },
@@ -138,7 +137,7 @@ class _PenDraftingPageState
     );
   }
 
-  Widget _changeButton() {
+  Widget _filterButton() {
     return FloatingActionButton.extended(
       backgroundColor: AppColors.current.eucalyptus700,
       onPressed: () => navigator.showBottomSheet(

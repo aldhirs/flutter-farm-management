@@ -1,4 +1,6 @@
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/entities/barn/barn.dart';
+import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -55,4 +57,54 @@ abstract class DeleteSalesItems extends SalesItemsEvent
   const factory DeleteSalesItems({required List<SalesItem> items}) =
       _DeleteSalesItems;
   const DeleteSalesItems._();
+}
+
+@freezed
+abstract class SalesList extends SalesItemsEvent with _$SalesList {
+  const factory SalesList() = _SalesList;
+
+  const SalesList._();
+}
+
+@freezed
+abstract class GetBarns extends SalesItemsEvent with _$GetBarns {
+  const factory GetBarns() = _GetBarns;
+
+  const GetBarns._();
+}
+
+@freezed
+abstract class BarnChanged extends SalesItemsEvent with _$BarnChanged {
+  const factory BarnChanged({required Barn barn}) = _BarnChanged;
+
+  const BarnChanged._();
+}
+
+@freezed
+abstract class GetPens extends SalesItemsEvent with _$GetPens {
+  const factory GetPens({required String barnId}) = _GetPens;
+
+  const GetPens._();
+}
+
+@freezed
+abstract class PenChanged extends SalesItemsEvent with _$PenChanged {
+  const factory PenChanged({required Pen pen}) = _PenChanged;
+
+  const PenChanged._();
+}
+
+@freezed
+abstract class SaleChanged extends SalesItemsEvent with _$SaleChanged {
+  const factory SaleChanged({required Sales sale}) = _SaleChanged;
+
+  const SaleChanged._();
+}
+
+@freezed
+abstract class OnSubmitMoveSale extends SalesItemsEvent
+    with _$OnSubmitMoveSale {
+  const factory OnSubmitMoveSale({required List<SalesItem> items}) =
+      _OnSubmitMoveSale;
+  const OnSubmitMoveSale._();
 }

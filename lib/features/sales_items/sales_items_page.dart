@@ -6,12 +6,13 @@ import 'package:farm/features/sales_items/bloc/sales_items_event.dart';
 import 'package:farm/features/sales_items/bloc/sales_items_state.dart';
 import 'package:farm/features/sales_items/widgets/detail_bottom_sheet.dart';
 import 'package:farm/features/sales_items/widgets/item_widget.dart';
+import 'package:farm/features/sales_items/widgets/delete_bottom_sheet.dart';
+import 'package:farm/features/sales_items/widgets/move_bottom_sheet.dart';
 import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/views/view.dart';
 import 'package:farm/widgets/checkbox/checkbox_button.dart';
-import 'package:farm/widgets/popup/popup.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -101,7 +102,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: state.isEditMode
-              ? _deleteButton(state)
+              ? _actionButton(state)
               : _addButton(),
           body: _listWidget(),
         );
@@ -137,9 +138,10 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
               bloc.add(const Load());
             },
             // Pull from top to show refresh indicator.
-            child: ListView.builder(
+            child: ListView.separated(
               controller: _scrollController,
               itemCount: state.salesItems.length + (state.isLoadMore ? 1 : 0),
+              separatorBuilder: (context, index) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
                 if (index >= state.salesItems.length) {
                   return const Padding(
@@ -150,7 +152,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
                 final item = state.salesItems[index];
                 final isSelected = state.selectedItems.contains(item);
 
-                return Row(
+                final content = Row(
                   children: [
                     if (state.isEditMode)
                       CheckboxButton(
@@ -168,6 +170,10 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
                     ),
                   ],
                 );
+
+                return index == 0
+                    ? Column(children: [const SizedBox(height: 8), content])
+                    : content;
               },
             ),
           );
@@ -181,6 +187,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
       return const SizedBox.shrink();
     }
     return FloatingActionButton.extended(
+      heroTag: 'addBtn',
       backgroundColor: AppColors.current.eucalyptus700,
       onPressed: () => _addNew(),
       label: Text(
@@ -239,42 +246,65 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
     );
   }
 
-  Widget _deleteButton(SalesItemsState state) {
+  Widget _actionButton(SalesItemsState state) {
     if (state.selectedItems.isEmpty) return const SizedBox.shrink();
 
-    return FloatingActionButton.extended(
-      backgroundColor: Colors.red,
-      onPressed: () async {
-        navigator.showAppDialog(
-          useRootNavigator: true,
-          barrierDismissible: false,
-          Popup(
-            title: "Konfirmasi Hapus",
-            description: [
-              TextSpan(
-                text:
-                    "Apakah anda yakin ingin menghapus ${state.selectedItems.length} item penjualan?",
+    return Row(
+      mainAxisAlignment:
+          MainAxisAlignment.center, // Aligns buttons to the right
+      children: [
+        FloatingActionButton.extended(
+          heroTag: 'moveBtn',
+          backgroundColor: AppColors.current.mint700,
+          onPressed: () async {
+            if (state.salesList.isEmpty) {
+              bloc.add(const SalesList());
+            }
+            navigator.showBottomSheet(
+              MoveBottomSheet(
+                bloc: bloc,
+                onDismiss: () {
+                  navigator.pop();
+                },
               ),
-            ],
-            positiveButtonText: "Ya, Hapus",
-            negativeButtonText: "Tidak Sekarang",
-            illustration: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: const Icon(Icons.delete_outline_rounded, size: 52),
-            ),
-            onNegativeButtonPressed: () => navigator.pop(),
-            onPositiveButtonPressed: () async {
-              navigator.pop();
-              bloc.add(DeleteSalesItems(items: state.selectedItems));
-            },
+              isScrollControlled: true,
+              isDismissible: false,
+              enableDrag: false,
+            );
+          },
+          label: Text(
+            'Pindah Penjualan (${state.selectedItems.length})',
+            style: TextStyles.button2().copyWith(color: Colors.white),
           ),
-        );
-      },
-      label: Text(
-        'Hapus (${state.selectedItems.length})',
-        style: TextStyles.button2().copyWith(color: Colors.white),
-      ),
-      icon: const Icon(Icons.delete, color: Colors.white),
+          icon: const Icon(Icons.move_up, color: Colors.white),
+        ),
+        const SizedBox(width: 16),
+        FloatingActionButton.extended(
+          heroTag: 'deleteBtn',
+          backgroundColor: AppColors.current.crimson500,
+          onPressed: () async {
+            if (state.barns.isEmpty) {
+              bloc.add(const GetBarns());
+            }
+            navigator.showBottomSheet(
+              DeleteBottomSheet(
+                bloc: bloc,
+                onDismiss: () {
+                  navigator.pop();
+                },
+              ),
+              isScrollControlled: true,
+              isDismissible: false,
+              enableDrag: false,
+            );
+          },
+          label: Text(
+            'Hapus (${state.selectedItems.length})',
+            style: TextStyles.button2().copyWith(color: Colors.white),
+          ),
+          icon: const Icon(Icons.delete, color: Colors.white),
+        ),
+      ],
     );
   }
 

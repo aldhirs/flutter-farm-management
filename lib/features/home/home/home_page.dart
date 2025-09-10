@@ -61,37 +61,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
             if (!state.showProjects) {
               return;
             }
-            navigator.showBottomSheet(
-              DropdownViewBottomsheet(
-                title: 'Pilih Feedlot',
-                searchHint: '',
-                items: ValueNotifier<List<DropdownCheckboxModel>>(
-                  state.projects
-                      .map(
-                        (item) => DropdownCheckboxModel(
-                          text: item.name,
-                          selected: item.id == state.selectedProject?.id,
-                        ),
-                      )
-                      .toList(),
-                ),
-                navigator: navigator,
-                onDismiss: () {},
-                onChoose: (value) {
-                  final selected = value.where((item) => item.selected).first;
-                  final selectedProject = state.projects
-                      .where((item) => item.name == selected.text)
-                      .first;
-                  appBloc.add(SelectedProject(project: selectedProject));
-                },
-
-                dropdownType: DropdownTypeEnum.single,
-                dismissible: true,
-              ),
-              onDismiss: () {
-                appBloc.add(const DismissProjects());
-              },
-            );
+            _showFeedlot(state);
           },
         ),
       ],
@@ -297,6 +267,40 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
           ),
         ),
       ),
+    );
+  }
+
+  void _showFeedlot(AppState state) {
+    navigator.showBottomSheet(
+      DropdownViewBottomsheet(
+        title: 'Pilih Feedlot',
+        searchHint: '',
+        items: ValueNotifier<List<DropdownCheckboxModel>>(
+          state.projects
+              .map(
+                (item) => DropdownCheckboxModel(
+                  text: item.name,
+                  selected: item.id == state.selectedProject?.id,
+                ),
+              )
+              .toList(),
+        ),
+        navigator: navigator,
+        onDismiss: () {},
+        onChoose: (value) {
+          final selected = value.where((item) => item.selected).first;
+          final selectedProject = state.projects
+              .where((item) => item.name == selected.text)
+              .first;
+          appBloc.add(SelectedProject(project: selectedProject));
+        },
+
+        dropdownType: DropdownTypeEnum.single,
+        dismissible: true,
+      ),
+      onDismiss: () {
+        appBloc.add(const DismissProjects());
+      },
     );
   }
 

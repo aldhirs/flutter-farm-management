@@ -203,9 +203,15 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
   Future<void> _cattleApi(String rfid, Emitter<DraftingFormState> emit) {
     return runBlocCatching(
       action: () async {
+        if (!_isProjectChosen(emit)) {
+          return;
+        }
         emit(state.copyWith(loading: true));
         final response = await _cattleUseCase.execute(
-          CattleRequest(rfid: rfid),
+          CattleRequest(
+            rfid: rfid,
+            id_project: appBloc.state.selectedProject?.id ?? '0',
+          ),
         );
         switch (response.result) {
           case DataSuccess(:final data):

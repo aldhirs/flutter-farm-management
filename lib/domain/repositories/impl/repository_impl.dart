@@ -22,6 +22,7 @@ import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
 import 'package:farm/domain/entities/sales/sales_item_delete_request.dart';
+import 'package:farm/domain/entities/sales/sales_item_move_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
@@ -168,6 +169,12 @@ class RepositoryImpl implements Repository {
     SalesItemDeleteRequest request,
   ) async {
     final response = await _apiService.salesItemDelete(request);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<void>> salesItemMove(SalesItemMoveRequest request) async {
+    final response = await _apiService.salesItemMove(request);
     return response;
   }
 

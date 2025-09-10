@@ -22,6 +22,7 @@ import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
 import 'package:farm/domain/entities/sales/sales_item_delete_request.dart';
+import 'package:farm/domain/entities/sales/sales_item_move_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
@@ -56,6 +57,7 @@ abstract class Repository {
   Future<DataListResponse<SalesItem>> salesItems(SalesItemRequest request);
   Future<DataResponse<void>> salesItemSave(SalesItemSaveRequest request);
   Future<DataResponse<void>> salesItemDelete(SalesItemDeleteRequest request);
+  Future<DataResponse<void>> salesItemMove(SalesItemMoveRequest request);
 
   Future<void> logout();
   UserData getUserDataPreference();

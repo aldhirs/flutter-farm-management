@@ -23,6 +23,7 @@ import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
 import 'package:farm/domain/entities/sales/sales_item_delete_request.dart';
+import 'package:farm/domain/entities/sales/sales_item_move_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
@@ -239,6 +240,15 @@ class ApiService {
     return _authAppServerApiClient.request(
       method: RestMethod.delete,
       path: '/v1/sales-item',
+      body: request.toJson(),
+      decoder: (_) => null,
+    );
+  }
+
+  Future<DataResponse<void>> salesItemMove(SalesItemMoveRequest request) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.post,
+      path: '/v1/sales-item/refer',
       body: request.toJson(),
       decoder: (_) => null,
     );

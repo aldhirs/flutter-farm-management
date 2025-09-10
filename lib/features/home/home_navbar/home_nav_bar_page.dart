@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:farm/app/bloc/app_event.dart';
 import 'package:farm/base/base_page_state.dart';
 import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_bloc.dart';
 import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_event.dart';
@@ -58,6 +59,7 @@ class _HomeNavBarPageState
                     positiveButtonText: "Mengerti",
                     onPositiveButtonPressed: () async {
                       navigator.pop();
+                      appBloc.add(const ShowProjects());
                     },
                   ),
                 );

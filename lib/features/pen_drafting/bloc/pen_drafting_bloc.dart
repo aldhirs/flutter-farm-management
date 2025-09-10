@@ -60,10 +60,14 @@ class PenDraftingBloc extends BaseBloc<PenDraftingEvent, PenDraftingState> {
         if (!_isProjectChosen(emit)) {
           return;
         }
+        var category = 'Penggemukan,Karantina,Isolasi,Penjualan';
+        if (state.filterStatus.isNotEmpty) {
+          category = state.filterStatus;
+        }
         final req = PenRequest(
           limit: limit,
           projectId: appBloc.state.selectedProject?.id ?? '',
-          barnCategory: 'Penggemukan,Karantina,Isolasi,Penjualan',
+          barnCategory: category,
           page: nextPage,
         );
         final response = await _pensUseCase.execute(req);

@@ -2,6 +2,7 @@ import 'package:dartx/dartx.dart';
 import 'package:farm/constants/date_constant.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/extensions/string.dart';
+import 'package:farm/resources/dimens/dimens.dart';
 import 'package:farm/resources/styles/app_colors.dart';
 import 'package:farm/resources/styles/text_styles.dart';
 import 'package:farm/utils/string_utils.dart';
@@ -19,17 +20,15 @@ class ItemWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       splashColor: AppColors.current.mint400.withValues(alpha: 120),
-      child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: AppColors.current.neutral300, width: 1.0),
-          borderRadius: BorderRadius.circular(10),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: Dimens.d10, vertical: 4),
+        decoration: BoxDecoration(
+          color: AppColors.current.neutral100,
+          border: BoxBorder.all(width: 2, color: AppColors.current.neutral500),
+          borderRadius: BorderRadius.circular(Dimens.d10),
         ),
-        elevation: 2,
-        color: Colors.white,
-        shadowColor: Colors.black12,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -97,12 +96,15 @@ class ItemWidget extends StatelessWidget {
 
   Widget _buildDetail(IconData icon, String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.grey.shade600),
+          Icon(icon, size: 16, color: Colors.blue),
           const SizedBox(width: 10),
-          Expanded(child: Text(text, style: const TextStyle(fontSize: 14))),
+          Text(
+            text,
+            style: TextStyles.label2().copyWith(color: Colors.grey.shade700),
+          ),
         ],
       ),
     );
@@ -110,10 +112,10 @@ class ItemWidget extends StatelessWidget {
 
   Widget _buildChip(IconData icon, String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.grey.shade600),
+          Icon(icon, size: 16, color: Colors.lightGreen),
           const SizedBox(width: 10),
           TagCategory(text: text, type: TagCategoryType.plain),
         ],

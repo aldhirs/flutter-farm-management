@@ -8,6 +8,7 @@ part 'cattle_request.g.dart';
 abstract class CattleRequest extends BaseInput with _$CattleRequest {
   const factory CattleRequest({
     @JsonKey(name: 'rfid') @Default('') String rfid,
+    @JsonKey(name: 'id_project') @Default('') String id_project,
   }) = _CattleRequest;
   const CattleRequest._();
 

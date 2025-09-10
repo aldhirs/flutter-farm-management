@@ -40,4 +40,13 @@ const cattleStatusMap = {
   'mutating': 'Sedang dimutasi',
 };
 
+const barnCategoryMap = {
+  '': 'Semua',
+  "Penggemukan": 'Penggemukan',
+  "Karantina": 'Karantina',
+  "Isolasi": 'Isolasi',
+  "Drafting": 'Drafting',
+  "Penjualan": 'Penjualan',
+};
+
 const salesItemStatusMap = {AVAILABLE: 'Tersedia', BOOKED: 'Dipesan'};

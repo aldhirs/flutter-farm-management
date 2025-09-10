@@ -10,6 +10,7 @@ abstract class SalesItemDeleteRequest extends BaseInput
     with _$SalesItemDeleteRequest {
   const factory SalesItemDeleteRequest({
     @Default('') String sale_id,
+    @Default('') String to_pen_id,
     @Default([]) List<SalesItem> items,
   }) = _SalesItemDeleteRequest;
 

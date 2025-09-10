@@ -1,3 +1,4 @@
+import 'package:dartx/dartx_io.dart';
 import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/features/pen_drafting/bloc/pen_drafting_bloc.dart';
 import 'package:farm/features/pen_drafting/bloc/pen_drafting_event.dart';
@@ -36,7 +37,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         children: [
           Text("Filter", style: TextStyles.heading5()),
           const SizedBox(height: 12),
-          _dropdownStatus(),
+          _dropdownCategory(),
           const SizedBox(height: 24),
           Button(
             fulLWidth: true,
@@ -53,21 +54,22 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     );
   }
 
-  Widget _dropdownStatus() {
+  Widget _dropdownCategory() {
     return BlocProvider.value(
       value: widget.bloc,
       child: BlocBuilder<PenDraftingBloc, PenDraftingState>(
         buildWhen: (p, c) => p.filterStatus != c.filterStatus,
         builder: (context, state) {
           return DropdownViewField(
-            title: 'Status Penjualan',
+            title: 'Kategori Kandang',
             items: ValueNotifier<List<DropdownCheckboxModel>>(
-              salesStatusMap.values
+              barnCategoryMap.entries
+                  .where((item) => item.key != 'Drafting')
                   .map(
                     (item) => DropdownCheckboxModel(
-                      id: item,
-                      text: item,
-                      selected: item == state.filterStatus,
+                      id: item.key,
+                      text: item.value,
+                      selected: item.key == state.filterStatus,
                     ),
                   )
                   .toList(),
@@ -75,10 +77,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             navigator: widget.bloc.navigator,
             dropdownType: DropdownTypeEnum.single,
             onSelectedItems: (List<String> value) {
-              final selected = salesStatusMap.values
-                  .where((item) => item == value.first)
+              final selected = barnCategoryMap.entries
+                  .where((item) => item.key == value.first)
                   .first;
-              widget.bloc.add(FilterStatusChanged(value: selected));
+              widget.bloc.add(FilterStatusChanged(value: selected.key));
             },
           );
         },

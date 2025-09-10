@@ -1,5 +1,6 @@
 import 'package:farm/domain/entities/sales/sales_item.dart';
 import 'package:farm/extensions/string.dart';
+import 'package:farm/resources/dimens/dimens.dart';
 import 'package:farm/resources/styles/app_colors.dart';
 import 'package:farm/resources/styles/text_styles.dart';
 import 'package:farm/widgets/tag/tag_category.dart';
@@ -16,14 +17,15 @@ class ItemWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       splashColor: AppColors.current.mint400.withValues(alpha: 120),
-      child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        elevation: 0,
-        color: AppColors.current.neutral200,
-        shadowColor: Colors.black12,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: Dimens.d10),
+        decoration: BoxDecoration(
+          color: AppColors.current.neutral100,
+          border: BoxBorder.all(width: 2, color: AppColors.current.neutral500),
+          borderRadius: BorderRadius.circular(Dimens.d10),
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -31,17 +33,64 @@ class ItemWidget extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          item.ear_tag.defaultValue('-'),
-                          style: TextStyles.heading5(),
+                        Row(
+                          children: [
+                            const Icon(Icons.tag, size: 18, color: Colors.teal),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                item.ear_tag.defaultValue('-'),
+                                style: TextStyles.heading5(),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 4),
-                        Text(item.rfid, style: TextStyles.label3()),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.barcode_reader,
+                              size: 18,
+                              color: Colors.indigo,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                item.rfid,
+                                style: TextStyles.label2().copyWith(
+                                  color: Colors.grey.shade700,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.monitor_weight,
+                              size: 18,
+                              color: Colors.redAccent,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'Bobot ${item.actual_weight} Kg',
+                                style: TextStyles.label2().copyWith(
+                                  color: Colors.grey.shade700,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -51,10 +100,6 @@ class ItemWidget extends StatelessWidget {
                   ),
                 ],
               ),
-
-              // Info items
-              const SizedBox(height: 8),
-              _buildDetail(Icons.scale_outlined, '${item.actual_weight} KG'),
             ],
           ),
         ),
