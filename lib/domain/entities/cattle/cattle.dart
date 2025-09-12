@@ -1,3 +1,4 @@
+import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/base/base.dart';
 import 'package:farm/domain/entities/level/level.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
@@ -32,4 +33,13 @@ abstract class Cattle extends BaseOutput with _$Cattle {
   }) = _Cattle;
   const Cattle._();
   factory Cattle.fromJson(Map<String, dynamic> json) => _$CattleFromJson(json);
+
+  bool isStatusAvailable() {
+    return status == AVAILABLE;
+  }
+
+  String statusLabel() {
+    if (status.isEmpty) return '-';
+    return cattleStatusMap[status] ?? status;
+  }
 }

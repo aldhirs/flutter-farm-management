@@ -113,10 +113,13 @@ class _GrowthFormBottomSheetState extends State<GrowthFormBottomSheet> {
             label: 'Berat',
             hintText: 'Berat',
             keyboardType: TextInputType.number,
-            prefixIcon: const Icon(Icons.scale_outlined),
+            prefixIcon: const Icon(
+              Icons.monitor_weight,
+              color: Colors.redAccent,
+            ),
             customSuffixIcon: const Padding(
               padding: EdgeInsetsGeometry.symmetric(vertical: 16),
-              child: Text('KG'),
+              child: Text('Kg'),
             ),
             onChanged: (value) {
               widget.bloc.add(WeightChanged(value: value));

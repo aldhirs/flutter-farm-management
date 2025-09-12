@@ -1,3 +1,4 @@
+import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
@@ -22,6 +23,17 @@ abstract class AppRouteInfo with _$AppRouteInfo {
   const factory AppRouteInfo.salesItem({required Sales item}) = SalesItemPage;
   const factory AppRouteInfo.salesItemForm({required Sales item}) =
       SalesItemFormPage;
+  const factory AppRouteInfo.salesItemPreview({
+    required Sales item,
+    BluetoothConnection? connection,
+  }) = SalesItemPreviewPage;
+  const factory AppRouteInfo.salesItemAdd({
+    required Sales item,
+    required bool fromManual,
+    Cattle? cattle,
+    String? rfid,
+    BluetoothConnection? connection,
+  }) = SalesItemAddPage;
   const factory AppRouteInfo.scan({required String route, Sales? sales}) =
       ScanPages;
   const factory AppRouteInfo.penDrafting() = PenDrafting;

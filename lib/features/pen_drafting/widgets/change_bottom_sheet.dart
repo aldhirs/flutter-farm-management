@@ -7,6 +7,8 @@ import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/widgets/buttons/button.dart';
+import 'package:farm/widgets/dropdownview/dropdown_model.dart';
+import 'package:farm/widgets/dropdownview/dropdown_view_field.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_pen_field.dart';
 import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
@@ -85,6 +87,7 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
               ),
               Text("Tujuan", style: TextStyles.label1()),
               const SizedBox(height: 6),
+              // _dropdownBarn(),
               _dropdownPen(),
               const SizedBox(height: 16),
               BlocProvider.value(
@@ -115,6 +118,40 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
       ),
     );
   }
+
+  // Widget _dropdownBarn() {
+  //   return BlocProvider.value(
+  //     value: widget.bloc,
+  //     child: BlocBuilder<PenDraftingBloc, PenDraftingState>(
+  //       buildWhen: (p, c) => p.barns != c.barns,
+  //       builder: (context, state) {
+  //         return DropdownViewField(
+  //           title: 'Kandang',
+  //           items: ValueNotifier<List<DropdownCheckboxModel>>(
+  //             state.barns
+  //                 .map(
+  //                   (item) => DropdownCheckboxModel(
+  //                     id: item.id,
+  //                     text: item.name,
+  //                     selected: item.id == state.selectedBarn?.id,
+  //                   ),
+  //                 )
+  //                 .toList(),
+  //           ),
+  //           navigator: widget.bloc.navigator,
+  //           dropdownType: DropdownTypeEnum.single,
+  //           onSelectedItems: (List<String> value) {
+  //             final selected = state.barns
+  //                 .where((item) => item.id == value.first)
+  //                 .first;
+  //             widget.bloc.add(BarnChanged(barn: selected));
+  //             _penController.text = "";
+  //           },
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
   Widget _dropdownPen() {
     return BlocProvider.value(

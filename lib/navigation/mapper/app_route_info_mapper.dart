@@ -23,6 +23,22 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       SalesPage() => const SalesRoute(),
       SalesItemPage(:final item) => SalesItemsRoute(item: item),
       SalesItemFormPage(:final item) => SalesItemFormRoute(item: item),
+      SalesItemPreviewPage(:final item, :final connection) =>
+        SalesItemPreviewRoute(item: item, connection: connection),
+      SalesItemAddPage(
+        :final item,
+        :final fromManual,
+        :final cattle,
+        :final rfid,
+        :final connection,
+      ) =>
+        SalesItemAddRoute(
+          item: item,
+          cattle: cattle,
+          rfid: rfid,
+          connection: connection,
+          fromManual: fromManual,
+        ),
       ScanPages(:final route, :final sales) =>
         sales != null
             ? ScanRoute(destinationRoute: route, sales: sales)

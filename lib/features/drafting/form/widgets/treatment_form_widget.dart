@@ -1,6 +1,5 @@
 import 'package:farm/features/drafting/form/bloc/drafting_form_bloc.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_state.dart';
-import 'package:farm/features/drafting/form/widgets/identity_form_bottom_sheet.dart';
 import 'package:farm/features/drafting/form/widgets/treatment_form_bottom_sheet.dart';
 import 'package:farm/navigation/app_navigator.dart';
 import 'package:farm/resources/resource.dart';

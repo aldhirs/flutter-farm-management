@@ -20,6 +20,7 @@ class PenDraftingBloc extends BaseBloc<PenDraftingEvent, PenDraftingState> {
     on<Initiated>(_initialized, transformer: log());
     on<Load>(_load, transformer: log());
     on<LoadMore>(_loadMore, transformer: log());
+    // on<GetBarns>(_barnsApi, transformer: log());
     on<GetPens>(_getPensApi, transformer: log());
     on<OnSubmitMoveToPen>(_onSubmitMoveToPen, transformer: log());
     on<PenChanged>((event, emit) {
@@ -73,7 +74,9 @@ class PenDraftingBloc extends BaseBloc<PenDraftingEvent, PenDraftingState> {
         final response = await _pensUseCase.execute(req);
         switch (response.result) {
           case DataSuccess(:final data):
-            final errorMessage = data.isEmpty ? 'Data tidak ditemukan' : '';
+            final errorMessage = !isLoadMore && data.isEmpty
+                ? 'Data tidak ditemukan'
+                : '';
             var items = data;
             if (isLoadMore) {
               items = [...state.items, ...data];
@@ -103,6 +106,37 @@ class PenDraftingBloc extends BaseBloc<PenDraftingEvent, PenDraftingState> {
       },
     );
   }
+
+  // Future<void> _barnsApi(GetBarns event, Emitter<SalesItemAddState> emit) {
+  //   return runBlocCatching(
+  //     handleLoading: false,
+  //     action: () async {
+  //       if (!_isProjectChosen(emit)) {
+  //         return;
+  //       }
+  //       final response = await _barnsUseCase.execute(
+  //         BarnRequest(
+  //           projectId: appBloc.state.selectedProject!.id,
+  //           category: barnCategoryMap.keys.join(","),
+  //         ),
+  //       );
+  //       switch (response.result) {
+  //         case DataSuccess(:final data):
+  //           emit(state.copyWith(barns: data, errorMessage: ''));
+  //           break;
+  //         case DataError(:final errorMessage):
+  //           emit(state.copyWith(errorMessage: errorMessage.orEmpty()));
+  //         case null:
+  //           return;
+  //       }
+  //     },
+  //     doOnEventCompleted: () async {},
+  //     handleError: false,
+  //     doOnError: (e) async {
+  //       emit(state.copyWith(errorMessage: exceptionMessageMapper.map(e)));
+  //     },
+  //   );
+  // }
 
   Future<void> _getPensApi(GetPens event, Emitter<PenDraftingState> emit) {
     return runBlocCatching(

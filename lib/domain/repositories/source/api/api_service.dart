@@ -22,6 +22,7 @@ import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
+import 'package:farm/domain/entities/sales/sales_item_add_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_delete_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_move_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
@@ -73,11 +74,19 @@ class ApiService {
   }
 
   Future<DataResponse<Cattle>> cattleByRFID(CattleRequest request) async {
-    const Map<String, dynamic> queryParameters = {};
     return _authAppServerApiClient.request(
       method: RestMethod.get,
       path: '/v1/cattle/rfid/${request.rfid}',
-      queryParameters: queryParameters,
+      queryParameters: request.toJson(),
+      decoder: Cattle.fromJson,
+    );
+  }
+
+  Future<DataResponse<Cattle>> cattleByEarTag(CattleRequest request) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/cattle/ear-tag/${request.eartag}',
+      queryParameters: request.toJson(),
       decoder: Cattle.fromJson,
     );
   }
@@ -249,6 +258,15 @@ class ApiService {
     return _authAppServerApiClient.request(
       method: RestMethod.post,
       path: '/v1/sales-item/refer',
+      body: request.toJson(),
+      decoder: (_) => null,
+    );
+  }
+
+  Future<DataResponse<void>> salesItemAdd(SalesItemAddRequest request) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.post,
+      path: '/v1/sales-item/create',
       body: request.toJson(),
       decoder: (_) => null,
     );

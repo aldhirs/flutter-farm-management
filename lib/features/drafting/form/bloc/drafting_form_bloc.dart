@@ -672,7 +672,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
         name: 'Berat',
         description: '${data.actual_weight.toString()} KG',
       ),
-      ListItem(name: 'Breed', description: data.id_breed),
+      ListItem(name: 'Ras', description: data.id_breed),
       ListItem(name: 'Jenis Kelamin', description: data.gender),
       ListItem(name: 'Status', description: data.status),
     ];

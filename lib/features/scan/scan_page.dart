@@ -67,11 +67,11 @@ class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
   Widget buildPage(BuildContext context) {
     return PopScope(
       canPop: true,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) {
-          navigator.pop(result: true);
-        }
-      },
+      // onPopInvokedWithResult: (didPop, result) {
+      //   if (didPop) {
+      //     navigator.pop(result: true);
+      //   }
+      // },
       child: BlocBuilder<ScanBloc, ScanState>(
         builder: (context, state) {
           return CommonScaffold(
@@ -212,7 +212,7 @@ class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
               navigator.popAndPush(const AppRouteInfo.draftingDetail());
             case DEST_SALES_ITEM:
               navigator.popAndPush(
-                AppRouteInfo.salesItemForm(item: widget.sales),
+                AppRouteInfo.salesItemPreview(item: widget.sales),
               );
           }
           // bypass-debug

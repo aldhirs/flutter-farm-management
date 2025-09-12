@@ -21,6 +21,7 @@ import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
+import 'package:farm/domain/entities/sales/sales_item_add_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_delete_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_move_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
@@ -61,6 +62,12 @@ class RepositoryImpl implements Repository {
   @override
   Future<DataResponse<Cattle>> cattleByRFID(CattleRequest request) async {
     final response = await _apiService.cattleByRFID(request);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<Cattle>> cattleByEarTag(CattleRequest request) async {
+    final response = await _apiService.cattleByEarTag(request);
     return response;
   }
 
@@ -161,6 +168,12 @@ class RepositoryImpl implements Repository {
   @override
   Future<DataResponse<void>> salesItemSave(SalesItemSaveRequest request) async {
     final response = await _apiService.salesItemSave(request);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<void>> salesItemAdd(SalesItemAddRequest request) async {
+    final response = await _apiService.salesItemAdd(request);
     return response;
   }
 
