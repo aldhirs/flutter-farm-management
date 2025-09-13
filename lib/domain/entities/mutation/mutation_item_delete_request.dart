@@ -9,8 +9,7 @@ part 'mutation_item_delete_request.g.dart';
 abstract class MutationItemDeleteRequest extends BaseInput
     with _$MutationItemDeleteRequest {
   const factory MutationItemDeleteRequest({
-    @Default('') String sale_id,
-    @Default('') String to_pen_id,
+    @Default('') String id_mutation,
     @Default([]) List<MutationItem> items,
   }) = _MutationItemDeleteRequest;
 

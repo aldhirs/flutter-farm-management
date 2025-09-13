@@ -363,7 +363,7 @@ class ApiService {
   ) async {
     return _authAppServerApiClient.request(
       method: RestMethod.delete,
-      path: '/v1/sales-item',
+      path: '/v1/mutation-item/bulk',
       body: request.toJson(),
       decoder: (_) => null,
     );

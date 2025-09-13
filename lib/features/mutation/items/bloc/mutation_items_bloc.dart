@@ -177,9 +177,8 @@ class MutationItemsBloc
       handleLoading: true,
       action: () async {
         final req = MutationItemDeleteRequest(
-          sale_id: state.mutation.id,
+          id_mutation: state.mutation.id,
           items: state.selectedItems,
-          to_pen_id: (state.selectedPen?.id).toString(),
         );
         final response = await _mutationItemDeleteUseCase.execute(req);
         switch (response.result) {
