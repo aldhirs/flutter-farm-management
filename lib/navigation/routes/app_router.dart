@@ -45,6 +45,16 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: SalesItemAddRoute.page, guards: [authGuard()]),
     AutoRoute(page: ScanRoute.page, guards: [authGuard()]),
     AutoRoute(page: PenDraftingRoute.page, guards: [authGuard()]),
+    AutoRoute(
+      page: MutationNavBarRoute.page,
+      guards: [authGuard()],
+      children: [
+        AutoRoute(page: MutationListInRoute.page),
+        AutoRoute(page: MutationListOutRoute.page),
+      ],
+    ),
+    AutoRoute(page: MutationItemsRoute.page, guards: [authGuard()]),
+    AutoRoute(page: MutationItemPreviewRoute.page, guards: [authGuard()]),
   ];
 
   @override

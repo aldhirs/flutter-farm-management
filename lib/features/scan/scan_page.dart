@@ -17,6 +17,7 @@ import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 
 const DEST_DRAFTING_DETAIL = 'drafting_detail';
 const DEST_SALES_ITEM = 'sales_item';
+const DEST_MUTATION_ITEM = 'mutation_item';
 
 @RoutePage()
 class ScanPage extends StatefulWidget {

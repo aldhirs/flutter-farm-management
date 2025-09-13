@@ -51,6 +51,25 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
             ? ScanRoute(destinationRoute: route, sales: sales)
             : ScanRoute(destinationRoute: route),
       PenDrafting() => const PenDraftingRoute(),
+
+      MutationNavBar() => const MutationNavBarRoute(),
+      MutationItemPage(:final item) => MutationItemsRoute(item: item),
+      MutationItemPreviewPage(:final item, :final connection) =>
+        MutationItemPreviewRoute(item: item, connection: connection),
+      // MutationItemAddPage(
+      //   :final item,
+      //   :final fromManual,
+      //   :final cattle,
+      //   :final rfid,
+      //   :final connection,
+      // ) =>
+      //   MutationItemsAddRoute(
+      //     item: item,
+      //     cattle: cattle,
+      //     rfid: rfid,
+      //     connection: connection,
+      //     fromManual: fromManual,
+      //   ),
       _ => throw UnimplementedError('Unknown route: $appRouteInfo'),
     };
   }

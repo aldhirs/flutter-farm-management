@@ -1,16 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base_page_state.dart';
-import 'package:farm/domain/entities/sales/sales.dart';
+import 'package:farm/domain/entities/mutation/mutation.dart';
 import 'package:farm/extensions/string.dart';
-import 'package:farm/features/sales/items/bloc/sales_items_bloc.dart';
-import 'package:farm/features/sales/items/bloc/sales_items_event.dart';
-import 'package:farm/features/sales/items/bloc/sales_items_state.dart';
-import 'package:farm/features/sales/items/widgets/add_manual_bottom_sheet.dart';
-import 'package:farm/features/sales/items/widgets/detail_bottom_sheet.dart';
-import 'package:farm/features/sales/items/widgets/item_widget.dart';
-import 'package:farm/features/sales/items/widgets/delete_bottom_sheet.dart';
-import 'package:farm/features/sales/items/widgets/move_bottom_sheet.dart';
-import 'package:farm/features/scan/scan_page.dart';
+import 'package:farm/features/mutation/items/bloc/mutation_items_bloc.dart';
+import 'package:farm/features/mutation/items/bloc/mutation_items_event.dart';
+import 'package:farm/features/mutation/items/bloc/mutation_items_state.dart';
+import 'package:farm/features/mutation/items/widgets/add_manual_bottom_sheet.dart';
+import 'package:farm/features/mutation/items/widgets/delete_bottom_sheet.dart';
+import 'package:farm/features/mutation/items/widgets/detail_bottom_sheet.dart';
+import 'package:farm/features/mutation/items/widgets/item_widget.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/views/view.dart';
@@ -21,16 +19,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
-class SalesItemsPage extends StatefulWidget {
-  const SalesItemsPage({super.key, required this.item});
+class MutationItemsPage extends StatefulWidget {
+  const MutationItemsPage({super.key, required this.item});
 
-  final Sales item;
+  final Mutation item;
 
   @override
-  State<StatefulWidget> createState() => _SalesPageState();
+  State<StatefulWidget> createState() => _MutationPageState();
 }
 
-class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
+class _MutationPageState
+    extends BasePageState<MutationItemsPage, MutationItemsBloc>
     with SingleTickerProviderStateMixin {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
@@ -62,7 +61,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
   Widget buildPageListeners({required Widget child}) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<SalesItemsBloc, SalesItemsState>(
+        BlocListener<MutationItemsBloc, MutationItemsState>(
           listenWhen: (previous, current) =>
               previous.successMessage != current.successMessage,
           listener: (context, state) async {
@@ -75,7 +74,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
             }
           },
         ),
-        BlocListener<SalesItemsBloc, SalesItemsState>(
+        BlocListener<MutationItemsBloc, MutationItemsState>(
           listenWhen: (previous, current) => previous.cattle != current.cattle,
           listener: (context, state) async {
             if (state.cattle != null) {
@@ -114,8 +113,8 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
                 type: ToastType.succes,
               );
               final result = await navigator.popAndPush(
-                AppRouteInfo.salesItemAdd(
-                  item: state.sales,
+                AppRouteInfo.mutationItemAdd(
+                  item: state.mutation,
                   cattle: state.cattle,
                   fromManual: true,
                 ),
@@ -133,11 +132,11 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
 
   @override
   Widget buildPage(BuildContext context) {
-    return BlocBuilder<SalesItemsBloc, SalesItemsState>(
+    return BlocBuilder<MutationItemsBloc, MutationItemsState>(
       builder: (context, state) {
         return CommonScaffold(
           appBar: CommonAppBar(
-            titleText: 'Penjualan #${widget.item.customer_detail?.name}',
+            titleText: 'Mutasi #${widget.item.id}',
             forceMaterialTransparency: false,
             actions: [
               Visibility(
@@ -167,9 +166,9 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
   Widget _listWidget() {
     return BlocProvider.value(
       value: bloc,
-      child: BlocBuilder<SalesItemsBloc, SalesItemsState>(
+      child: BlocBuilder<MutationItemsBloc, MutationItemsState>(
         buildWhen: (p, c) =>
-            p.salesItems != c.salesItems ||
+            p.mutationItems != c.mutationItems ||
             p.errorMessage != c.errorMessage ||
             p.isLoadMore != c.isLoadMore ||
             p.isEditMode != c.isEditMode ||
@@ -179,7 +178,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
             return _errorWidget();
           }
 
-          if (state.salesItems.isEmpty) {
+          if (state.mutationItems.isEmpty) {
             return _emptyWidget();
           }
 
@@ -195,16 +194,17 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
             child: ListView.separated(
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: state.salesItems.length + (state.isLoadMore ? 1 : 0),
+              itemCount:
+                  state.mutationItems.length + (state.isLoadMore ? 1 : 0),
               separatorBuilder: (context, index) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
-                if (index >= state.salesItems.length) {
+                if (index >= state.mutationItems.length) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
                     child: Center(child: CircularProgressIndicator()),
                   );
                 }
-                final item = state.salesItems[index];
+                final item = state.mutationItems[index];
                 final isSelected = state.selectedItems.contains(item);
 
                 final content = Row(
@@ -276,7 +276,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
     return EmptyState(
       title: 'Data masih kosong',
       description:
-          'Data sapi masih kosong, silakan tambah sapi baru dalam penjualan ini.',
+          'Data sapi masih kosong, silakan tambah sapi baru dalam mutasi ini.',
       imageAssets: ClipRRect(
         borderRadius: BorderRadius.circular(20), // adjust radius
         child: Assets.images.ilNotFound.image(
@@ -303,65 +303,33 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
     );
   }
 
-  Widget _actionButton(SalesItemsState state) {
+  Widget _actionButton(MutationItemsState state) {
     if (state.selectedItems.isEmpty) return const SizedBox.shrink();
 
-    return Row(
-      mainAxisAlignment:
-          MainAxisAlignment.center, // Aligns buttons to the right
-      children: [
-        FloatingActionButton.extended(
-          heroTag: 'moveBtn',
-          backgroundColor: AppColors.current.mint700,
-          onPressed: () async {
-            if (state.salesList.isEmpty) {
-              bloc.add(const SalesList());
-            }
-            navigator.showBottomSheet(
-              MoveBottomSheet(
-                bloc: bloc,
-                onDismiss: () {
-                  navigator.pop();
-                },
-              ),
-              isScrollControlled: true,
-              isDismissible: false,
-              enableDrag: false,
-            );
-          },
-          label: Text(
-            'Pindah Penjualan (${state.selectedItems.length})',
-            style: TextStyles.button2().copyWith(color: Colors.white),
+    return FloatingActionButton.extended(
+      heroTag: 'deleteBtn',
+      backgroundColor: AppColors.current.crimson500,
+      onPressed: () async {
+        if (state.barns.isEmpty) {
+          bloc.add(const GetBarns());
+        }
+        navigator.showBottomSheet(
+          DeleteBottomSheet(
+            bloc: bloc,
+            onDismiss: () {
+              navigator.pop();
+            },
           ),
-          icon: const Icon(Icons.move_up, color: Colors.white),
-        ),
-        const SizedBox(width: 16),
-        FloatingActionButton.extended(
-          heroTag: 'deleteBtn',
-          backgroundColor: AppColors.current.crimson500,
-          onPressed: () async {
-            if (state.barns.isEmpty) {
-              bloc.add(const GetBarns());
-            }
-            navigator.showBottomSheet(
-              DeleteBottomSheet(
-                bloc: bloc,
-                onDismiss: () {
-                  navigator.pop();
-                },
-              ),
-              isScrollControlled: true,
-              isDismissible: false,
-              enableDrag: false,
-            );
-          },
-          label: Text(
-            'Hapus (${state.selectedItems.length})',
-            style: TextStyles.button2().copyWith(color: Colors.white),
-          ),
-          icon: const Icon(Icons.delete, color: Colors.white),
-        ),
-      ],
+          isScrollControlled: true,
+          isDismissible: false,
+          enableDrag: false,
+        );
+      },
+      label: Text(
+        'Hapus (${state.selectedItems.length})',
+        style: TextStyles.button2().copyWith(color: Colors.white),
+      ),
+      icon: const Icon(Icons.delete, color: Colors.white),
     );
   }
 
@@ -371,23 +339,24 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
       barrierDismissible: false,
       Popup(
         closeVisibility: true,
-        title: 'Tambah Item Penjualan',
+        title: 'Tambah Item Mutasi',
         description: [
           const TextSpan(
             text:
-                'Silakan pilih metode dalam penambahan item penjualan menggunakan alat pemindai atau manual dengan mencari berdasarkan sapi ear tag.',
+                'Silakan pilih metode dalam penambahan item mutasi menggunakan alat pemindai atau manual dengan mencari berdasarkan sapi ear tag.',
           ),
         ],
         positiveButtonText: "Tambah dengan Alat",
         negativeButtonText: "Tambah Manual",
         onNegativeButtonPressed: () => _addManualBottomSheet(),
         onPositiveButtonPressed: () async {
-          final result = await navigator.popAndPush(
-            AppRouteInfo.scan(route: DEST_SALES_ITEM, sales: widget.item),
-          );
-          if (result == null) {
-            bloc.add(const Load());
-          }
+          // TODO
+          // final result = await navigator.popAndPush(
+          //   AppRouteInfo.scan(route: DEST_SALES_ITEM, sales: widget.item),
+          // );
+          // if (result == null) {
+          //   bloc.add(const Load());
+          // }
         },
       ),
     );

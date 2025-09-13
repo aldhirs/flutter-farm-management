@@ -52,3 +52,16 @@ const barnCategoryMap = {
 const salesItemStatusMap = {AVAILABLE: 'Tersedia', BOOKED: 'Dipesan'};
 
 const genderMap = {"male": 'Jantan', "female": 'Betina'};
+
+const mutationStatusMap = {
+  '': 'Semua',
+  DRAFT: 'Draf',
+  ISSUED: 'Sudah Terbit',
+  COMPLETED: 'Selesai',
+  CANCELLED: 'Dibatalkan',
+};
+
+const mutationItemStatusMap = {
+  'available': 'Tersedia',
+  'delivered': 'Terkirim',
+};

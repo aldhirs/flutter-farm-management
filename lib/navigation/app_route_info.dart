@@ -1,4 +1,5 @@
 import 'package:farm/domain/entities/cattle/cattle.dart';
+import 'package:farm/domain/entities/mutation/mutation.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
@@ -41,4 +42,21 @@ abstract class AppRouteInfo with _$AppRouteInfo {
   const factory AppRouteInfo.scan({required String route, Sales? sales}) =
       ScanPages;
   const factory AppRouteInfo.penDrafting() = PenDrafting;
+
+  const factory AppRouteInfo.mutationNavBar() = MutationNavBar;
+  const factory AppRouteInfo.mutationItem({required Mutation item}) =
+      MutationItemPage;
+  const factory AppRouteInfo.mutationItemForm({required Mutation item}) =
+      MutationItemFormPage;
+  const factory AppRouteInfo.mutationItemPreview({
+    required Mutation item,
+    BluetoothConnection? connection,
+  }) = MutationItemPreviewPage;
+  const factory AppRouteInfo.mutationItemAdd({
+    required Mutation item,
+    required bool fromManual,
+    Cattle? cattle,
+    String? rfid,
+    BluetoothConnection? connection,
+  }) = MutationItemAddPage;
 }

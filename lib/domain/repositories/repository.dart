@@ -17,6 +17,12 @@ import 'package:farm/domain/entities/medical/medical_form_request.dart';
 import 'package:farm/domain/entities/medical/medical_type.dart';
 import 'package:farm/domain/entities/medical/medical_type_request.dart';
 import 'package:farm/domain/entities/model/data_response.dart';
+import 'package:farm/domain/entities/mutation/mutation.dart';
+import 'package:farm/domain/entities/mutation/mutation_item.dart';
+import 'package:farm/domain/entities/mutation/mutation_item_add_request.dart';
+import 'package:farm/domain/entities/mutation/mutation_item_delete_request.dart';
+import 'package:farm/domain/entities/mutation/mutation_item_request.dart';
+import 'package:farm/domain/entities/mutation/mutation_request.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
@@ -71,6 +77,15 @@ abstract class Repository {
   Future<DataResponse<void>> salesItemAdd(SalesItemAddRequest request);
   Future<DataResponse<void>> salesItemDelete(SalesItemDeleteRequest request);
   Future<DataResponse<void>> salesItemMove(SalesItemMoveRequest request);
+
+  Future<DataListResponse<Mutation>> mutations(MutationRequest request);
+  Future<DataListResponse<MutationItem>> mutationItems(
+    MutationItemRequest request,
+  );
+  Future<DataResponse<void>> mutationItemAdd(MutationItemAddRequest request);
+  Future<DataResponse<void>> mutationItemDelete(
+    MutationItemDeleteRequest request,
+  );
 
   Future<void> logout();
   UserData getUserDataPreference();

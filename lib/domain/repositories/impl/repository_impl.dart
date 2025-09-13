@@ -17,6 +17,12 @@ import 'package:farm/domain/entities/level/level_request.dart';
 import 'package:farm/domain/entities/medical/medical_form_request.dart';
 import 'package:farm/domain/entities/medical/medical_type.dart';
 import 'package:farm/domain/entities/medical/medical_type_request.dart';
+import 'package:farm/domain/entities/mutation/mutation.dart';
+import 'package:farm/domain/entities/mutation/mutation_item.dart';
+import 'package:farm/domain/entities/mutation/mutation_item_add_request.dart';
+import 'package:farm/domain/entities/mutation/mutation_item_delete_request.dart';
+import 'package:farm/domain/entities/mutation/mutation_item_request.dart';
+import 'package:farm/domain/entities/mutation/mutation_request.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
@@ -220,6 +226,36 @@ class RepositoryImpl implements Repository {
   @override
   Future<DataResponse<void>> salesItemMove(SalesItemMoveRequest request) async {
     final response = await _apiService.salesItemMove(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<Mutation>> mutations(MutationRequest request) async {
+    final response = await _apiService.mutations(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<MutationItem>> mutationItems(
+    MutationItemRequest request,
+  ) async {
+    final response = await _apiService.mutationItems(request);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<void>> mutationItemAdd(
+    MutationItemAddRequest request,
+  ) async {
+    final response = await _apiService.mutationItemAdd(request);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<void>> mutationItemDelete(
+    MutationItemDeleteRequest request,
+  ) async {
+    final response = await _apiService.mutationItemDelete(request);
     return response;
   }
 

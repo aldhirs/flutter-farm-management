@@ -96,7 +96,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Icon(Icons.feed_outlined),
+                      const Icon(Icons.home_work_outlined),
                       const SizedBox(width: 8),
                       Flexible(
                         child: Text(
@@ -221,7 +221,8 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                       child: QuickActionCard(
                         icon: Icons.multiline_chart,
                         label: "Mutasi",
-                        onTap: () {},
+                        onTap: () =>
+                            _onMenuClicked(const AppRouteInfo.mutationNavBar()),
                       ),
                     ),
                     const SizedBox(width: 12),

@@ -9,8 +9,10 @@ import 'package:farm/features/sales/add/bloc/sales_item_add_state.dart';
 import 'package:farm/features/sales/add/model/list_item.dart';
 import 'package:farm/features/sales/add/widgets/form_input_widget.dart';
 import 'package:farm/resources/resource.dart';
+import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/utils/view_utils.dart';
 import 'package:farm/views/view.dart';
+import 'package:farm/widgets/buttons/button.dart';
 import 'package:farm/widgets/popup/popup.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
@@ -151,8 +153,6 @@ class _SalesItemAddPageState
         tabletPotrait: _contentView(ViewUtils.screenWidth() * 0.4, true),
         tabletLandscape: _contentView(ViewUtils.screenWidth() * 0.3, true),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _finishButton(),
     );
   }
 
@@ -168,21 +168,28 @@ class _SalesItemAddPageState
           if (state.errorMessage.isNotEmpty == true) {
             return _errorWidget();
           }
-          return SingleChildScrollView(
-            physics: const ScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsetsGeometry.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _animalIdentityWidget(state),
-                  const SizedBox(height: 24),
-                  Text('Lengkapi Data', style: TextStyles.body1()),
-                  const SizedBox(height: 8),
-                  FormInputWidget(bloc: bloc),
-                ],
+          return Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const ScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsetsGeometry.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _animalIdentityWidget(state),
+                        const SizedBox(height: 24),
+                        Text('Lengkapi Data', style: TextStyles.body1()),
+                        const SizedBox(height: 8),
+                        FormInputWidget(bloc: bloc),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
+              _finishButton(),
+            ],
           );
         },
       ),
@@ -250,40 +257,52 @@ class _SalesItemAddPageState
         buildWhen: (p, c) =>
             p.selectedPen != c.selectedPen || p.weight != c.weight,
         builder: (context, state) {
-          return FloatingActionButton.extended(
-            backgroundColor: AppColors.current.eucalyptus700,
-            onPressed: () {
-              if (state.selectedPen?.id.isEmpty == true ||
-                  state.weight == "0" ||
-                  state.weight == null) {
-                navigator.showAppDialog(
-                  useRootNavigator: true,
-                  barrierDismissible: false,
-                  Popup(
-                    title: 'Tidak dapat dilanjutkan',
-                    description: [
-                      const TextSpan(
-                        text:
-                            'Lengkapi data terlebih dahulu untuk dapat menambahkan item penjualan.',
-                      ),
-                    ],
-                    positiveButtonText: "Mengerti",
-                    onNegativeButtonPressed: () => navigator.pop(),
-                    onPositiveButtonPressed: () {
-                      navigator.pop();
-                    },
-                  ),
-                );
-                return;
-              }
-
-              bloc.add(const OnSubmit());
-            },
-            label: Text(
-              'Tambahkan ke Item Penjualan',
-              style: TextStyles.button2().copyWith(color: Colors.white),
+          return Container(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white, // ✅ wajib biar shadow kelihatan
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08), // warna shadow
+                  blurRadius: 8, // seberapa blur
+                  spreadRadius: 0, // seberapa melebar
+                  offset: const Offset(0, -2), // ✅ arah ke atas
+                ),
+              ],
             ),
-            icon: const Icon(Icons.add, color: Colors.white),
+            child: Button(
+              type: ButtonType.primary,
+              leftIcon: const Icon(Icons.add, color: Colors.white),
+              text: 'Tambahkan ke Item Penjualan',
+              fulLWidth: true,
+              onPressed: () {
+                if (state.selectedPen?.id.isEmpty == true ||
+                    state.weight == "0" ||
+                    state.weight == null) {
+                  navigator.showAppDialog(
+                    useRootNavigator: true,
+                    barrierDismissible: false,
+                    Popup(
+                      title: 'Tidak dapat dilanjutkan',
+                      description: [
+                        const TextSpan(
+                          text:
+                              'Lengkapi data terlebih dahulu untuk dapat menambahkan item penjualan.',
+                        ),
+                      ],
+                      positiveButtonText: "Mengerti",
+                      onNegativeButtonPressed: () => navigator.pop(),
+                      onPositiveButtonPressed: () {
+                        navigator.pop();
+                      },
+                    ),
+                  );
+                  return;
+                }
+
+                bloc.add(const OnSubmit());
+              },
+            ),
           );
         },
       ),

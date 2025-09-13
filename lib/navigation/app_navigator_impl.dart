@@ -20,6 +20,11 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
 
   final homeNavBarRoutes = const [HomeRoute(), AccountRoute()];
 
+  final mutationNavBarRoutes = const [
+    MutationListInRoute(),
+    MutationListOutRoute(),
+  ];
+
   TabsRouter? tabsRouter;
 
   final AppRouter _appRouter;

@@ -18,6 +18,12 @@ import 'package:farm/domain/entities/medical/medical_form_request.dart';
 import 'package:farm/domain/entities/medical/medical_type.dart';
 import 'package:farm/domain/entities/medical/medical_type_request.dart';
 import 'package:farm/domain/entities/model/data_response.dart';
+import 'package:farm/domain/entities/mutation/mutation.dart';
+import 'package:farm/domain/entities/mutation/mutation_item.dart';
+import 'package:farm/domain/entities/mutation/mutation_item_add_request.dart';
+import 'package:farm/domain/entities/mutation/mutation_item_delete_request.dart';
+import 'package:farm/domain/entities/mutation/mutation_item_request.dart';
+import 'package:farm/domain/entities/mutation/mutation_request.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
@@ -314,6 +320,50 @@ class ApiService {
     return _authAppServerApiClient.request(
       method: RestMethod.post,
       path: '/v1/sales-item/create',
+      body: request.toJson(),
+      decoder: (_) => null,
+    );
+  }
+
+  Future<DataListResponse<Mutation>> mutations(MutationRequest request) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/mutation',
+      queryParameters: request.toJson(),
+      successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: Mutation.fromJson,
+    );
+  }
+
+  Future<DataListResponse<MutationItem>> mutationItems(
+    MutationItemRequest request,
+  ) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/mutation-item',
+      queryParameters: request.toJson(),
+      successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: MutationItem.fromJson,
+    );
+  }
+
+  Future<DataResponse<void>> mutationItemAdd(
+    MutationItemAddRequest request,
+  ) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.post,
+      path: '/v1/mutation-item/create-bulk',
+      body: request.toJson(),
+      decoder: (_) => null,
+    );
+  }
+
+  Future<DataResponse<void>> mutationItemDelete(
+    MutationItemDeleteRequest request,
+  ) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.delete,
+      path: '/v1/sales-item',
       body: request.toJson(),
       decoder: (_) => null,
     );
