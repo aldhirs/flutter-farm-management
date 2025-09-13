@@ -68,12 +68,7 @@ class EmptyState extends StatelessWidget {
         mainAxisSize: !isTablet ? MainAxisSize.min : MainAxisSize.max,
         children: [
           SizedBox(height: isTablet ? Dimens.d64 : 0),
-          SizedBox(
-            width: DeviceUtils.getDeviceType() == DeviceType.mobile
-                ? width * 0.7
-                : width,
-            child: imageAssets,
-          ),
+          SizedBox(width: width * 0.7, child: imageAssets),
           Visibility(
             visible: title?.isNotEmpty == true,
             child: Container(

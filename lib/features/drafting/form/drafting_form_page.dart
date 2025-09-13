@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base_page_state.dart';
+import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/extensions/string.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_bloc.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_event.dart';
@@ -9,6 +10,7 @@ import 'package:farm/features/drafting/form/widgets/identity_form_widget.dart';
 import 'package:farm/features/drafting/form/widgets/growth_form_widget.dart';
 import 'package:farm/features/drafting/form/widgets/medical_form_widget.dart';
 import 'package:farm/features/drafting/form/widgets/treatment_form_widget.dart';
+import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/utils/view_utils.dart';
@@ -20,9 +22,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
 class DraftingFormPage extends StatefulWidget {
-  const DraftingFormPage({super.key, required this.rfid});
+  const DraftingFormPage({super.key, this.rfid, this.cattle});
 
-  final String rfid;
+  final String? rfid;
+  final Cattle? cattle;
 
   @override
   State<DraftingFormPage> createState() => _DraftingFormPageState();
@@ -32,7 +35,7 @@ class _DraftingFormPageState
     extends BasePageState<DraftingFormPage, DraftingFormBloc> {
   @override
   void initState() {
-    bloc.add(Initiated(rfid: widget.rfid));
+    bloc.add(Initiated(rfid: widget.rfid, cattle: widget.cattle));
     super.initState();
   }
 
@@ -122,18 +125,31 @@ class _DraftingFormPageState
     return EmptyState(
       title: isNotFound ? 'Data tidak ditemukan' : 'Terjadi Kesalahan',
       description: isNotFound
-          ? 'Data tidak dapat ditemukan. Silakan buat data baru.'
+          ? 'Data sapi tidak dapat ditemukan. Silakan buat data baru.'
           : bloc.state.errorMessage,
-      imageAssets: Icon(
-        Icons.warning_outlined,
-        size: 140,
-        color: AppColors.current.neutral800,
+      imageAssets: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Assets.images.ilCowDenied.image(
+          height: Dimens.d240,
+          fit: BoxFit.cover,
+        ),
       ),
       isEnabledPositifButton: isNotFound,
-      buttonText: isNotFound ? 'Buat Data Baru' : '',
+      buttonText: isNotFound ? 'Buat Data Sapi Baru' : 'Mengerti',
       isButtonFullWidth: true,
       leftIconButton: const Icon(Icons.add, color: Colors.white),
-      onPressed: () async {},
+      onPressed: () async {
+        if (isNotFound) {
+          final result = await navigator.push(
+            AppRouteInfo.cattleCreate(rfid: widget.rfid),
+          );
+          if (result != null) {
+            bloc.add(GetCattle(cattle: result as Cattle));
+          }
+        } else {
+          navigator.pop();
+        }
+      },
     );
   }
 

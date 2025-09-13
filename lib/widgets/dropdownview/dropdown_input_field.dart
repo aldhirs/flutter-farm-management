@@ -145,9 +145,10 @@ class _DropdownInputFieldState extends State<DropdownInputField> {
             enabledBorder: OutlineInputBorder(
               borderRadius: _borderRadius,
               borderSide: BorderSide(
+                width: 2,
                 color: (widget.isShowDropdown.defaultFalse()
                     ? AppColors.current.mint700
-                    : AppColors.current.neutral500),
+                    : AppColors.current.neutral700),
               ),
             ),
             border: OutlineInputBorder(
@@ -155,36 +156,42 @@ class _DropdownInputFieldState extends State<DropdownInputField> {
               borderSide: BorderSide(
                 color: (widget.isShowDropdown.defaultFalse()
                     ? AppColors.current.mint700
-                    : AppColors.current.neutral500),
+                    : AppColors.current.neutral700),
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: _borderRadius,
               borderSide: BorderSide(
+                width: 2,
                 color: (widget.isShowDropdown.defaultFalse()
                     ? AppColors.current.mint700
-                    : AppColors.current.neutral500),
+                    : AppColors.current.neutral700),
               ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: _borderRadius,
               borderSide: BorderSide(
+                width: 2,
                 color: (widget.isShowDropdown.defaultFalse()
                     ? AppColors.current.mint700
-                    : AppColors.current.neutral500),
+                    : AppColors.current.neutral700),
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: _borderRadius,
               borderSide: BorderSide(
+                width: 2,
                 color: (widget.isShowDropdown.defaultFalse()
                     ? AppColors.current.mint700
-                    : AppColors.current.neutral500),
+                    : AppColors.current.neutral700),
               ),
             ),
             disabledBorder: OutlineInputBorder(
               borderRadius: _borderRadius,
-              borderSide: BorderSide(color: AppColors.current.neutral500),
+              borderSide: BorderSide(
+                width: 2,
+                color: AppColors.current.neutral500,
+              ),
             ),
           ),
         ),
@@ -283,10 +290,10 @@ class _DropdownInputFieldState extends State<DropdownInputField> {
   Widget? _dropdownIcon() {
     return IconButton(
       onPressed: () {},
-      icon: SvgPicture.asset(
+      icon: Icon(
         widget.isShowDropdown.defaultFalse()
-            ? 'assets/icons/ic_chevron_up.svg'
-            : 'assets/icons/ic_chevron_down.svg',
+            ? Icons.arrow_drop_up_outlined
+            : Icons.arrow_drop_down_outlined,
       ),
     );
   }

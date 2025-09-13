@@ -3,6 +3,8 @@ import 'package:farm/domain/entities/auth/login_request.dart';
 import 'package:farm/domain/entities/auth/user_data.dart';
 import 'package:farm/domain/entities/barn/barn.dart';
 import 'package:farm/domain/entities/barn/barn_request.dart';
+import 'package:farm/domain/entities/breed/breed.dart';
+import 'package:farm/domain/entities/breed/breed_request.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/cattle/cattle_form_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_list_request.dart';
@@ -20,6 +22,8 @@ import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
+import 'package:farm/domain/entities/reception/reception.dart';
+import 'package:farm/domain/entities/reception/reception_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
 import 'package:farm/domain/entities/sales/sales_item_add_request.dart';
@@ -28,6 +32,8 @@ import 'package:farm/domain/entities/sales/sales_item_move_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
+import 'package:farm/domain/entities/supplier/supplier.dart';
+import 'package:farm/domain/entities/supplier/supplier_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_type.dart';
 import 'package:farm/domain/entities/treatment/treatment_type_request.dart';
@@ -58,6 +64,15 @@ class ApiService {
       path: '/v1/cattle',
       queryParameters: request.toJson(),
       successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: Cattle.fromJson,
+    );
+  }
+
+  Future<DataResponse<Cattle>> cattleCreate(CattleFormRequest request) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.post,
+      path: '/v1/cattle',
+      body: request.toJson(),
       decoder: Cattle.fromJson,
     );
   }
@@ -112,6 +127,28 @@ class ApiService {
     );
   }
 
+  Future<DataListResponse<Supplier>> suppliers(SupplierRequest request) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/supplier',
+      queryParameters: request.toJson(),
+      successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: Supplier.fromJson,
+    );
+  }
+
+  Future<DataListResponse<Reception>> receptions(
+    ReceptionRequest request,
+  ) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/reception',
+      queryParameters: request.toJson(),
+      successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: Reception.fromJson,
+    );
+  }
+
   Future<DataListResponse<Barn>> barns(BarnRequest request) async {
     return _authAppServerApiClient.request(
       method: RestMethod.get,
@@ -163,6 +200,16 @@ class ApiService {
       queryParameters: request.toJson(),
       successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
       decoder: MedicalType.fromJson,
+    );
+  }
+
+  Future<DataListResponse<Breed>> breeds(BreedRequest request) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/breed',
+      queryParameters: request.toJson(),
+      successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: Breed.fromJson,
     );
   }
 

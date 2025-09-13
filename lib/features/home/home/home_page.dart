@@ -15,6 +15,7 @@ import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/views/view.dart';
 import 'package:farm/widgets/dropdownview/dropdown_model.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_bottomsheet.dart';
+import 'package:farm/widgets/popup/popup.dart';
 import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -218,11 +219,9 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                   children: [
                     Expanded(
                       child: QuickActionCard(
-                        icon: Icons.list_alt,
-                        label: "Drafting",
-                        onTap: () => navigator.push(
-                          const AppRouteInfo.scan(route: DEST_DRAFTING_DETAIL),
-                        ),
+                        icon: Icons.multiline_chart,
+                        label: "Mutasi",
+                        onTap: () {},
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -230,7 +229,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                       child: QuickActionCard(
                         icon: Icons.sell,
                         label: "Penjualan",
-                        onTap: () => navigator.push(const AppRouteInfo.sales()),
+                        onTap: () => _onMenuClicked(const AppRouteInfo.sales()),
                       ),
                     ),
                   ],
@@ -245,9 +244,10 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                   children: [
                     Expanded(
                       child: QuickActionCard(
-                        icon: Icons.multiline_chart,
-                        label: "Mutasi",
-                        onTap: () {},
+                        icon: Icons.add,
+                        label: "Tambah Sapi",
+                        onTap: () =>
+                            _onMenuClicked(const AppRouteInfo.cattleCreate()),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -256,9 +256,31 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                         icon: Icons.change_circle_outlined,
                         label: "Pen Drafting",
                         onTap: () =>
-                            navigator.push(const AppRouteInfo.penDrafting()),
+                            _onMenuClicked(const AppRouteInfo.penDrafting()),
                       ),
                     ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              _fadeSlide(
+                fade: _fadeQuickActions,
+                slide: _slideQuickActions,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // const Expanded(child: SizedBox.shrink()),
+                    const SizedBox(width: 80),
+                    Expanded(
+                      child: QuickActionCard(
+                        icon: Icons.barcode_reader,
+                        label: "Drafting",
+                        onTap: () => _onMenuClicked(
+                          const AppRouteInfo.scan(route: DEST_DRAFTING_DETAIL),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 80),
                   ],
                 ),
               ),
@@ -268,6 +290,38 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
         ),
       ),
     );
+  }
+
+  void _onMenuClicked(AppRouteInfo route) async {
+    if (appBloc.state.selectedProject == null) {
+      navigator.showAppDialog(
+        useRootNavigator: true,
+        barrierDismissible: false,
+        Popup(
+          title: 'Feedlot belum diisi',
+          illustration: ClipRRect(
+            borderRadius: BorderRadius.circular(20), // adjust radius
+            child: Assets.images.ilCowFeedlot.image(
+              height: Dimens.d140,
+              fit: BoxFit.cover,
+            ),
+          ),
+          description: [
+            const TextSpan(
+              text:
+                  "Silakan untuk memilih feedlot terlebih dahulu untuk melanjutkan aktivitas.",
+            ),
+          ],
+          positiveButtonText: "Pilih Feedlot",
+          onPositiveButtonPressed: () async {
+            navigator.pop();
+            appBloc.add(const ShowProjects());
+          },
+        ),
+      );
+    } else {
+      await navigator.push(route);
+    }
   }
 
   void _showFeedlot(AppState state) {

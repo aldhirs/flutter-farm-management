@@ -42,4 +42,9 @@ abstract class Cattle extends BaseOutput with _$Cattle {
     if (status.isEmpty) return '-';
     return cattleStatusMap[status] ?? status;
   }
+
+  String genderLabel() {
+    if (gender.isEmpty) return '-';
+    return genderMap[gender] ?? gender;
+  }
 }

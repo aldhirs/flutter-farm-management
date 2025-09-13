@@ -281,7 +281,7 @@ class SalesItemAddBloc extends BaseBloc<SalesItemAddEvent, SalesItemAddState> {
         description: '${data.actual_weight.toString()} KG',
       ),
       ListItem(name: 'Ras', description: data.id_breed),
-      ListItem(name: 'Jenis Kelamin', description: data.gender),
+      ListItem(name: 'Jenis Kelamin', description: data.genderLabel()),
       ListItem(name: 'Status', description: data.statusLabel()),
     ];
     return items;

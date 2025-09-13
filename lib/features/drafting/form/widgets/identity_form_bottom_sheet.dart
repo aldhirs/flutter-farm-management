@@ -72,16 +72,18 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
           padding: const EdgeInsets.all(Dimens.d16),
           alignment: Alignment.topLeft,
           child: Column(
-            spacing: Dimens.d8,
             children: [
               Text("Input Identitas Sapi", style: TextStyles.heading5()),
               const SizedBox(height: 12),
               _errorWidget(),
               const SizedBox(height: 12),
+
+              _textInputEarTag(),
+              const SizedBox(height: 16),
               _dropdownBarn(),
               _dropdownPen(),
               _dropdownLevel(),
-              _textInputEarTag(),
+              _dropdownGender(),
 
               const SizedBox(height: 24),
               BlocProvider.value(
@@ -126,6 +128,8 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
             controller: _earTagController,
             label: 'Ear Tag',
             hintText: 'Ear Tag',
+            keyboardType: TextInputType.text,
+            prefixIcon: Icon(Icons.earbuds, color: AppColors.current.mint700),
             onChanged: (value) {
               widget.bloc.add(EarTagChanged(value: value));
             },
@@ -223,9 +227,42 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
             dropdownType: DropdownTypeEnum.single,
             onSelectedItems: (List<String> value) {
               final selected = state.levels
-                  .where((item) => item.id == value.first)
+                  .where((item) => item.id.toString() == value.first)
                   .first;
               widget.bloc.add(LevelChanged(value: selected));
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _dropdownGender() {
+    return BlocProvider.value(
+      value: widget.bloc,
+      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
+        buildWhen: (p, c) => p.selectedGender != c.selectedGender,
+        builder: (context, state) {
+          return DropdownViewField(
+            title: 'Jenis Kelamin',
+            items: ValueNotifier<List<DropdownCheckboxModel>>(
+              genderMap.entries
+                  .map(
+                    (item) => DropdownCheckboxModel(
+                      id: item.key,
+                      text: item.value,
+                      selected: item.key == state.selectedGender,
+                    ),
+                  )
+                  .toList(),
+            ),
+            navigator: widget.bloc.navigator,
+            dropdownType: DropdownTypeEnum.single,
+            onSelectedItems: (List<String> value) {
+              final selected = genderMap.entries
+                  .where((item) => item.key == value.first)
+                  .first;
+              widget.bloc.add(GenderChanged(value: selected.key));
             },
           );
         },

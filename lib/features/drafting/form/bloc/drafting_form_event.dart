@@ -1,5 +1,6 @@
 import 'package:farm/base/base.dart';
 import 'package:farm/domain/entities/barn/barn.dart';
+import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/level/level.dart';
 import 'package:farm/domain/entities/medical/medical_type.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
@@ -16,9 +17,16 @@ abstract class DraftingFormEvent extends BaseBlocEvent {
 
 @freezed
 abstract class Initiated extends DraftingFormEvent with _$Initiated {
-  const factory Initiated({required String rfid}) = _Initiated;
+  const factory Initiated({String? rfid, Cattle? cattle}) = _Initiated;
 
   const Initiated._();
+}
+
+@freezed
+abstract class GetCattle extends DraftingFormEvent with _$GetCattle {
+  const factory GetCattle({required Cattle cattle}) = _GetCattle;
+
+  const GetCattle._();
 }
 
 @freezed
@@ -217,4 +225,11 @@ abstract class MedicalStatusChanged extends DraftingFormEvent
       _MedicalStatusChanged;
 
   const MedicalStatusChanged._();
+}
+
+@freezed
+abstract class GenderChanged extends DraftingFormEvent with _$GenderChanged {
+  const factory GenderChanged({required String value}) = _GenderChanged;
+
+  const GenderChanged._();
 }

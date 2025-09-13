@@ -205,7 +205,7 @@ class _DatePickerInputFieldState extends State<DatePickerInputWidget> {
               borderSide: BorderSide(
                 color: (widget.isShowDatePicker.defaultFalse()
                     ? AppColors.current.mint700
-                    : AppColors.current.neutral500),
+                    : AppColors.current.neutral700),
               ),
             ),
             border: OutlineInputBorder(
@@ -213,7 +213,7 @@ class _DatePickerInputFieldState extends State<DatePickerInputWidget> {
               borderSide: BorderSide(
                 color: (widget.isShowDatePicker.defaultFalse()
                     ? AppColors.current.mint700
-                    : AppColors.current.neutral500),
+                    : AppColors.current.neutral700),
               ),
             ),
             focusedBorder: OutlineInputBorder(
@@ -221,7 +221,7 @@ class _DatePickerInputFieldState extends State<DatePickerInputWidget> {
               borderSide: BorderSide(
                 color: (widget.isShowDatePicker.defaultFalse()
                     ? AppColors.current.mint700
-                    : AppColors.current.neutral500),
+                    : AppColors.current.neutral700),
               ),
             ),
             errorBorder: OutlineInputBorder(
@@ -229,7 +229,7 @@ class _DatePickerInputFieldState extends State<DatePickerInputWidget> {
               borderSide: BorderSide(
                 color: (widget.isShowDatePicker.defaultFalse()
                     ? AppColors.current.mint700
-                    : AppColors.current.neutral500),
+                    : AppColors.current.neutral700),
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
@@ -237,7 +237,7 @@ class _DatePickerInputFieldState extends State<DatePickerInputWidget> {
               borderSide: BorderSide(
                 color: (widget.isShowDatePicker.defaultFalse()
                     ? AppColors.current.mint700
-                    : AppColors.current.neutral500),
+                    : AppColors.current.neutral700),
               ),
             ),
             disabledBorder: OutlineInputBorder(

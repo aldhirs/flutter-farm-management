@@ -44,31 +44,7 @@ class _HomeNavBarPageState
               FloatingActionButtonLocation.centerDocked,
           floatingActionButton: FloatingActionButton.large(
             backgroundColor: AppColors.current.mint700,
-            onPressed: () async {
-              if (appBloc.state.selectedProject == null) {
-                navigator.showAppDialog(
-                  useRootNavigator: true,
-                  barrierDismissible: false,
-                  Popup(
-                    title: 'Pilih Feedlot terlebih dahulu',
-                    description: [
-                      const TextSpan(
-                        text: "harap pilih feedlot terlebih dahulu.",
-                      ),
-                    ],
-                    positiveButtonText: "Mengerti",
-                    onPositiveButtonPressed: () async {
-                      navigator.pop();
-                      appBloc.add(const ShowProjects());
-                    },
-                  ),
-                );
-              } else {
-                await navigator.push(
-                  const AppRouteInfo.scan(route: DEST_DRAFTING_DETAIL),
-                );
-              }
-            },
+            onPressed: () => _onDraftingClicked(),
             shape: const CircleBorder(),
             child: const Icon(Icons.barcode_reader, color: Colors.white),
           ),
@@ -105,5 +81,39 @@ class _HomeNavBarPageState
         );
       },
     );
+  }
+
+  void _onDraftingClicked() async {
+    if (appBloc.state.selectedProject == null) {
+      navigator.showAppDialog(
+        useRootNavigator: true,
+        barrierDismissible: false,
+        Popup(
+          title: 'Feedlot belum diisi',
+          illustration: ClipRRect(
+            borderRadius: BorderRadius.circular(20), // adjust radius
+            child: Assets.images.ilCowFeedlot.image(
+              height: Dimens.d140,
+              fit: BoxFit.cover,
+            ),
+          ),
+          description: [
+            const TextSpan(
+              text:
+                  "Silakan untuk memilih feedlot terlebih dahulu untuk melanjutkan aktivitas.",
+            ),
+          ],
+          positiveButtonText: "Pilih Feedlot",
+          onPositiveButtonPressed: () async {
+            navigator.pop();
+            appBloc.add(const ShowProjects());
+          },
+        ),
+      );
+    } else {
+      await navigator.push(
+        const AppRouteInfo.scan(route: DEST_DRAFTING_DETAIL),
+      );
+    }
   }
 }

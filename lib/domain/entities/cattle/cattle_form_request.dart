@@ -8,6 +8,8 @@ part 'cattle_form_request.g.dart';
 abstract class CattleFormRequest extends BaseInput with _$CattleFormRequest {
   const factory CattleFormRequest({
     @JsonKey(name: 'id') @Default('') String id,
+    @JsonKey(name: 'project_id') @Default('') String project_id,
+    @JsonKey(name: 'rfid') @Default('') String rfid,
     @JsonKey(name: 'barn_id') @Default('') String barn_id,
     @JsonKey(name: 'pen_id') @Default('') String pen_id,
     @JsonKey(name: 'supplier_id') @Default('') String supplier_id,
@@ -16,6 +18,7 @@ abstract class CattleFormRequest extends BaseInput with _$CattleFormRequest {
     @JsonKey(name: 'level_id') @Default(0) int level_id,
     @JsonKey(name: 'reception_id') @Default('') String reception_id,
     @JsonKey(name: 'status') @Default('') String status,
+    @JsonKey(name: 'gender') @Default('') String gender,
   }) = _CattleFormRequest;
   const CattleFormRequest._();
 

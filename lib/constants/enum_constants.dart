@@ -50,3 +50,5 @@ const barnCategoryMap = {
 };
 
 const salesItemStatusMap = {AVAILABLE: 'Tersedia', BOOKED: 'Dipesan'};
+
+const genderMap = {"male": 'Jantan', "female": 'Betina'};

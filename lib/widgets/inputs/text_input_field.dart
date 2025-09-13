@@ -197,7 +197,7 @@ class _TextInputFieldState extends State<TextInputField> {
                 width: 2,
                 color:
                     widget.textInputState?.borderColor ??
-                    AppColors.current.neutral700,
+                    AppColors.current.neutral500,
               ),
             ),
           ),
@@ -331,7 +331,7 @@ enum TextInputState {
   Color get borderColor {
     switch (this) {
       case TextInputState.inactive:
-        return AppColors.current.neutral500;
+        return AppColors.current.neutral700;
       case TextInputState.filled:
       case TextInputState.active:
         return AppColors.current.mint700;

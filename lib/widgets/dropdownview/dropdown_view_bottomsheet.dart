@@ -10,6 +10,7 @@ import 'package:farm/utils/view_utils.dart';
 import 'package:farm/widgets/buttons/button.dart';
 import 'package:farm/widgets/checkbox/checkbox_button.dart';
 import 'package:farm/widgets/dropdownview/dropdown_model.dart';
+import 'package:farm/widgets/inputs/search_bar_widget.dart';
 import 'package:flutter/material.dart';
 
 class DropdownViewBottomsheet extends StatefulWidget {
@@ -112,74 +113,33 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
   }
 
   void _onSearchChanged(String text) {
-    if (widget.searchDebounceDuration == null) {
-      _applySearch(text);
-    } else {
-      if (_debounce?.isActive ?? false) {
-        _debounce!.cancel();
-      }
-      _debounce = Timer(
-        widget.searchDebounceDuration ?? const Duration(seconds: 1),
-        () => _applySearch(text),
-      );
+    if (_debounce?.isActive ?? false) {
+      _debounce!.cancel();
     }
+
+    _debounce = Timer(
+      widget.searchDebounceDuration ?? const Duration(milliseconds: 800),
+      () async {
+        setState(() {
+          searchText = text;
+        });
+
+        if (text.isEmpty) {
+          // Restore ke data default (parent bisa isi ulang items.value dengan all data)
+          widget.doOnKeywordSearch?.call('');
+          return;
+        }
+
+        if (text.length < 3) {
+          // Kalau kurang dari 3 huruf, jangan fetch
+          return;
+        }
+
+        // Trigger API lewat callback parent
+        widget.doOnKeywordSearch?.call(text);
+      },
+    );
   }
-
-  void _applySearch(String text) {
-    setState(() {
-      searchText = text;
-      final lowerKeyword = text.toLowerCase();
-
-      final filtered = originalItems.where((item) {
-        return item.selected || item.text.toLowerCase().contains(lowerKeyword);
-      }).toList();
-
-      selectedItems =
-          DropdownTypeEnum.getEnum(widget.dropdownType.value) ==
-              DropdownTypeEnum.multiple
-          ? sortSelectedFirst(filtered)
-          : filtered;
-
-      widget.items.value = filtered;
-    });
-
-    if (widget.doOnKeywordSearch != null) {
-      widget.doOnKeywordSearch!(text);
-    }
-  }
-
-  // void _onSearchChanged(String text) {
-  //   if (_debounce?.isActive ?? false) {
-  //     _debounce!.cancel();
-  //   }
-  //
-  //   _debounce = Timer(widget.searchDebounceDuration, () {
-  //     setState(() {
-  //       searchText = text;
-  //       final lowerKeyword = text.toLowerCase();
-  //
-  //       // Filter originalItems berdasarkan pencarian
-  //       final filtered = originalItems
-  //           .where((item) => item.selected || item.text.toLowerCase().contains(lowerKeyword))
-  //           .toList();
-  //
-  //       // Sesuaikan selectedItems sesuai dengan hasil filter
-  //       if (DropdownTypeEnum.getEnum(widget.dropdownType.value) == DropdownTypeEnum.multiple) {
-  //         selectedItems = sortSelectedFirst(filtered);
-  //       } else {
-  //         selectedItems = filtered;
-  //       }
-  //
-  //       // Update ValueNotifier dengan hasil filter
-  //       widget.items.value = filtered;
-  //     });
-  //
-  //     // Jika ada fungsi pencarian tambahan, panggil
-  //     if (widget.doOnKeywordSearch != null) {
-  //       widget.doOnKeywordSearch!(text);
-  //     }
-  //   });
-  // }
 
   void _onSearchClear() {
     _searchController.clear();
@@ -312,14 +272,17 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
       padding: const EdgeInsets.symmetric(horizontal: Dimens.d16),
       child: Visibility(
         visible: widget.hasSearchBar,
-        child: Text('Search'),
-        // SearchBarWidget(
-        //   hint: widget.searchHint,
-        //   controller: _searchController,
-        //   onSearch: (_) {},
-        //   onChanged: _onSearchChanged,
-        //   onEndActionClicked: _onSearchClear,
-        // ),
+        child: Column(
+          children: [
+            SearchBarWidget(
+              hint: widget.searchHint,
+              controller: _searchController,
+              onSearch: (_) {},
+              onChanged: _onSearchChanged,
+              onEndActionClicked: _onSearchClear,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -331,6 +294,10 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
         if (value.isEmpty) {
           return _emptyStateWidget();
         }
+
+        final List<DropdownCheckboxModel> selectedItems = List.from(
+          value,
+        ); // langsung sync
 
         return SizedBox(
           height: value.length > 7 ? ViewUtils.screenHeight() * 0.78 : null,
@@ -541,17 +508,14 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
   }
 
   Widget _emptyStateWidget() {
-    if (searchText.isEmpty || searchText.length < 3) {
-      return Padding(
-        padding: const EdgeInsets.all(Dimens.d16),
-        child: Center(
-          child: Text(
-            widget.emptyStateMessage.defaultValue('Data tidak ditemukan'),
-            style: TextStyles.label1(),
-          ),
+    return Padding(
+      padding: const EdgeInsets.all(Dimens.d16),
+      child: Center(
+        child: Text(
+          widget.emptyStateMessage.defaultValue('Data tidak ditemukan'),
+          style: TextStyles.label1(),
         ),
-      );
-    }
-    return const SizedBox.shrink();
+      ),
+    );
   }
 }

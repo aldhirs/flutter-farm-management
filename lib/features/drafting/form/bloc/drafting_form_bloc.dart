@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:dartx/dartx.dart';
 import 'package:farm/base/base.dart';
-import 'package:farm/constants/date_constant.dart';
 import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/entities/auth/user_data.dart';
 import 'package:farm/domain/entities/barn/barn.dart';
@@ -29,7 +28,6 @@ import 'package:farm/domain/usecases/medical_types_use_case.dart';
 import 'package:farm/domain/usecases/pens_use_case.dart';
 import 'package:farm/domain/usecases/treatment_create_use_case.dart';
 import 'package:farm/domain/usecases/treatment_types_use_case.dart';
-import 'package:farm/extensions/int.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_event.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_state.dart';
 import 'package:farm/features/drafting/form/model/list_item.dart';
@@ -74,6 +72,9 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     on<IdentityInit>(_identityInit, transformer: log());
     on<TreatmentInit>(_treatmentInit, transformer: log());
     on<MedicalInit>(_medicalInit, transformer: log());
+    on<GetCattle>((event, emit) {
+      _prepareCattle(event.cattle, emit);
+    }, transformer: log());
     on<OnSubmitIdentity>(_onSubmitIdentity, transformer: log());
     on<OnSubmitGrowth>(_onSubmitGrowth, transformer: log());
     on<OnSubmitTreatment>(_onSubmitTreatment, transformer: log());
@@ -97,6 +98,10 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     }, transformer: log());
     on<PenChanged>((event, emit) {
       emit(state.copyWith(selectedPen: event.pen));
+    }, transformer: log());
+
+    on<GenderChanged>((event, emit) {
+      emit(state.copyWith(selectedGender: event.value));
     }, transformer: log());
     on<EarTagChanged>((event, emit) {
       emit(
@@ -139,7 +144,14 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     Initiated event,
     Emitter<DraftingFormState> emit,
   ) async {
-    await _cattleApi(event.rfid, emit);
+    // jika rfid ada, endpoint dari scan page
+    if (event.rfid?.isNotEmpty == true) {
+      await _cattleApi(event.rfid.orEmpty(), emit);
+    }
+
+    if (event.cattle != null) {
+      _prepareCattle(event.cattle ?? const Cattle(), emit);
+    }
 
     // user data
     final user = switch (runCatching(
@@ -148,7 +160,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
       ResultSuccess(:final data) => data,
       _ => const UserData(),
     };
-    emit(state.copyWith(userData: user));
+    emit(state.copyWith(userData: user, rfid: event.rfid.orEmpty()));
   }
 
   Future<void> _identityInit(
@@ -215,28 +227,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
         );
         switch (response.result) {
           case DataSuccess(:final data):
-            final items = _getCattleItems(data);
-            Barn? barn;
-            Pen? pen;
-            if (data.pen != null) {
-              barn = Barn(
-                id: data.pen?.id_barn ?? '',
-                name: data.pen?.name_barn ?? '',
-              );
-              pen = data.pen;
-              add(GetPens(barnId: data.pen?.id_barn ?? ''));
-            }
-            emit(
-              state.copyWith(
-                cattle: data,
-                selectedBarn: barn,
-                selectedPen: pen,
-                selectedLevel: data.level,
-                earTag: data.ear_tag,
-                weight: data.actual_weight.toString(),
-                listItems: items,
-              ),
-            );
+            _prepareCattle(data, emit);
             break;
           case DataError(:final errorMessage):
             emit(state.copyWith(errorMessage: errorMessage.orEmpty()));
@@ -410,6 +401,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
           barn_id: state.selectedBarn?.id ?? '',
           pen_id: state.selectedPen?.id ?? '',
           ear_tag: state.earTag.orEmpty(),
+          gender: state.selectedGender.orEmpty(),
           level_id: state.selectedLevel?.id ?? 0,
         );
         final response = await _cattleUpdateUseCase.execute(payload);
@@ -418,6 +410,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
             final cattle = state.cattle.copyWith(
               ear_tag: state.earTag ?? '',
               level: state.selectedLevel ?? state.cattle.level,
+              gender: state.selectedGender.orEmpty(),
               pen: state.cattle.pen?.copyWith(
                 id: state.selectedPen?.id ?? (state.cattle.pen?.id ?? ''),
                 id_barn:
@@ -577,11 +570,9 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
           id_project: appBloc.state.selectedProject?.id ?? '0',
           id_cattle: state.cattle.id,
           id_treatment_type: state.selectedTreatmentType?.id ?? 0,
-          treatment_date: DateFormat(
-            DateConstant.DATE_YEAR_FIRST,
-            'id_ID',
-          ).format(state.treatmentDate ?? DateTime.now()),
+          treatment_date: DateTimeUtils.wibToUtcString(state.treatmentDate),
           notes: state.treatmentNote.orEmpty(),
+          administered_by: (state.userData.id).toInt(),
         );
 
         final response = await _treatmentCreateUseCase.execute(payload);
@@ -629,6 +620,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
           is_infection: state.isInfection,
           notes: state.medicalNote.orEmpty(),
           status: status,
+          administered_by: (state.userData.id).toInt(),
         );
 
         final response = await _medicalCreateUseCase.execute(payload);
@@ -661,6 +653,29 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     );
   }
 
+  void _prepareCattle(Cattle data, Emitter<DraftingFormState> emit) {
+    final items = _getCattleItems(data);
+    Barn? barn;
+    Pen? pen;
+    if (data.pen != null) {
+      barn = Barn(id: data.pen?.id_barn ?? '', name: data.pen?.name_barn ?? '');
+      pen = data.pen;
+      add(GetPens(barnId: data.pen?.id_barn ?? ''));
+    }
+    emit(
+      state.copyWith(
+        cattle: data,
+        selectedBarn: barn,
+        selectedPen: pen,
+        selectedLevel: data.level,
+        earTag: data.ear_tag,
+        weight: data.actual_weight.toString(),
+        listItems: items,
+        errorMessage: "",
+      ),
+    );
+  }
+
   List<ListItem> _getCattleItems(Cattle data) {
     final items = [
       ListItem(name: 'ID', description: data.id),
@@ -673,8 +688,8 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
         description: '${data.actual_weight.toString()} KG',
       ),
       ListItem(name: 'Ras', description: data.id_breed),
-      ListItem(name: 'Jenis Kelamin', description: data.gender),
-      ListItem(name: 'Status', description: data.status),
+      ListItem(name: 'Jenis Kelamin', description: data.genderLabel()),
+      ListItem(name: 'Status', description: data.statusLabel()),
     ];
     return items;
   }

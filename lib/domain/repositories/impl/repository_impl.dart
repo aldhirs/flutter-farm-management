@@ -3,6 +3,8 @@ import 'package:farm/domain/entities/auth/login_request.dart';
 import 'package:farm/domain/entities/auth/user_data.dart';
 import 'package:farm/domain/entities/barn/barn.dart';
 import 'package:farm/domain/entities/barn/barn_request.dart';
+import 'package:farm/domain/entities/breed/breed.dart';
+import 'package:farm/domain/entities/breed/breed_request.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/cattle/cattle_form_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_list_request.dart';
@@ -19,6 +21,8 @@ import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
+import 'package:farm/domain/entities/reception/reception.dart';
+import 'package:farm/domain/entities/reception/reception_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
 import 'package:farm/domain/entities/sales/sales_item_add_request.dart';
@@ -27,6 +31,8 @@ import 'package:farm/domain/entities/sales/sales_item_move_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
+import 'package:farm/domain/entities/supplier/supplier.dart';
+import 'package:farm/domain/entities/supplier/supplier_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_type.dart';
 import 'package:farm/domain/entities/treatment/treatment_type_request.dart';
@@ -76,6 +82,12 @@ class RepositoryImpl implements Repository {
     CattlePenToPenRequest request,
   ) async {
     final response = await _apiService.cattleMovePenToPen(request);
+    return response;
+  }
+
+  @override
+  Future<DataResponse<Cattle>> cattleCreate(CattleFormRequest request) async {
+    final response = await _apiService.cattleCreate(request);
     return response;
   }
 
@@ -148,6 +160,26 @@ class RepositoryImpl implements Repository {
   @override
   Future<DataListResponse<Level>> levels(LevelRequest request) async {
     final response = await _apiService.levels(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<Breed>> breeds(BreedRequest request) async {
+    final response = await _apiService.breeds(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<Supplier>> suppliers(SupplierRequest request) async {
+    final response = await _apiService.suppliers(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<Reception>> receptions(
+    ReceptionRequest request,
+  ) async {
+    final response = await _apiService.receptions(request);
     return response;
   }
 

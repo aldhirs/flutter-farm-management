@@ -54,7 +54,7 @@ class DraftingDetailBloc
     emit(state.copyWith(loading: true));
     // bypass-debug
     Future.delayed(const Duration(seconds: 1), () {
-      add(RFIDChanged(rfid: '654864869'));
+      add(RFIDChanged(rfid: '65486486911'));
     });
   }
 

@@ -2,6 +2,8 @@ import 'package:farm/domain/entities/auth/login_request.dart';
 import 'package:farm/domain/entities/auth/user_data.dart';
 import 'package:farm/domain/entities/barn/barn.dart';
 import 'package:farm/domain/entities/barn/barn_request.dart';
+import 'package:farm/domain/entities/breed/breed.dart';
+import 'package:farm/domain/entities/breed/breed_request.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/cattle/cattle_form_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_list_request.dart';
@@ -19,6 +21,8 @@ import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
+import 'package:farm/domain/entities/reception/reception.dart';
+import 'package:farm/domain/entities/reception/reception_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
 import 'package:farm/domain/entities/sales/sales_item_add_request.dart';
@@ -27,6 +31,8 @@ import 'package:farm/domain/entities/sales/sales_item_move_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
+import 'package:farm/domain/entities/supplier/supplier.dart';
+import 'package:farm/domain/entities/supplier/supplier_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_type.dart';
 import 'package:farm/domain/entities/treatment/treatment_type_request.dart';
@@ -38,6 +44,9 @@ abstract class Repository {
   Future<DataListResponse<Barn>> barns(BarnRequest request);
   Future<DataListResponse<Pen>> pens(PenRequest request);
   Future<DataListResponse<Level>> levels(LevelRequest request);
+  Future<DataListResponse<Breed>> breeds(BreedRequest request);
+  Future<DataListResponse<Supplier>> suppliers(SupplierRequest request);
+  Future<DataListResponse<Reception>> receptions(ReceptionRequest request);
   Future<DataListResponse<TreatmentType>> treatmentTypes(
     TreatmentTypeRequest request,
   );
@@ -48,6 +57,7 @@ abstract class Repository {
   Future<DataListResponse<Cattle>> cattles(CattleListRequest request);
   Future<DataResponse<Cattle>> cattleByRFID(CattleRequest request);
   Future<DataResponse<Cattle>> cattleByEarTag(CattleRequest request);
+  Future<DataResponse<Cattle>> cattleCreate(CattleFormRequest request);
   Future<DataResponse<void>> cattleUpdate(CattleFormRequest request);
   Future<DataResponse<void>> cattleMovePenToPen(CattlePenToPenRequest request);
   Future<DataResponse<Growth>> growthCreate(GrowthFormRequest request);

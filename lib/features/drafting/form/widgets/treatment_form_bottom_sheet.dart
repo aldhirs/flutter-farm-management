@@ -6,8 +6,7 @@ import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/widgets/buttons/button.dart';
-import 'package:farm/widgets/datepicker/date_picker_input_widget.dart';
-import 'package:farm/widgets/datepicker/date_picker_view.dart';
+import 'package:farm/widgets/datepicker/date_time_picker_input_widget.dart';
 import 'package:farm/widgets/dropdownview/dropdown_model.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_field.dart';
 import 'package:farm/widgets/inputs/text_input_field.dart';
@@ -41,7 +40,7 @@ class _TreatmentFormBottomSheetState extends State<TreatmentFormBottomSheet> {
     widget.bloc.add(const TreatmentInit());
     final dateValue = DateTime.now();
     _datePickerController.text = DateFormat(
-      DateConstant.DATE_FULL_MONTH,
+      DateConstant.DATETIME_FULL_MONTH,
       'id_ID',
     ).format(dateValue);
     widget.bloc.add(TreatmentDateChanged(value: dateValue));
@@ -126,14 +125,13 @@ class _TreatmentFormBottomSheetState extends State<TreatmentFormBottomSheet> {
       value: widget.bloc,
       child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
         builder: (context, state) {
-          return DatePickerInputWidget(
+          return DateTimePickerInputWidget(
             controller: _datePickerController,
             navigator: widget.bloc.navigator,
-            datePickerType: DatePickerType.datePicker,
             label: "Tanggal Treatment",
             hintText: 'Tanggal Treatment',
             datePickerLabel: 'Pilih Tanggal Treatment',
-            onApplyDate: (value, datetime) {
+            onApplyDateTime: (value, datetime) {
               widget.bloc.add(TreatmentDateChanged(value: datetime));
             },
           );
@@ -184,7 +182,7 @@ class _TreatmentFormBottomSheetState extends State<TreatmentFormBottomSheet> {
             dropdownType: DropdownTypeEnum.single,
             onSelectedItems: (List<String> value) {
               final selected = state.treatmentTypes
-                  .where((item) => item.id == value.first)
+                  .where((item) => item.id.toString() == value.first)
                   .first;
               widget.bloc.add(TreatmentTypeChanged(value: selected));
             },

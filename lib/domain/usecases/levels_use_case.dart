@@ -1,10 +1,6 @@
 import 'package:farm/domain/base/base.dart';
-import 'package:farm/domain/entities/barn/barn.dart';
-import 'package:farm/domain/entities/barn/barn_request.dart';
 import 'package:farm/domain/entities/level/level.dart';
 import 'package:farm/domain/entities/level/level_request.dart';
-import 'package:farm/domain/entities/pen/pen.dart';
-import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/repositories/repository.dart';
 import 'package:farm/utils/domain_state.dart';
 import 'package:farm/utils/response_mapper.dart';

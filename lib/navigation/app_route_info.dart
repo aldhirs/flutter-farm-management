@@ -17,8 +17,12 @@ abstract class AppRouteInfo with _$AppRouteInfo {
   const factory AppRouteInfo.draftingScan() = DraftingScan;
   const factory AppRouteInfo.draftingDetail({BluetoothConnection? connection}) =
       DraftingDetail;
-  const factory AppRouteInfo.draftingForm({required String rfid}) =
+  const factory AppRouteInfo.draftingForm({String? rfid, Cattle? cattle}) =
       DraftingForm;
+  const factory AppRouteInfo.cattleCreate({
+    BluetoothConnection? connection,
+    String? rfid,
+  }) = CattleCreate;
   const factory AppRouteInfo.sales() = SalesPage;
   const factory AppRouteInfo.salesItem({required Sales item}) = SalesItemPage;
   const factory AppRouteInfo.salesItemForm({required Sales item}) =

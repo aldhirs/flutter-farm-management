@@ -18,7 +18,14 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       DraftingDetail(:final connection) => DraftingDetailRoute(
         connection: connection,
       ),
-      DraftingForm(:final rfid) => DraftingFormRoute(rfid: rfid),
+      DraftingForm(:final rfid, :final cattle) => DraftingFormRoute(
+        rfid: rfid,
+        cattle: cattle,
+      ),
+      CattleCreate(:final connection, :final rfid) => CattleCreateRoute(
+        connection: connection,
+        rfid: rfid,
+      ),
       Account() => const AccountRoute(),
       SalesPage() => const SalesRoute(),
       SalesItemPage(:final item) => SalesItemsRoute(item: item),

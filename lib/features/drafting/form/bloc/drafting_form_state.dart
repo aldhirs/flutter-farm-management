@@ -39,6 +39,7 @@ abstract class DraftingFormState extends BaseBlocState
     @Default('') String treatmentErrorMessage,
     @Default('') String medicalErrorMessage,
 
+    @Default(null) String? selectedGender,
     @Default(null) Barn? selectedBarn,
     @Default(null) Pen? selectedPen,
     @Default(null) String? earTag,
