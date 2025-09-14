@@ -55,10 +55,4 @@ abstract class AppRouteInfo with _$AppRouteInfo {
     required Mutation item,
     BluetoothConnection? connection,
   }) = MutationItemPreviewPage;
-  // const factory AppRouteInfo.mutationItemAdd({
-  //   required Mutation item,
-  //   required bool fromManual,
-  //   Cattle? cattle,
-  //   String? rfid,
-  // }) = MutationItemAddPage;
 }

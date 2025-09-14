@@ -61,18 +61,6 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       ),
       MutationItemPreviewPage(:final item, :final connection) =>
         MutationItemPreviewRoute(item: item, connection: connection),
-      // MutationItemAddPage(
-      //   :final item,
-      //   :final fromManual,
-      //   :final cattle,
-      //   :final rfid,
-      // ) =>
-      //   MutationItemAddRoute(
-      //     item: item,
-      //     cattle: cattle,
-      //     rfid: rfid,
-      //     fromManual: fromManual,
-      //   ),
       _ => throw UnimplementedError('Unknown route: $appRouteInfo'),
     };
   }
