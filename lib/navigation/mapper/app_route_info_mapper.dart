@@ -29,7 +29,6 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       Account() => const AccountRoute(),
       SalesPage() => const SalesRoute(),
       SalesItemPage(:final item) => SalesItemsRoute(item: item),
-      SalesItemFormPage(:final item) => SalesItemFormRoute(item: item),
       SalesItemPreviewPage(:final item, :final connection) =>
         SalesItemPreviewRoute(item: item, connection: connection),
       SalesItemAddPage(
