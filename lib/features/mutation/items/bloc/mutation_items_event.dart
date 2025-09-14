@@ -109,3 +109,10 @@ abstract class CheckCattleEarTag extends MutationItemsEvent
 
   const CheckCattleEarTag._();
 }
+
+@freezed
+abstract class OnSubmitAdd extends MutationItemsEvent with _$OnSubmitAdd {
+  const factory OnSubmitAdd() = _OnSubmitAdd;
+
+  const OnSubmitAdd._();
+}

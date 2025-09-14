@@ -16,8 +16,10 @@ abstract class MutationItemsState extends BaseBlocState
     @Default([]) List<MutationItem> mutationItems,
     @Default([]) List<Mutation> mutationList,
     @Default('') String errorMessage,
+    @Default('') String addErrorMessage,
     @Default('') String earTagErrorMessage,
     @Default(false) bool earTagLoading,
+    @Default(false) bool addLoading,
     @Default('') String earTag,
     @Default(null) Cattle? cattle,
     @Default(false) bool isLoadMore,
@@ -31,6 +33,7 @@ abstract class MutationItemsState extends BaseBlocState
     @Default(null) Barn? selectedBarn,
     @Default(null) Pen? selectedPen,
     @Default(null) Mutation? selectedSale,
+    @Default(false) bool isSuccessAdd,
   }) = _MutationItemsState;
   const MutationItemsState._();
 }

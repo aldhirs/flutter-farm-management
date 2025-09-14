@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:farm/constants/date_constant.dart';
+import 'package:farm/utils/date_time_utils.dart';
 import 'package:intl/intl.dart';
 
 extension StringExtensions on String {
@@ -84,15 +85,13 @@ extension StringExtensions on String {
   String formatDateString({
     String format = DateConstant.DATE_FULL_MONTH,
     String newFormat = DateConstant.DATE_YEAR_FIRST,
+    String suffix = "WIB",
   }) {
     if (isEmpty) {
       return this;
     }
-
-    final inputFormat = DateFormat(format, 'id_ID');
-    final dateTime = inputFormat.parse(this);
-
-    final output = DateFormat(newFormat, 'id_ID').format(dateTime);
-    return output;
+    final wibDate = DateTimeUtils.parseToWib(this);
+    final datetime = DateFormat(newFormat, 'id_ID').format(wibDate);
+    return "$datetime $suffix";
   }
 }

@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/entities/mutation/mutation.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/features/scan/bloc/scan_bloc.dart';
 import 'package:farm/features/scan/bloc/scan_event.dart';
@@ -25,10 +26,12 @@ class ScanPage extends StatefulWidget {
     super.key,
     required this.destinationRoute,
     this.sales = const Sales(),
+    this.mutation = const Mutation(),
   });
 
   final String destinationRoute;
   final Sales sales;
+  final Mutation mutation;
 
   @override
   State<ScanPage> createState() => _ScanPageState();
@@ -38,7 +41,13 @@ class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
   @override
   void initState() {
     super.initState();
-    bloc.add(Initiated(sales: widget.sales, route: widget.destinationRoute));
+    bloc.add(
+      Initiated(
+        sales: widget.sales,
+        mutation: widget.mutation,
+        route: widget.destinationRoute,
+      ),
+    );
   }
 
   @override
@@ -214,6 +223,10 @@ class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
             case DEST_SALES_ITEM:
               navigator.popAndPush(
                 AppRouteInfo.salesItemPreview(item: widget.sales),
+              );
+            case DEST_MUTATION_ITEM:
+              navigator.popAndPush(
+                AppRouteInfo.mutationItemPreview(item: widget.mutation),
               );
           }
           // bypass-debug

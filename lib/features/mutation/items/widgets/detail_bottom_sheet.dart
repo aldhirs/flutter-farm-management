@@ -12,10 +12,12 @@ class DetailBottomSheet extends StatelessWidget {
     super.key,
     required this.item,
     required this.onDismiss,
+    this.showBottomSheet = false,
   });
 
   final Mutation item;
   final VoidCallback onDismiss;
+  final bool showBottomSheet;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,10 @@ class DetailBottomSheet extends StatelessWidget {
           Text("Informasi Mutasi", style: TextStyles.heading5()),
           const SizedBox(height: 16),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              _buildChip(Icons.key_outlined, item.id.defaultValue('-')),
               Align(
                 alignment: Alignment.topLeft,
                 child: TagCategory(
@@ -36,8 +41,6 @@ class DetailBottomSheet extends StatelessWidget {
                   type: item.statusType(),
                 ),
               ),
-
-              _buildChip(Icons.key_outlined, item.id.defaultValue('-')),
             ],
           ),
 
@@ -66,7 +69,9 @@ class DetailBottomSheet extends StatelessWidget {
                 )
                 .defaultValue('-'),
           ),
-          const SizedBox(height: 16),
+          showBottomSheet
+              ? const SizedBox(height: 16)
+              : const SizedBox.shrink(),
         ],
       ),
     );

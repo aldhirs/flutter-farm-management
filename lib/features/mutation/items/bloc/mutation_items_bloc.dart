@@ -1,17 +1,17 @@
 import 'package:dartx/dartx.dart';
 import 'package:farm/base/base.dart';
-import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/entities/barn/barn_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_request.dart';
+import 'package:farm/domain/entities/mutation/mutation_item_add_request.dart';
+import 'package:farm/domain/entities/mutation/mutation_item_delete.dart';
 import 'package:farm/domain/entities/mutation/mutation_item_delete_request.dart';
 import 'package:farm/domain/entities/mutation/mutation_item_request.dart';
-import 'package:farm/domain/entities/mutation/mutation_request.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/usecases/barns_use_case.dart';
 import 'package:farm/domain/usecases/cattle_by_ear_tag_use_case.dart';
+import 'package:farm/domain/usecases/mutation_item_add_use_case.dart';
 import 'package:farm/domain/usecases/mutation_item_delete_use_case.dart';
 import 'package:farm/domain/usecases/mutation_items_use_case.dart';
-import 'package:farm/domain/usecases/mutations_use_case.dart';
 import 'package:farm/domain/usecases/pens_use_case.dart';
 import 'package:farm/features/mutation/items/bloc/mutation_items_event.dart';
 import 'package:farm/features/mutation/items/bloc/mutation_items_state.dart';
@@ -22,7 +22,7 @@ import 'package:injectable/injectable.dart';
 @Injectable()
 class MutationItemsBloc
     extends BaseBloc<MutationItemsEvent, MutationItemsState> {
-  final MutationsUseCase _mutationsUseCase;
+  final MutationItemAddUseCase _mutationItemAddUseCase;
   final CattleByEarTagUseCase _cattleByEarTagUseCase;
   final MutationItemsUseCase _mutationItemsUseCase;
   final MutationItemDeleteUseCase _mutationItemDeleteUseCase;
@@ -32,12 +32,13 @@ class MutationItemsBloc
   MutationItemsBloc(
     this._cattleByEarTagUseCase,
     this._barnsUseCase,
-    this._mutationsUseCase,
+    this._mutationItemAddUseCase,
     this._pensUseCase,
     this._mutationItemsUseCase,
     this._mutationItemDeleteUseCase,
   ) : super(const MutationItemsState()) {
     on<Initiated>(_initialized, transformer: log());
+    on<OnSubmitAdd>(_onSubmitAddApi, transformer: log());
     on<Load>(_load, transformer: log());
     on<LoadMore>(_loadMore, transformer: log());
     on<EditModeToggled>(_onEditModeToggled, transformer: log());
@@ -176,9 +177,17 @@ class MutationItemsBloc
     return runBlocCatching(
       handleLoading: true,
       action: () async {
+        final items = state.selectedItems
+            .map(
+              (item) => MutationItemDelete(
+                id_mutation_item: item.id,
+                id_cattle: item.id_cattle,
+              ),
+            )
+            .toList();
         final req = MutationItemDeleteRequest(
           id_mutation: state.mutation.id,
-          items: state.selectedItems,
+          items: items,
         );
         final response = await _mutationItemDeleteUseCase.execute(req);
         switch (response.result) {
@@ -303,6 +312,51 @@ class MutationItemsBloc
       handleError: false,
       doOnError: (e) async {
         emit(state.copyWith(earTagErrorMessage: exceptionMessageMapper.map(e)));
+      },
+    );
+  }
+
+  Future<void> _onSubmitAddApi(
+    OnSubmitAdd event,
+    Emitter<MutationItemsState> emit,
+  ) {
+    return runBlocCatching(
+      handleLoading: true,
+      action: () async {
+        if (!_isProjectChosen(emit)) {
+          return;
+        }
+        emit(
+          state.copyWith(addLoading: true, loading: true, isSuccessAdd: false),
+        );
+        final payload = MutationItemAddRequest(
+          id_mutation: state.mutation.id,
+          id_cattles: [(state.cattle?.id).orEmpty()],
+        );
+        final response = await _mutationItemAddUseCase.execute(payload);
+        switch (response.result) {
+          case DataSuccess(:final data):
+            emit(
+              state.copyWith(
+                isSuccessAdd: true,
+                addErrorMessage: '',
+                successMessage: 'Item mutasi berhasil ditambahkan.',
+                cattle: null,
+              ),
+            );
+            break;
+          case DataError(:final errorMessage):
+            emit(state.copyWith(addErrorMessage: errorMessage.orEmpty()));
+          case null:
+            return;
+        }
+      },
+      doOnEventCompleted: () async {
+        emit(state.copyWith(addLoading: false, loading: false));
+      },
+      handleError: true,
+      doOnError: (e) async {
+        emit(state.copyWith(addErrorMessage: exceptionMessageMapper.map(e)));
       },
     );
   }

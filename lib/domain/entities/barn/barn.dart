@@ -7,8 +7,9 @@ part 'barn.g.dart';
 @freezed
 abstract class Barn extends BaseOutput with _$Barn {
   const factory Barn({
-    @JsonKey(name: 'id') @Default('') String id,
-    @JsonKey(name: 'name') @Default('') String name,
+    @Default('') String id,
+    @Default('') String name,
+    @Default('') String category,
   }) = _Barn;
   const Barn._();
   factory Barn.fromJson(Map<String, dynamic> json) => _$BarnFromJson(json);

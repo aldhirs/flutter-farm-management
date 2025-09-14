@@ -116,18 +116,21 @@ class _PenDraftingPageState
                 final item = state.items[index];
                 return ItemWidget(
                   item: item,
-                  onTap: () => navigator.showBottomSheet(
-                    isScrollControlled: true,
-                    isDismissible: true,
-                    enableDrag: true,
-                    ChangeBottomSheet(
-                      bloc: bloc,
-                      item: item,
-                      onDismiss: () {
-                        navigator.pop();
-                      },
-                    ),
-                  ),
+                  onTap: () {
+                    bloc.add(const GetBarns());
+                    navigator.showBottomSheet(
+                      isScrollControlled: true,
+                      isDismissible: true,
+                      enableDrag: true,
+                      ChangeBottomSheet(
+                        bloc: bloc,
+                        item: item,
+                        onDismiss: () {
+                          navigator.pop();
+                        },
+                      ),
+                    );
+                  },
                 );
               },
             ),
@@ -158,12 +161,14 @@ class _PenDraftingPageState
 
   Widget _errorWidget() {
     return EmptyState(
-      title: 'Opps',
+      title: 'Ups!',
       description: bloc.state.errorMessage,
-      imageAssets: Icon(
-        Icons.warning_outlined,
-        size: 140,
-        color: AppColors.current.neutral800,
+      imageAssets: ClipRRect(
+        borderRadius: BorderRadius.circular(20), // adjust radius
+        child: Assets.images.ilNotFound.image(
+          height: Dimens.d240,
+          fit: BoxFit.contain,
+        ),
       ),
       isEnabledPositifButton: true,
       buttonText: 'Muat Ulang',

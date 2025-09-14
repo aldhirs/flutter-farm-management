@@ -1,4 +1,5 @@
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/entities/mutation/mutation.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -16,6 +17,7 @@ abstract class ScanState extends BaseBlocState with _$ScanState {
     @Default('') String errorMessage,
     @Default(false) bool isError,
     @Default(Sales()) Sales sales,
+    @Default(Mutation()) Mutation mutation,
     @Default('') String route,
   }) = _ScanState;
 

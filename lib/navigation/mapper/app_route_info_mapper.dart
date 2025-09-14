@@ -46,14 +46,19 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
           connection: connection,
           fromManual: fromManual,
         ),
-      ScanPages(:final route, :final sales) =>
+      ScanPages(:final route, :final sales, :final mutation) =>
         sales != null
             ? ScanRoute(destinationRoute: route, sales: sales)
+            : mutation != null
+            ? ScanRoute(destinationRoute: route, mutation: mutation)
             : ScanRoute(destinationRoute: route),
       PenDrafting() => const PenDraftingRoute(),
 
       MutationNavBar() => const MutationNavBarRoute(),
-      MutationItemPage(:final item) => MutationItemsRoute(item: item),
+      MutationItemPage(:final item, :final isIn) => MutationItemsRoute(
+        item: item,
+        isIn: isIn,
+      ),
       MutationItemPreviewPage(:final item, :final connection) =>
         MutationItemPreviewRoute(item: item, connection: connection),
       // MutationItemAddPage(
@@ -61,13 +66,11 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       //   :final fromManual,
       //   :final cattle,
       //   :final rfid,
-      //   :final connection,
       // ) =>
-      //   MutationItemsAddRoute(
+      //   MutationItemAddRoute(
       //     item: item,
       //     cattle: cattle,
       //     rfid: rfid,
-      //     connection: connection,
       //     fromManual: fromManual,
       //   ),
       _ => throw UnimplementedError('Unknown route: $appRouteInfo'),

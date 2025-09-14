@@ -107,8 +107,9 @@ class _MutationListPageState
                 return ItemWidget(
                   isIn: widget.isIn,
                   item: item,
-                  onTap: () =>
-                      navigator.push(AppRouteInfo.mutationItem(item: item)),
+                  onTap: () => navigator.push(
+                    AppRouteInfo.mutationItem(item: item, isIn: widget.isIn),
+                  ),
                 );
               },
             ),
@@ -120,8 +121,8 @@ class _MutationListPageState
 
   Widget _emptyWidget() {
     return EmptyState(
-      title: 'Data masih kosong',
-      description: 'Data mutasi masih kosong.',
+      title: 'Ups!',
+      description: 'Data tidak ditemukan.',
       imageAssets: ClipRRect(
         borderRadius: BorderRadius.circular(20), // adjust radius
         child: Assets.images.ilNotFound.image(
@@ -155,7 +156,7 @@ class _MutationListPageState
 
   Widget _errorWidget() {
     return EmptyState(
-      title: 'Opps',
+      title: 'Ups!',
       description: bloc.state.errorMessage,
       imageAssets: ClipRRect(
         borderRadius: BorderRadius.circular(20), // adjust radius

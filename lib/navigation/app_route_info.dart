@@ -39,24 +39,26 @@ abstract class AppRouteInfo with _$AppRouteInfo {
     String? rfid,
     BluetoothConnection? connection,
   }) = SalesItemAddPage;
-  const factory AppRouteInfo.scan({required String route, Sales? sales}) =
-      ScanPages;
+  const factory AppRouteInfo.scan({
+    required String route,
+    Sales? sales,
+    Mutation? mutation,
+  }) = ScanPages;
   const factory AppRouteInfo.penDrafting() = PenDrafting;
 
   const factory AppRouteInfo.mutationNavBar() = MutationNavBar;
-  const factory AppRouteInfo.mutationItem({required Mutation item}) =
-      MutationItemPage;
-  const factory AppRouteInfo.mutationItemForm({required Mutation item}) =
-      MutationItemFormPage;
+  const factory AppRouteInfo.mutationItem({
+    required Mutation item,
+    required bool isIn,
+  }) = MutationItemPage;
   const factory AppRouteInfo.mutationItemPreview({
     required Mutation item,
     BluetoothConnection? connection,
   }) = MutationItemPreviewPage;
-  const factory AppRouteInfo.mutationItemAdd({
-    required Mutation item,
-    required bool fromManual,
-    Cattle? cattle,
-    String? rfid,
-    BluetoothConnection? connection,
-  }) = MutationItemAddPage;
+  // const factory AppRouteInfo.mutationItemAdd({
+  //   required Mutation item,
+  //   required bool fromManual,
+  //   Cattle? cattle,
+  //   String? rfid,
+  // }) = MutationItemAddPage;
 }

@@ -10,9 +10,7 @@ class ExceptionMessageMapper {
       case AppExceptionType.remote:
         final exception = appException as RemoteException;
         if (exception.generalServerMessage?.isNotEmpty == true) {
-          return exception.generalServerMessage.defaultValue(
-            exception.rootException.toString(),
-          );
+          return "${exception.generalServerStatusCode}: ${exception.generalServerMessage.defaultValue(exception.rootException.toString())}";
         }
         switch (exception.kind) {
           case RemoteExceptionKind.badCertificate:
@@ -39,7 +37,7 @@ class ExceptionMessageMapper {
       case AppExceptionType.remoteConfig:
         return 'Remote config';
       case AppExceptionType.uncaught:
-        return 'Uncaught';
+        return 'Terjadi kesalahan, silakan ulangi kembali. ';
       case AppExceptionType.validation:
         return 'Invalid some validation';
     }

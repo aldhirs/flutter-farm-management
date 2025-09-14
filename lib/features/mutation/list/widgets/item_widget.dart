@@ -44,7 +44,10 @@ class ItemWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                _buildChip(Icons.key_outlined, item.id.defaultValue('-')),
                 Align(
                   alignment: Alignment.topLeft,
                   child: TagCategory(
@@ -52,8 +55,6 @@ class ItemWidget extends StatelessWidget {
                     type: item.statusType(),
                   ),
                 ),
-
-                _buildChip(Icons.key_outlined, item.id.defaultValue('-')),
               ],
             ),
 

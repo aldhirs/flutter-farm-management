@@ -154,6 +154,7 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
                       id: item.id,
                       text: item.name,
                       selected: item.id == state.selectedBarn?.id,
+                      notes: item.category,
                     ),
                   )
                   .toList(),

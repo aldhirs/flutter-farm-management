@@ -1,4 +1,5 @@
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/entities/barn/barn.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -9,7 +10,9 @@ abstract class PenDraftingState extends BaseBlocState with _$PenDraftingState {
   const factory PenDraftingState({
     @Default('') String filterStatus,
     @Default([]) List<Pen> items,
+    @Default([]) List<Barn> barns,
     @Default([]) List<Pen> dropdownPens,
+    @Default(null) Barn? selectedBarn,
     @Default(null) Pen? selectedPen,
     @Default('') String errorMessage,
     @Default('') String successMessage,

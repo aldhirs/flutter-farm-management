@@ -55,6 +55,7 @@ class AppRouter extends RootStackRouter {
     ),
     AutoRoute(page: MutationItemsRoute.page, guards: [authGuard()]),
     AutoRoute(page: MutationItemPreviewRoute.page, guards: [authGuard()]),
+    // AutoRoute(page: MutationItemAddRoute.page, guards: [authGuard()]),
   ];
 
   @override

@@ -36,7 +36,13 @@ class ScanBloc extends BaseBloc<ScanEvent, ScanState> {
   }
 
   Future<void> _initialized(Initiated event, Emitter<ScanState> emit) async {
-    emit(state.copyWith(route: event.route, sales: event.sales));
+    emit(
+      state.copyWith(
+        route: event.route,
+        sales: event.sales,
+        mutation: event.mutation,
+      ),
+    );
     var adapterState = BluetoothAdapterState.unknown;
     final Set<BluetoothDevice> devices = {};
     try {
@@ -106,6 +112,10 @@ class ScanBloc extends BaseBloc<ScanEvent, ScanState> {
           case DEST_SALES_ITEM:
             navigator.push(AppRouteInfo.salesItemForm(item: state.sales));
             break;
+          case DEST_MUTATION_ITEM:
+            navigator.popAndPush(
+              AppRouteInfo.mutationItemPreview(item: state.mutation),
+            );
           default:
             navigator.push(AppRouteInfo.draftingDetail(connection: connection));
             break;

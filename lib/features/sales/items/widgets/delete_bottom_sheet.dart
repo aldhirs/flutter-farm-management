@@ -121,6 +121,7 @@ class _DeleteBottomSheetState extends State<DeleteBottomSheet> {
                       id: item.id,
                       text: item.name,
                       selected: item.id == state.selectedBarn?.id,
+                      notes: item.category,
                     ),
                   )
                   .toList(),

@@ -25,7 +25,7 @@ class DioExceptionMapper extends ExceptionMapper<RemoteException> {
           final httpErrorCode = exception.response?.statusCode ?? -1;
 
           /// server-defined error
-          if (exception.response?.data != null) {
+          if (exception.response?.data != "") {
             final expired =
                 exception.response?.data["error"] == 'token has expired';
 
@@ -47,6 +47,11 @@ class DioExceptionMapper extends ExceptionMapper<RemoteException> {
             kind: RemoteExceptionKind.serverUndefined,
             httpErrorCode: httpErrorCode,
             rootException: exception,
+            serverError: ServerError(
+              generalServerStatusCode: httpErrorCode,
+              generalMessage:
+                  exception.response?.statusMessage ?? exception.message,
+            ),
           );
         case DioExceptionType.badCertificate:
           return RemoteException(

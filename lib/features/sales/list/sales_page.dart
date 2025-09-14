@@ -153,12 +153,14 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
 
   Widget _errorWidget() {
     return EmptyState(
-      title: 'Opps',
+      title: 'Ups!',
       description: bloc.state.errorMessage,
-      imageAssets: Icon(
-        Icons.warning_outlined,
-        size: 140,
-        color: AppColors.current.neutral800,
+      imageAssets: ClipRRect(
+        borderRadius: BorderRadius.circular(20), // adjust radius
+        child: Assets.images.ilNotFound.image(
+          height: Dimens.d240,
+          fit: BoxFit.contain,
+        ),
       ),
       isEnabledPositifButton: true,
       buttonText: 'Muat Ulang',

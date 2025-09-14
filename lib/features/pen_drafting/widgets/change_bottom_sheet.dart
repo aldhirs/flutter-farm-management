@@ -32,17 +32,22 @@ class ChangeBottomSheet extends StatefulWidget {
 }
 
 class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
+  final TextEditingController _barnController = TextEditingController();
   final TextEditingController _penController = TextEditingController();
 
   @override
   void initState() {
-    widget.bloc.add(const GetPens());
+    widget.bloc.add(const GetBarns());
+    _barnController.text = "";
+    _penController.text = "";
     super.initState();
   }
 
   @override
   void dispose() {
+    _barnController.dispose();
     _penController.dispose();
+
     super.dispose();
   }
 
@@ -87,7 +92,7 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
               ),
               Text("Tujuan", style: TextStyles.label1()),
               const SizedBox(height: 6),
-              // _dropdownBarn(),
+              _dropdownBarn(),
               _dropdownPen(),
               const SizedBox(height: 16),
               BlocProvider.value(
@@ -119,45 +124,52 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
     );
   }
 
-  // Widget _dropdownBarn() {
-  //   return BlocProvider.value(
-  //     value: widget.bloc,
-  //     child: BlocBuilder<PenDraftingBloc, PenDraftingState>(
-  //       buildWhen: (p, c) => p.barns != c.barns,
-  //       builder: (context, state) {
-  //         return DropdownViewField(
-  //           title: 'Kandang',
-  //           items: ValueNotifier<List<DropdownCheckboxModel>>(
-  //             state.barns
-  //                 .map(
-  //                   (item) => DropdownCheckboxModel(
-  //                     id: item.id,
-  //                     text: item.name,
-  //                     selected: item.id == state.selectedBarn?.id,
-  //                   ),
-  //                 )
-  //                 .toList(),
-  //           ),
-  //           navigator: widget.bloc.navigator,
-  //           dropdownType: DropdownTypeEnum.single,
-  //           onSelectedItems: (List<String> value) {
-  //             final selected = state.barns
-  //                 .where((item) => item.id == value.first)
-  //                 .first;
-  //             widget.bloc.add(BarnChanged(barn: selected));
-  //             _penController.text = "";
-  //           },
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
+  Widget _dropdownBarn() {
+    return BlocProvider.value(
+      value: widget.bloc,
+      child: BlocBuilder<PenDraftingBloc, PenDraftingState>(
+        buildWhen: (p, c) =>
+            p.barns != c.barns || p.selectedBarn != c.selectedBarn,
+        builder: (context, state) {
+          _barnController.text = state.selectedBarn?.name ?? "";
+          return DropdownViewField(
+            controller: _barnController,
+            title: 'Kandang',
+            items: ValueNotifier<List<DropdownCheckboxModel>>(
+              state.barns
+                  .map(
+                    (item) => DropdownCheckboxModel(
+                      id: item.id,
+                      text: item.name,
+                      selected: item.id == state.selectedBarn?.id,
+                      notes: item.category,
+                    ),
+                  )
+                  .toList(),
+            ),
+            navigator: widget.bloc.navigator,
+            dropdownType: DropdownTypeEnum.single,
+            onSelectedItems: (List<String> value) {
+              final selected = state.barns
+                  .where((item) => item.id == value.first)
+                  .first;
+              widget.bloc.add(BarnChanged(barn: selected));
+              _penController.text = "";
+            },
+          );
+        },
+      ),
+    );
+  }
 
   Widget _dropdownPen() {
     return BlocProvider.value(
       value: widget.bloc,
       child: BlocBuilder<PenDraftingBloc, PenDraftingState>(
+        buildWhen: (p, c) =>
+            p.dropdownPens != c.dropdownPens || p.selectedPen != c.selectedPen,
         builder: (context, state) {
+          _penController.text = state.selectedPen?.name ?? "";
           return DropdownViewPenField(
             controller: _penController,
             title: 'Pen Tujuan',

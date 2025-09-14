@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base_page_state.dart';
 import 'package:farm/domain/entities/mutation/mutation.dart';
-import 'package:farm/extensions/string.dart';
 import 'package:farm/features/mutation/items/bloc/mutation_items_bloc.dart';
 import 'package:farm/features/mutation/items/bloc/mutation_items_event.dart';
 import 'package:farm/features/mutation/items/bloc/mutation_items_state.dart';
@@ -9,6 +8,8 @@ import 'package:farm/features/mutation/items/widgets/add_manual_bottom_sheet.dar
 import 'package:farm/features/mutation/items/widgets/delete_bottom_sheet.dart';
 import 'package:farm/features/mutation/items/widgets/detail_bottom_sheet.dart';
 import 'package:farm/features/mutation/items/widgets/item_widget.dart';
+import 'package:farm/features/mutation/items/widgets/result_cattle_bottom_sheet.dart';
+import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/views/view.dart';
@@ -20,9 +21,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
 class MutationItemsPage extends StatefulWidget {
-  const MutationItemsPage({super.key, required this.item});
+  const MutationItemsPage({super.key, required this.item, required this.isIn});
 
   final Mutation item;
+  final bool isIn;
 
   @override
   State<StatefulWidget> createState() => _MutationPageState();
@@ -75,6 +77,17 @@ class _MutationPageState
           },
         ),
         BlocListener<MutationItemsBloc, MutationItemsState>(
+          listenWhen: (previous, current) =>
+              previous.isSuccessAdd != current.isSuccessAdd,
+          listener: (context, state) async {
+            if (state.isSuccessAdd) {
+              await navigator.pop();
+              await navigator.pop();
+              bloc.add(const Load());
+            }
+          },
+        ),
+        BlocListener<MutationItemsBloc, MutationItemsState>(
           listenWhen: (previous, current) => previous.cattle != current.cattle,
           listener: (context, state) async {
             if (state.cattle != null) {
@@ -106,22 +119,16 @@ class _MutationPageState
                 return;
               }
 
-              ToastHelper().showToast(
-                context: context,
-                message:
-                    "Data sapi ${state.cattle?.ear_tag.defaultValue('-')} berhasil ditemukan",
-                type: ToastType.succes,
-              );
-              final result = await navigator.popAndPush(
-                AppRouteInfo.mutationItemAdd(
-                  item: state.mutation,
-                  cattle: state.cattle,
-                  fromManual: true,
+              navigator.showBottomSheet(
+                isScrollControlled: true,
+                ResultCattleBottomSheet(
+                  bloc: bloc,
+                  onTap: () async {
+                    bloc.add(const OnSubmitAdd());
+                  },
+                  onDismiss: () => navigator.pop(),
                 ),
               );
-              if (result != null) {
-                bloc.add(const Load());
-              }
             }
           },
         ),
@@ -140,7 +147,7 @@ class _MutationPageState
             forceMaterialTransparency: false,
             actions: [
               Visibility(
-                visible: widget.item.isDraft(),
+                visible: widget.item.isDraft() && !widget.isIn,
                 child: IconButton(
                   onPressed: () => bloc.add(const EditModeToggled()),
                   icon: Icon(state.isEditMode ? Icons.close : Icons.edit),
@@ -238,7 +245,7 @@ class _MutationPageState
   }
 
   Widget _addButton() {
-    if (!widget.item.isDraft()) {
+    if (!widget.item.isDraft() || widget.isIn) {
       return const SizedBox.shrink();
     }
     return FloatingActionButton.extended(
@@ -255,12 +262,14 @@ class _MutationPageState
 
   Widget _errorWidget() {
     return EmptyState(
-      title: 'Opps',
+      title: 'Ups!',
       description: bloc.state.errorMessage,
-      imageAssets: Icon(
-        Icons.warning_outlined,
-        size: 140,
-        color: AppColors.current.neutral800,
+      imageAssets: ClipRRect(
+        borderRadius: BorderRadius.circular(20), // adjust radius
+        child: Assets.images.ilNotFound.image(
+          height: Dimens.d240,
+          fit: BoxFit.contain,
+        ),
       ),
       isEnabledPositifButton: true,
       buttonText: 'Muat Ulang',
@@ -274,9 +283,8 @@ class _MutationPageState
 
   Widget _emptyWidget() {
     return EmptyState(
-      title: 'Data masih kosong',
-      description:
-          'Data sapi masih kosong, silakan tambah sapi baru dalam mutasi ini.',
+      title: 'Ups!',
+      description: 'Data masih kosong.',
       imageAssets: ClipRRect(
         borderRadius: BorderRadius.circular(20), // adjust radius
         child: Assets.images.ilNotFound.image(
@@ -284,8 +292,8 @@ class _MutationPageState
           fit: BoxFit.contain,
         ),
       ),
-      isEnabledPositifButton: true,
-      buttonText: 'Tambah Data',
+      isEnabledPositifButton: !widget.isIn,
+      buttonText: !widget.isIn ? 'Tambah Data' : '',
       isButtonFullWidth: true,
       leftIconButton: const Icon(Icons.add, color: Colors.white),
       onPressed: () => _addNew(),
@@ -299,6 +307,7 @@ class _MutationPageState
         onDismiss: () {
           navigator.pop();
         },
+        showBottomSheet: true,
       ),
     );
   }
@@ -310,9 +319,6 @@ class _MutationPageState
       heroTag: 'deleteBtn',
       backgroundColor: AppColors.current.crimson500,
       onPressed: () async {
-        if (state.barns.isEmpty) {
-          bloc.add(const GetBarns());
-        }
         navigator.showBottomSheet(
           DeleteBottomSheet(
             bloc: bloc,
@@ -350,13 +356,12 @@ class _MutationPageState
         negativeButtonText: "Tambah Manual",
         onNegativeButtonPressed: () => _addManualBottomSheet(),
         onPositiveButtonPressed: () async {
-          // TODO
-          // final result = await navigator.popAndPush(
-          //   AppRouteInfo.scan(route: DEST_SALES_ITEM, sales: widget.item),
-          // );
-          // if (result == null) {
-          //   bloc.add(const Load());
-          // }
+          final result = await navigator.popAndPush(
+            AppRouteInfo.scan(route: DEST_MUTATION_ITEM, mutation: widget.item),
+          );
+          if (result == null) {
+            bloc.add(const Load());
+          }
         },
       ),
     );

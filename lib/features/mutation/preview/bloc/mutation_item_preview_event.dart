@@ -1,4 +1,5 @@
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/entities/mutation/mutation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -11,8 +12,10 @@ abstract class MutationItemPreviewEvent extends BaseBlocEvent {
 
 @freezed
 abstract class Initiated extends MutationItemPreviewEvent with _$Initiated {
-  const factory Initiated({required BluetoothConnection? connection}) =
-      _Initiated;
+  const factory Initiated({
+    required BluetoothConnection? connection,
+    required Mutation mutation,
+  }) = _Initiated;
 
   const Initiated._();
 }
@@ -38,4 +41,25 @@ abstract class BottomsheetDismiss extends MutationItemPreviewEvent
   const factory BottomsheetDismiss() = _BottomsheetDismiss;
 
   const BottomsheetDismiss._();
+}
+
+@freezed
+abstract class CheckCattle extends MutationItemPreviewEvent with _$CheckCattle {
+  const factory CheckCattle({required String rfid}) = _CheckCattle;
+
+  const CheckCattle._();
+}
+
+@freezed
+abstract class OnSubmitAdd extends MutationItemPreviewEvent with _$OnSubmitAdd {
+  const factory OnSubmitAdd() = _OnSubmitAdd;
+
+  const OnSubmitAdd._();
+}
+
+@freezed
+abstract class OnClear extends MutationItemPreviewEvent with _$OnClear {
+  const factory OnClear() = _OnClear;
+
+  const OnClear._();
 }

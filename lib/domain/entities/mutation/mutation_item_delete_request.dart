@@ -1,5 +1,6 @@
 import 'package:farm/domain/base/base.dart';
 import 'package:farm/domain/entities/mutation/mutation_item.dart';
+import 'package:farm/domain/entities/mutation/mutation_item_delete.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'mutation_item_delete_request.freezed.dart';
@@ -10,7 +11,8 @@ abstract class MutationItemDeleteRequest extends BaseInput
     with _$MutationItemDeleteRequest {
   const factory MutationItemDeleteRequest({
     @Default('') String id_mutation,
-    @Default([]) List<MutationItem> items,
+    @Default('') String to_pen_id,
+    @Default([]) List<MutationItemDelete> items,
   }) = _MutationItemDeleteRequest;
 
   const MutationItemDeleteRequest._();

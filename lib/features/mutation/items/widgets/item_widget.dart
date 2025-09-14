@@ -1,8 +1,6 @@
 import 'package:farm/domain/entities/mutation/mutation_item.dart';
 import 'package:farm/extensions/string.dart';
-import 'package:farm/resources/dimens/dimens.dart';
-import 'package:farm/resources/styles/app_colors.dart';
-import 'package:farm/resources/styles/text_styles.dart';
+import 'package:farm/resources/resource.dart';
 import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:flutter/material.dart';
 
@@ -30,77 +28,76 @@ class ItemWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header: Name + Status
-              // Row(
-              //   crossAxisAlignment: CrossAxisAlignment.center,
-              //   children: [
-              //     const SizedBox(width: 4),
-              //     Expanded(
-              //       child: Column(
-              //         crossAxisAlignment: CrossAxisAlignment.start,
-              //         children: [
-              //           Row(
-              //             children: [
-              //               const Icon(Icons.tag, size: 18, color: Colors.teal),
-              //               const SizedBox(width: 6),
-              //               Expanded(
-              //                 child: Text(
-              //                   item.id_cattle.defaultValue('-'),
-              //                   style: TextStyles.heading5(),
-              //                   overflow: TextOverflow.ellipsis,
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //           const SizedBox(height: 4),
-              //           Row(
-              //             children: [
-              //               const Icon(
-              //                 Icons.barcode_reader,
-              //                 size: 18,
-              //                 color: Colors.indigo,
-              //               ),
-              //               const SizedBox(width: 6),
-              //               Expanded(
-              //                 child: Text(
-              //                   item.rfid,
-              //                   style: TextStyles.label2().copyWith(
-              //                     color: Colors.grey.shade700,
-              //                   ),
-              //                   overflow: TextOverflow.ellipsis,
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //           const SizedBox(height: 4),
-              //           Row(
-              //             children: [
-              //               const Icon(
-              //                 Icons.monitor_weight,
-              //                 size: 18,
-              //                 color: Colors.redAccent,
-              //               ),
-              //               const SizedBox(width: 6),
-              //               Expanded(
-              //                 child: Text(
-              //                   'Berat ${item.actual_weight} Kg',
-              //                   style: TextStyles.label2().copyWith(
-              //                     color: Colors.grey.shade700,
-              //                   ),
-              //                   overflow: TextOverflow.ellipsis,
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //     TagCategory(
-              //       text: item.statusLabel(),
-              //       type: item.statusType(),
-              //     ),
-              //   ],
-              // ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.tag, size: 18, color: Colors.teal),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                item.ear_tag.defaultValue('-'),
+                                style: TextStyles.heading5(),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.barcode_reader,
+                              size: 18,
+                              color: Colors.indigo,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                item.rfid,
+                                style: TextStyles.label2().copyWith(
+                                  color: Colors.grey.shade700,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.monitor_weight,
+                              size: 18,
+                              color: Colors.redAccent,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'Berat ${item.weight} Kg',
+                                style: TextStyles.label2().copyWith(
+                                  color: Colors.grey.shade700,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  TagCategory(
+                    text: item.statusLabel(),
+                    type: item.statusType(),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

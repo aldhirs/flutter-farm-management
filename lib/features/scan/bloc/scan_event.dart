@@ -1,4 +1,5 @@
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/entities/mutation/mutation.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -11,8 +12,11 @@ abstract class ScanEvent extends BaseBlocEvent {
 
 @freezed
 abstract class Initiated extends ScanEvent with _$Initiated {
-  const factory Initiated({required Sales sales, required String route}) =
-      _Initiated;
+  const factory Initiated({
+    required Sales sales,
+    required Mutation mutation,
+    required String route,
+  }) = _Initiated;
 
   const Initiated._();
 }

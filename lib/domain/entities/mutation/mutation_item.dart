@@ -12,6 +12,9 @@ abstract class MutationItem extends BaseOutput with _$MutationItem {
     @Default('') String id,
     @Default('') String id_mutation,
     @Default('') String id_cattle,
+    @Default('') String rfid,
+    @Default('') String ear_tag,
+    @Default(0) double weight,
     @Default('') String mutation_do_status,
     @Default('') String created_at,
   }) = _MutationItem;

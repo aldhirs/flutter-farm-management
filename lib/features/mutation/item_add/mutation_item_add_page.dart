@@ -1,13 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base_page_state.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
-import 'package:farm/domain/entities/sales/sales.dart';
+import 'package:farm/domain/entities/mutation/mutation.dart';
 import 'package:farm/extensions/string.dart';
-import 'package:farm/features/sales/add/bloc/sales_item_add_bloc.dart';
-import 'package:farm/features/sales/add/bloc/sales_item_add_event.dart';
-import 'package:farm/features/sales/add/bloc/sales_item_add_state.dart';
+import 'package:farm/features/mutation/item_add/bloc/mutation_item_add_bloc.dart';
+import 'package:farm/features/mutation/item_add/bloc/mutation_item_add_event.dart';
+import 'package:farm/features/mutation/item_add/bloc/mutation_item_add_state.dart';
+import 'package:farm/features/mutation/items/widgets/detail_bottom_sheet.dart';
 import 'package:farm/features/sales/add/model/list_item.dart';
-import 'package:farm/features/sales/add/widgets/form_input_widget.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/utils/view_utils.dart';
@@ -20,8 +20,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 
 @RoutePage()
-class SalesItemAddPage extends StatefulWidget {
-  const SalesItemAddPage({
+class MutationItemAddPage extends StatefulWidget {
+  const MutationItemAddPage({
     super.key,
     required this.item,
     required this.fromManual,
@@ -32,20 +32,20 @@ class SalesItemAddPage extends StatefulWidget {
 
   final Cattle? cattle;
   final String? rfid;
-  final Sales item;
+  final Mutation item;
   final bool fromManual;
   final BluetoothConnection? connection;
 
   @override
-  State<SalesItemAddPage> createState() => _SalesItemAddPageState();
+  State<MutationItemAddPage> createState() => _MutationItemAddPageState();
 }
 
-class _SalesItemAddPageState
-    extends BasePageState<SalesItemAddPage, SalesItemAddBloc> {
+class _MutationItemAddPageState
+    extends BasePageState<MutationItemAddPage, MutationItemAddBloc> {
   @override
   void initState() {
     bloc.add(
-      Initiated(rfid: widget.rfid, cattle: widget.cattle, sale: widget.item),
+      Initiated(rfid: widget.rfid, cattle: widget.cattle, item: widget.item),
     );
     super.initState();
   }
@@ -54,7 +54,7 @@ class _SalesItemAddPageState
   Widget buildPageListeners({required Widget child}) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<SalesItemAddBloc, SalesItemAddState>(
+        BlocListener<MutationItemAddBloc, MutationItemAddState>(
           listenWhen: (previous, current) =>
               previous.errorMessage != current.errorMessage,
           listener: (context, state) {
@@ -67,7 +67,7 @@ class _SalesItemAddPageState
             }
           },
         ),
-        BlocListener<SalesItemAddBloc, SalesItemAddState>(
+        BlocListener<MutationItemAddBloc, MutationItemAddState>(
           listenWhen: (previous, current) =>
               previous.isSuccess != current.isSuccess,
           listener: (context, state) {
@@ -102,7 +102,7 @@ class _SalesItemAddPageState
             }
           },
         ),
-        BlocListener<SalesItemAddBloc, SalesItemAddState>(
+        BlocListener<MutationItemAddBloc, MutationItemAddState>(
           listenWhen: (previous, current) => previous.cattle != current.cattle,
           listener: (context, state) {
             if (state.cattle.id.isNotEmpty &&
@@ -145,7 +145,7 @@ class _SalesItemAddPageState
   Widget buildPage(BuildContext context) {
     return CommonScaffold(
       appBar: CommonAppBar(
-        titleText: 'Input Item Penjualan Sapi',
+        titleText: 'Input Item Mutasi Sapi',
         forceMaterialTransparency: false,
       ),
       body: ResponsiveWidget(
@@ -159,7 +159,7 @@ class _SalesItemAddPageState
   Widget _contentView(double width, bool isTablet) {
     return BlocProvider.value(
       value: bloc,
-      child: BlocBuilder<SalesItemAddBloc, SalesItemAddState>(
+      child: BlocBuilder<MutationItemAddBloc, MutationItemAddState>(
         buildWhen: (p, c) =>
             p.cattle != c.cattle ||
             p.loading != c.loading ||
@@ -174,15 +174,19 @@ class _SalesItemAddPageState
                 child: SingleChildScrollView(
                   physics: const ScrollPhysics(),
                   child: Padding(
-                    padding: const EdgeInsetsGeometry.all(16),
+                    padding: const EdgeInsetsGeometry.all(8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _animalIdentityWidget(state),
-                        const SizedBox(height: 24),
-                        Text('Lengkapi Data', style: TextStyles.body1()),
-                        const SizedBox(height: 8),
-                        FormInputWidget(bloc: bloc),
+                        DetailBottomSheet(item: state.item, onDismiss: () {}),
+                        Padding(
+                          padding: const EdgeInsetsGeometry.only(
+                            left: 8,
+                            right: 8,
+                            bottom: 16,
+                          ),
+                          child: _animalIdentityWidget(state),
+                        ),
                       ],
                     ),
                   ),
@@ -225,11 +229,12 @@ class _SalesItemAddPageState
     );
   }
 
-  Widget _animalIdentityWidget(SalesItemAddState state) {
+  Widget _animalIdentityWidget(MutationItemAddState state) {
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: ExpansionTile(
+        initiallyExpanded: true,
         shape: const RoundedRectangleBorder(side: BorderSide.none),
         title: Text("Identitas Sapi", style: TextStyles.body1()),
         subtitle: Text(
@@ -255,9 +260,8 @@ class _SalesItemAddPageState
   Widget _finishButton() {
     return BlocProvider.value(
       value: bloc,
-      child: BlocBuilder<SalesItemAddBloc, SalesItemAddState>(
-        buildWhen: (p, c) =>
-            p.selectedPen != c.selectedPen || p.weight != c.weight,
+      child: BlocBuilder<MutationItemAddBloc, MutationItemAddState>(
+        buildWhen: (p, c) => p.cattle != c.cattle,
         builder: (context, state) {
           return Container(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -275,33 +279,9 @@ class _SalesItemAddPageState
             child: Button(
               type: ButtonType.primary,
               leftIcon: const Icon(Icons.add, color: Colors.white),
-              text: 'Tambahkan ke Item Penjualan',
+              text: 'Tambahkan ke Item Mutasi',
               fulLWidth: true,
               onPressed: () {
-                if (state.selectedPen?.id.isEmpty == true ||
-                    state.weight == "0" ||
-                    state.weight == null) {
-                  navigator.showAppDialog(
-                    useRootNavigator: true,
-                    barrierDismissible: false,
-                    Popup(
-                      title: 'Tidak dapat dilanjutkan',
-                      description: [
-                        const TextSpan(
-                          text:
-                              'Lengkapi data terlebih dahulu untuk dapat menambahkan item penjualan.',
-                        ),
-                      ],
-                      positiveButtonText: "Mengerti",
-                      onNegativeButtonPressed: () => navigator.pop(),
-                      onPositiveButtonPressed: () {
-                        navigator.pop();
-                      },
-                    ),
-                  );
-                  return;
-                }
-
                 bloc.add(const OnSubmit());
               },
             ),

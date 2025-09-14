@@ -56,12 +56,10 @@ class _DeleteBottomSheetState extends State<DeleteBottomSheet> {
             ),
             Text("Konfirmasi Hapus", style: TextStyles.heading5()),
             Text(
-              "Pilih pen terlebih dahulu sebelum Anda menghapus item mutasi ini.",
+              "Tekan Ya, Hapus untuk mengonfirmasi hapus item mutasi.",
               style: TextStyles.body2(),
             ),
             _errorWidget(),
-            _dropdownBarn(),
-            _dropdownPen(),
             BlocProvider.value(
               value: widget.bloc,
               child: BlocBuilder<MutationItemsBloc, MutationItemsState>(
@@ -76,14 +74,6 @@ class _DeleteBottomSheetState extends State<DeleteBottomSheet> {
                     loading: state.loading,
                     text: 'Ya, Hapus',
                     onPressed: () {
-                      if (state.selectedPen == null) {
-                        ToastHelper().showToast(
-                          context: context,
-                          message: "Pilih pen tujuan terlebih dahulu.",
-                          type: ToastType.warning,
-                        );
-                        return;
-                      }
                       widget.bloc.add(
                         DeleteMutationItems(items: state.selectedItems),
                       );
@@ -121,6 +111,7 @@ class _DeleteBottomSheetState extends State<DeleteBottomSheet> {
                       id: item.id,
                       text: item.name,
                       selected: item.id == state.selectedBarn?.id,
+                      notes: item.category,
                     ),
                   )
                   .toList(),

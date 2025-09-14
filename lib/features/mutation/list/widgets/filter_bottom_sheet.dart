@@ -60,9 +60,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         buildWhen: (p, c) => p.filterStatus != c.filterStatus,
         builder: (context, state) {
           return DropdownViewField(
-            title: 'Status Penjualan',
+            title: 'Status',
             items: ValueNotifier<List<DropdownCheckboxModel>>(
-              salesStatusMap.values
+              mutationStatusMap.values
                   .map(
                     (item) => DropdownCheckboxModel(
                       id: item,
@@ -75,7 +75,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             navigator: widget.bloc.navigator,
             dropdownType: DropdownTypeEnum.single,
             onSelectedItems: (List<String> value) {
-              final selected = salesStatusMap.values
+              final selected = mutationStatusMap.values
                   .where((item) => item == value.first)
                   .first;
               widget.bloc.add(FilterStatusChanged(value: selected));

@@ -352,7 +352,7 @@ class ApiService {
   ) async {
     return _authAppServerApiClient.request(
       method: RestMethod.post,
-      path: '/v1/mutation-item/create-bulk',
+      path: '/v1/mutation-item/bulk',
       body: request.toJson(),
       decoder: (_) => null,
     );

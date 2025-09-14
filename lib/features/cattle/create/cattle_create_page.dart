@@ -182,6 +182,13 @@ class _CattleCreatePageState
     final isNotFound = bloc.state.errorMessage == 'record not found';
     return EmptyState(
       title: isNotFound ? 'Data tidak ditemukan' : 'Terjadi Kesalahan',
+      imageAssets: ClipRRect(
+        borderRadius: BorderRadius.circular(20), // adjust radius
+        child: Assets.images.ilNotFound.image(
+          height: Dimens.d240,
+          fit: BoxFit.contain,
+        ),
+      ),
       description: isNotFound
           ? 'Data sapi tidak dapat ditemukan.'
           : bloc.state.errorMessage,

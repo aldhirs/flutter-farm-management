@@ -1,4 +1,5 @@
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/entities/barn/barn.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -42,8 +43,22 @@ abstract class LoadMore extends PenDraftingEvent with _$LoadMore {
 }
 
 @freezed
+abstract class GetBarns extends PenDraftingEvent with _$GetBarns {
+  const factory GetBarns() = _GetBarns;
+
+  const GetBarns._();
+}
+
+@freezed
+abstract class BarnChanged extends PenDraftingEvent with _$BarnChanged {
+  const factory BarnChanged({required Barn barn}) = _BarnChanged;
+
+  const BarnChanged._();
+}
+
+@freezed
 abstract class GetPens extends PenDraftingEvent with _$GetPens {
-  const factory GetPens() = _GetPens;
+  const factory GetPens({required String barnId}) = _GetPens;
 
   const GetPens._();
 }

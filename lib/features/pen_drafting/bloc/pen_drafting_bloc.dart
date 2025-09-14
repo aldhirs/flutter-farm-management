@@ -1,7 +1,10 @@
 import 'package:dartx/dartx.dart';
 import 'package:farm/base/base.dart';
+import 'package:farm/constants/enum_constants.dart';
+import 'package:farm/domain/entities/barn/barn_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_pen_to_pen_request.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
+import 'package:farm/domain/usecases/barns_use_case.dart';
 import 'package:farm/domain/usecases/cattle_move_to_pen_use_case.dart';
 import 'package:farm/domain/usecases/pens_use_case.dart';
 import 'package:farm/features/pen_drafting/bloc/pen_drafting_event.dart';
@@ -12,17 +15,25 @@ import 'package:injectable/injectable.dart';
 
 @Injectable()
 class PenDraftingBloc extends BaseBloc<PenDraftingEvent, PenDraftingState> {
+  final BarnsUseCase _barnsUseCase;
   final PensUseCase _pensUseCase;
   final CattleMoveToPenUseCase _cattleMoveToPenUseCase;
   final limit = 8;
-  PenDraftingBloc(this._pensUseCase, this._cattleMoveToPenUseCase)
-    : super(const PenDraftingState()) {
+  PenDraftingBloc(
+    this._barnsUseCase,
+    this._pensUseCase,
+    this._cattleMoveToPenUseCase,
+  ) : super(const PenDraftingState()) {
     on<Initiated>(_initialized, transformer: log());
     on<Load>(_load, transformer: log());
     on<LoadMore>(_loadMore, transformer: log());
-    // on<GetBarns>(_barnsApi, transformer: log());
+    on<GetBarns>(_barnsApi, transformer: log());
     on<GetPens>(_getPensApi, transformer: log());
     on<OnSubmitMoveToPen>(_onSubmitMoveToPen, transformer: log());
+    on<BarnChanged>((event, emit) {
+      emit(state.copyWith(selectedBarn: event.barn, selectedPen: null));
+      add(GetPens(barnId: event.barn.id));
+    }, transformer: log());
     on<PenChanged>((event, emit) {
       emit(state.copyWith(selectedPen: event.pen));
     }, transformer: log());
@@ -107,36 +118,46 @@ class PenDraftingBloc extends BaseBloc<PenDraftingEvent, PenDraftingState> {
     );
   }
 
-  // Future<void> _barnsApi(GetBarns event, Emitter<SalesItemAddState> emit) {
-  //   return runBlocCatching(
-  //     handleLoading: false,
-  //     action: () async {
-  //       if (!_isProjectChosen(emit)) {
-  //         return;
-  //       }
-  //       final response = await _barnsUseCase.execute(
-  //         BarnRequest(
-  //           projectId: appBloc.state.selectedProject!.id,
-  //           category: barnCategoryMap.keys.join(","),
-  //         ),
-  //       );
-  //       switch (response.result) {
-  //         case DataSuccess(:final data):
-  //           emit(state.copyWith(barns: data, errorMessage: ''));
-  //           break;
-  //         case DataError(:final errorMessage):
-  //           emit(state.copyWith(errorMessage: errorMessage.orEmpty()));
-  //         case null:
-  //           return;
-  //       }
-  //     },
-  //     doOnEventCompleted: () async {},
-  //     handleError: false,
-  //     doOnError: (e) async {
-  //       emit(state.copyWith(errorMessage: exceptionMessageMapper.map(e)));
-  //     },
-  //   );
-  // }
+  Future<void> _barnsApi(GetBarns event, Emitter<PenDraftingState> emit) {
+    return runBlocCatching(
+      handleLoading: false,
+      action: () async {
+        if (!_isProjectChosen(emit)) {
+          return;
+        }
+        final response = await _barnsUseCase.execute(
+          BarnRequest(
+            projectId: appBloc.state.selectedProject!.id,
+            category: barnCategoryMap
+                .filter((item) => item.key != "Drafting")
+                .keys
+                .join(","),
+          ),
+        );
+        switch (response.result) {
+          case DataSuccess(:final data):
+            emit(
+              state.copyWith(
+                barns: data,
+                selectedBarn: null,
+                selectedPen: null,
+                errorMessage: '',
+              ),
+            );
+            break;
+          case DataError(:final errorMessage):
+            emit(state.copyWith(errorMessage: errorMessage.orEmpty()));
+          case null:
+            return;
+        }
+      },
+      doOnEventCompleted: () async {},
+      handleError: false,
+      doOnError: (e) async {
+        emit(state.copyWith(errorMessage: exceptionMessageMapper.map(e)));
+      },
+    );
+  }
 
   Future<void> _getPensApi(GetPens event, Emitter<PenDraftingState> emit) {
     return runBlocCatching(
@@ -147,7 +168,11 @@ class PenDraftingBloc extends BaseBloc<PenDraftingEvent, PenDraftingState> {
         final response = await _pensUseCase.execute(
           PenRequest(
             projectId: appBloc.state.selectedProject!.id,
-            barnCategory: 'Penggemukan,Karantina,Isolasi,Penjualan',
+            barnId: event.barnId,
+            barnCategory: barnCategoryMap
+                .filter((item) => item.key != "Drafting")
+                .keys
+                .join(","),
           ),
         );
         switch (response.result) {

@@ -2,17 +2,19 @@ import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base_page_state.dart';
 import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/entities/mutation/mutation.dart';
-import 'package:farm/extensions/string.dart';
+import 'package:farm/features/mutation/items/widgets/detail_bottom_sheet.dart';
 import 'package:farm/features/mutation/preview/bloc/mutation_item_preview_bloc.dart';
 import 'package:farm/features/mutation/preview/bloc/mutation_item_preview_event.dart';
 import 'package:farm/features/mutation/preview/bloc/mutation_item_preview_state.dart';
-import 'package:farm/navigation/app_route_info.dart';
+import 'package:farm/features/mutation/preview/widgets/result_cattle_bottom_sheet.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/device_utils.dart';
 import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/utils/view_utils.dart';
 import 'package:farm/views/view.dart';
 import 'package:farm/widgets/buttons/button.dart';
+import 'package:farm/widgets/popup/popup.dart';
+import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
@@ -38,7 +40,7 @@ class _MutationItemPreviewPageState
     extends BasePageState<MutationItemPreviewPage, MutationItemPreviewBloc> {
   @override
   void initState() {
-    bloc.add(Initiated(connection: widget.connection));
+    bloc.add(Initiated(connection: widget.connection, mutation: widget.item));
     super.initState();
   }
 
@@ -61,6 +63,66 @@ class _MutationItemPreviewPageState
               if (await Vibration.hasVibrator()) {
                 Vibration.vibrate();
               }
+            }
+          },
+        ),
+        BlocListener<MutationItemPreviewBloc, MutationItemPreviewState>(
+          listenWhen: (previous, current) =>
+              previous.isSuccessAdd != current.isSuccessAdd,
+          listener: (context, state) async {
+            if (state.isSuccessAdd) {
+              await navigator.pop();
+              ToastHelper().showToast(
+                context: context,
+                message: 'Item mutasi berhasil ditambahkan.',
+                type: ToastType.succes,
+              );
+              bloc.add(const OnClear());
+            }
+          },
+        ),
+        BlocListener<MutationItemPreviewBloc, MutationItemPreviewState>(
+          listenWhen: (previous, current) => previous.cattle != current.cattle,
+          listener: (context, state) async {
+            if (state.cattle != null) {
+              if (state.cattle?.isStatusAvailable() == false) {
+                navigator.showAppDialog(
+                  useRootNavigator: true,
+                  barrierDismissible: false,
+                  Popup(
+                    title: 'Tidak dapat dilanjutkan',
+                    illustration: ClipRRect(
+                      borderRadius: BorderRadius.circular(20), // adjust radius
+                      child: Assets.images.ilCowDenied.image(
+                        height: Dimens.d240,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    description: [
+                      const TextSpan(
+                        text:
+                            'Data sapi ini tidak tersedia atau sudah dipesan.',
+                      ),
+                    ],
+                    positiveButtonText: "Mengerti",
+                    onPositiveButtonPressed: () async {
+                      navigator.pop();
+                    },
+                  ),
+                );
+                return;
+              }
+
+              navigator.showBottomSheet(
+                isScrollControlled: true,
+                ResultCattleBottomSheet(
+                  bloc: bloc,
+                  onTap: () async {
+                    bloc.add(const OnSubmitAdd());
+                  },
+                  onDismiss: () => navigator.pop(),
+                ),
+              );
             }
           },
         ),
@@ -108,17 +170,17 @@ class _MutationItemPreviewPageState
     bool isTablet,
   ) {
     return Column(
-      mainAxisSize: !isTablet ? MainAxisSize.min : MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SizedBox(height: isTablet ? Dimens.d64 : 0),
         SizedBox(
           width: DeviceUtils.getDeviceType() == DeviceType.mobile
-              ? width * 0.7
+              ? width * 0.6
               : width,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20), // adjust radius
             child: Assets.images.ilCowScanning.image(
-              height: Dimens.d240,
+              height: Dimens.d180,
               fit: BoxFit.cover,
             ),
           ),
@@ -128,7 +190,7 @@ class _MutationItemPreviewPageState
           width: width,
           padding: const EdgeInsets.only(top: Dimens.d16),
           child: Text(
-            'Tambah Item Mutasi #${(widget.item.id).defaultValue('-')}',
+            'Tambah Item Mutasi',
             textAlign: TextAlign.center,
             style: TextStyles.heading4().copyWith(
               color: AppColors.current.mint800,
@@ -160,90 +222,93 @@ class _MutationItemPreviewPageState
     double width,
     bool isTablet,
   ) {
-    return Column(
-      mainAxisSize: !isTablet ? MainAxisSize.min : MainAxisSize.max,
-      children: [
-        SizedBox(height: isTablet ? Dimens.d64 : 0),
-        SizedBox(
-          width: DeviceUtils.getDeviceType() == DeviceType.mobile
-              ? width * 0.7
-              : width,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20), // adjust radius
-            child: Assets.images.ilRfidResult.image(
-              height: Dimens.d200,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          width: width,
-          padding: const EdgeInsets.only(top: Dimens.d16),
-          child: Text(
-            'RFID Diterima',
-            textAlign: TextAlign.center,
-            style: TextStyles.heading4().copyWith(
-              color: AppColors.current.mint800,
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        Text("RFID", style: TextStyles.paragraph2()),
-        Text(state.rfid, style: TextStyles.heading4()),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: width,
-          child: Text(
-            'Silakan tekan tombol Lanjutkan untuk melakukan proses lengkapi data sapi dan tambahkan item penjualan.',
-            textAlign: TextAlign.center,
-            style: TextStyles.paragraph1(),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Column(
-          children: [
-            const SizedBox(height: Dimens.d16),
-            Button(
-              size: ButtonSize.extraLarge,
-              fulLWidth: true,
-              type: ButtonType.primary,
-              text: 'Lanjutkan ',
-              onPressed: () {
-                _onSearchResult(state.rfid);
-              },
-              rightIcon: const Icon(
-                Icons.arrow_circle_right_outlined,
-                color: Colors.white,
+    return Container(
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: !isTablet ? MainAxisSize.min : MainAxisSize.max,
+        children: [
+          SizedBox(height: isTablet ? Dimens.d64 : 0),
+          SizedBox(
+            width: DeviceUtils.getDeviceType() == DeviceType.mobile
+                ? width * 0.6
+                : width,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20), // adjust radius
+              child: Assets.images.ilRfidResult.image(
+                height: Dimens.d140,
+                fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(height: 16),
-            Button(
-              fulLWidth: true,
-              type: ButtonType.ghost,
-              text: 'Nanti, Pindai Ulang',
-              onPressed: () {
-                bloc.add(const BottomsheetDismiss());
-              },
+          ),
+          const SizedBox(height: 8),
+          Container(
+            width: width,
+            padding: const EdgeInsets.only(top: Dimens.d16),
+            child: Text(
+              'RFID Diterima',
+              textAlign: TextAlign.center,
+              style: TextStyles.heading4().copyWith(
+                color: AppColors.current.mint800,
+              ),
             ),
-          ],
-        ),
-      ],
+          ),
+          const SizedBox(height: 24),
+          Text("RFID", style: TextStyles.paragraph2()),
+          Text(state.rfid, style: TextStyles.heading4()),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: width,
+            child: Text(
+              'Silakan tekan tombol Lanjutkan untuk melakukan proses penambahan item mutasi.',
+              textAlign: TextAlign.center,
+              style: TextStyles.paragraph1(),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Column(
+            children: [
+              const SizedBox(height: Dimens.d16),
+              _checkRFIDButton(),
+              const SizedBox(height: 16),
+              Button(
+                fulLWidth: true,
+                type: ButtonType.ghost,
+                text: 'Nanti, Pindai Ulang',
+                onPressed: () {
+                  bloc.add(const BottomsheetDismiss());
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
   Widget _contentView(double width, bool isTablet) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: Dimens.d16),
-      alignment: Alignment.center,
       child: BlocProvider.value(
         value: bloc,
         child: BlocBuilder<MutationItemPreviewBloc, MutationItemPreviewState>(
           buildWhen: (p, c) => p.rfid != c.rfid,
           builder: (context, state) {
-            return state.rfid.isNotEmpty
-                ? _received(state, width, isTablet)
-                : _emptyState(state, width, isTablet);
+            return SingleChildScrollView(
+              physics: const ScrollPhysics(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(height: isTablet ? Dimens.d64 : 0),
+                  DetailBottomSheet(item: widget.item, onDismiss: () {}),
+                  const Divider(),
+                  const SizedBox(height: 16),
+                  state.rfid.isNotEmpty
+                      ? _received(state, width, isTablet)
+                      : _emptyState(state, width, isTablet),
+                  const SizedBox(height: Dimens.d16),
+                ],
+              ),
+            );
           },
         ),
       ),
@@ -273,19 +338,6 @@ class _MutationItemPreviewPageState
     return shouldLeave ?? false;
   }
 
-  void _onSearchResult(String value) {
-    bloc.add(const BottomsheetDismiss());
-    // TODO
-    // navigator.push(
-    //   AppRouteInfo.salesItemAdd(
-    //     rfid: value,
-    //     item: widget.item,
-    //     connection: widget.connection,
-    //     fromManual: false,
-    //   ),
-    // );
-  }
-
   Widget _button() {
     return Center(
       child: BlocProvider.value(
@@ -304,6 +356,33 @@ class _MutationItemPreviewPageState
               },
               leftIcon: const Icon(
                 Icons.bluetooth_connected,
+                color: Colors.white,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _checkRFIDButton() {
+    return Center(
+      child: BlocProvider.value(
+        value: bloc,
+        child: BlocBuilder<MutationItemPreviewBloc, MutationItemPreviewState>(
+          buildWhen: (p, c) => p.loading != c.loading,
+          builder: (context, state) {
+            return Button(
+              size: ButtonSize.extraLarge,
+              fulLWidth: true,
+              type: !state.loading ? ButtonType.primary : ButtonType.disabled,
+              loading: state.loading,
+              text: 'Lanjutkan ',
+              onPressed: () async {
+                bloc.add(CheckCattle(rfid: state.rfid));
+              },
+              rightIcon: const Icon(
+                Icons.arrow_circle_right_outlined,
                 color: Colors.white,
               ),
             );
