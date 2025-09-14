@@ -110,7 +110,7 @@ class ScanBloc extends BaseBloc<ScanEvent, ScanState> {
             navigator.push(AppRouteInfo.draftingDetail(connection: connection));
             break;
           case DEST_SALES_ITEM:
-            navigator.push(AppRouteInfo.salesItemForm(item: state.sales));
+            navigator.push(AppRouteInfo.salesItemPreview(item: state.sales));
             break;
           case DEST_MUTATION_ITEM:
             navigator.popAndPush(
