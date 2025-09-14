@@ -40,7 +40,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: CattleCreateRoute.page, guards: [authGuard()]),
     AutoRoute(page: SalesRoute.page, guards: [authGuard()]),
     AutoRoute(page: SalesItemsRoute.page, guards: [authGuard()]),
-    AutoRoute(page: SalesItemFormRoute.page, guards: [authGuard()]),
     AutoRoute(page: SalesItemPreviewRoute.page, guards: [authGuard()]),
     AutoRoute(page: SalesItemAddRoute.page, guards: [authGuard()]),
     AutoRoute(page: ScanRoute.page, guards: [authGuard()]),
