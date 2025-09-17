@@ -105,16 +105,24 @@ class ScanBloc extends BaseBloc<ScanEvent, ScanState> {
       );
       if (connection != null && connection.isConnected) {
         emit(state.copyWith(connectionIndex: null));
-        switch (state..route) {
+        switch (state.route) {
           case DEST_DRAFTING_DETAIL:
             navigator.push(AppRouteInfo.draftingDetail(connection: connection));
             break;
           case DEST_SALES_ITEM:
-            navigator.push(AppRouteInfo.salesItemPreview(item: state.sales));
+            navigator.push(
+              AppRouteInfo.salesItemPreview(
+                connection: connection,
+                item: state.sales,
+              ),
+            );
             break;
           case DEST_MUTATION_ITEM:
             navigator.popAndPush(
-              AppRouteInfo.mutationItemPreview(item: state.mutation),
+              AppRouteInfo.mutationItemPreview(
+                connection: connection,
+                item: state.mutation,
+              ),
             );
           default:
             navigator.push(AppRouteInfo.draftingDetail(connection: connection));

@@ -119,7 +119,7 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
       ResultSuccess(:final data) => data,
       _ => const UserData(),
     };
-    emit(state.copyWith(userData: user, rfid: state.rfid));
+    emit(state.copyWith(userData: user, rfid: event.rfid.orEmpty()));
   }
 
   Future<void> _onSubmit(
@@ -281,6 +281,7 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
         final response = await _receptionsUseCase.execute(
           ReceptionRequest(
             search: event.search.orEmpty(),
+            id_project: appBloc.state.selectedProject!.id,
             client_slug: (appBloc.state.userData?.clientSlug).orEmpty(),
           ),
         );

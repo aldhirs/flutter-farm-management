@@ -25,7 +25,7 @@ const medicalStatusMap = {
 const salesStatusMap = {
   '': 'Semua',
   DRAFT: 'Draf',
-  ISSUED: 'Sudah Terbit',
+  ISSUED: 'Diterbitkan',
   COMPLETED: 'Selesai',
   CANCELLED: 'Dibatalkan',
 };
@@ -56,7 +56,7 @@ const genderMap = {"male": 'Jantan', "female": 'Betina'};
 const mutationStatusMap = {
   '': 'Semua',
   DRAFT: 'Draf',
-  ISSUED: 'Sudah Terbit',
+  ISSUED: 'Diterbitkan',
   COMPLETED: 'Selesai',
   CANCELLED: 'Dibatalkan',
 };

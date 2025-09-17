@@ -8,6 +8,7 @@ part 'reception_request.g.dart';
 abstract class ReceptionRequest extends BaseInput with _$ReceptionRequest {
   const factory ReceptionRequest({
     @Default('') String client_slug,
+    @Default('') String id_project,
     @Default('') String search,
     @Default(1) int page,
     @Default(50) int limit,

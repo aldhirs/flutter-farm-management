@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/app/bloc/app_event.dart';
 import 'package:farm/base/base_page_state.dart';
@@ -9,6 +10,7 @@ import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/widgets/popup/popup.dart';
 import 'package:flutter/material.dart';
+import 'package:vibration/vibration.dart';
 
 @RoutePage()
 class HomeNavBarPage extends StatefulWidget {
@@ -20,10 +22,17 @@ class HomeNavBarPage extends StatefulWidget {
 
 class _HomeNavBarPageState
     extends BasePageState<HomeNavBarPage, HomeNavBarBloc> {
+  final AudioPlayer _player = AudioPlayer();
   @override
   void initState() {
     super.initState();
     bloc.add(const Initiated());
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
   }
 
   @override

@@ -39,7 +39,7 @@ class DraftingDetailBloc
     _connection = event.connection;
     try {
       _readSubscription = _connection?.input?.listen((event) {
-        final rfid = utf8.decode(event);
+        final rfid = utf8.decode(event).trim().replaceAll('\\', '');
         add(RFIDChanged(rfid: rfid));
       });
     } catch (e) {

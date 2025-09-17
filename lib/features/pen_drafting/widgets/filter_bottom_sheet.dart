@@ -64,7 +64,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             title: 'Kategori Kandang',
             items: ValueNotifier<List<DropdownCheckboxModel>>(
               barnCategoryMap.entries
-                  .where((item) => item.key != 'Drafting')
+                  // .where((item) => item.key != 'Drafting')
                   .map(
                     (item) => DropdownCheckboxModel(
                       id: item.key,

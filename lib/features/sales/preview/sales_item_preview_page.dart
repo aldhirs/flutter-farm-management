@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base_page_state.dart';
 import 'package:farm/constants/enum_constants.dart';
@@ -31,6 +32,7 @@ class SalesItemPreviewPage extends StatefulWidget {
 
 class _SalesItemPreviewPageState
     extends BasePageState<SalesItemPreviewPage, SalesItemPreviewBloc> {
+  final AudioPlayer _player = AudioPlayer();
   @override
   void initState() {
     bloc.add(Initiated(connection: widget.connection));
@@ -39,6 +41,7 @@ class _SalesItemPreviewPageState
 
   @override
   void dispose() {
+    _player.dispose();
     widget.connection?.dispose();
     super.dispose();
   }
@@ -56,6 +59,7 @@ class _SalesItemPreviewPageState
               if (await Vibration.hasVibrator()) {
                 Vibration.vibrate();
               }
+              await _player.play(AssetSource('audio/rfid_accepted.m4a'));
             }
           },
         ),

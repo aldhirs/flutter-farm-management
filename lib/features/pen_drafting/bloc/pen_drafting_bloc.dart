@@ -72,7 +72,7 @@ class PenDraftingBloc extends BaseBloc<PenDraftingEvent, PenDraftingState> {
         if (!_isProjectChosen(emit)) {
           return;
         }
-        var category = 'Penggemukan,Karantina,Isolasi,Penjualan';
+        var category = barnCategoryMap.keys.join(",");
         if (state.filterStatus.isNotEmpty) {
           category = state.filterStatus;
         }
@@ -170,7 +170,7 @@ class PenDraftingBloc extends BaseBloc<PenDraftingEvent, PenDraftingState> {
             projectId: appBloc.state.selectedProject!.id,
             barnId: event.barnId,
             barnCategory: barnCategoryMap
-                .filter((item) => item.key != "Drafting")
+                // .filter((item) => item.key != "Drafting")
                 .keys
                 .join(","),
           ),

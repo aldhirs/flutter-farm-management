@@ -134,13 +134,7 @@ class SalesItemAddBloc extends BaseBloc<SalesItemAddEvent, SalesItemAddState> {
           case DataSuccess(:final data):
             final items = _getCattleItems(data);
             add(const GetBarns());
-            emit(
-              state.copyWith(
-                cattle: data,
-                weight: data.actual_weight.toString(),
-                listItems: items,
-              ),
-            );
+            emit(state.copyWith(cattle: data, listItems: items));
             break;
           case DataError(:final errorMessage):
             emit(state.copyWith(errorMessage: errorMessage.orEmpty()));
@@ -168,7 +162,7 @@ class SalesItemAddBloc extends BaseBloc<SalesItemAddEvent, SalesItemAddState> {
         final response = await _barnsUseCase.execute(
           BarnRequest(
             projectId: appBloc.state.selectedProject!.id,
-            category: barnCategoryMap.keys.join(","),
+            category: "Drafting",
           ),
         );
         switch (response.result) {

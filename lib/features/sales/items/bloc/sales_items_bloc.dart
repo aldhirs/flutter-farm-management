@@ -267,7 +267,11 @@ class SalesItemsBloc extends BaseBloc<SalesItemsEvent, SalesItemsState> {
         switch (response.result) {
           case DataSuccess(:final data):
             final errorMessage = data.isEmpty ? 'Data tidak ditemukan' : '';
-            emit(state.copyWith(salesList: data, errorMessage: errorMessage));
+            final result = data
+                .whereNot((item) => item.id == state.sales.id)
+                .toList();
+
+            emit(state.copyWith(salesList: result, errorMessage: errorMessage));
             break;
           case DataError(:final errorMessage):
             emit(state.copyWith(errorMessage: errorMessage.orEmpty()));

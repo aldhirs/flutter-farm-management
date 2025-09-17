@@ -121,7 +121,7 @@ class _DraftingFormPageState
   }
 
   Widget _errorWidget() {
-    final isNotFound = bloc.state.errorMessage == 'record not found';
+    final isNotFound = bloc.state.errorMessage.contains('record not found');
     return EmptyState(
       title: isNotFound ? 'Data tidak ditemukan' : 'Terjadi Kesalahan',
       description: isNotFound
@@ -189,7 +189,7 @@ class _DraftingFormPageState
   }
 
   Widget _finishButton() {
-    final isNotFound = bloc.state.errorMessage != 'record not found';
+    final isNotFound = bloc.state.errorMessage.contains('record not found');
     return FloatingActionButton.extended(
       backgroundColor: AppColors.current.eucalyptus700,
       onPressed: () => navigator.pop(),

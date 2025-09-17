@@ -193,7 +193,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     if (state.selectedBarn == null ||
         state.selectedLevel == null ||
         state.selectedPen == null ||
-        state.earTag == null) {
+        state.earTag == "") {
       emit(
         state.copyWith(
           identityErrorMessage:
@@ -670,6 +670,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
         selectedLevel: data.level,
         earTag: data.ear_tag,
         weight: data.actual_weight.toString(),
+        selectedGender: data.gender,
         listItems: items,
         errorMessage: "",
       ),

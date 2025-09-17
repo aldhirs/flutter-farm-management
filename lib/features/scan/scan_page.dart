@@ -215,20 +215,20 @@ class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
         onNegativeButtonPressed: () => navigator.pop(),
         onPositiveButtonPressed: () async {
           navigator.pop();
-          // bloc.add(const StartScanning());
+          bloc.add(const StartScanning());
           // bypass-debug
-          switch (widget.destinationRoute) {
-            case DEST_DRAFTING_DETAIL:
-              navigator.popAndPush(const AppRouteInfo.draftingDetail());
-            case DEST_SALES_ITEM:
-              navigator.popAndPush(
-                AppRouteInfo.salesItemPreview(item: widget.sales),
-              );
-            case DEST_MUTATION_ITEM:
-              navigator.popAndPush(
-                AppRouteInfo.mutationItemPreview(item: widget.mutation),
-              );
-          }
+          // switch (widget.destinationRoute) {
+          //   case DEST_DRAFTING_DETAIL:
+          //     navigator.popAndPush(const AppRouteInfo.draftingDetail());
+          //   case DEST_SALES_ITEM:
+          //     navigator.popAndPush(
+          //       AppRouteInfo.salesItemPreview(item: widget.sales),
+          //     );
+          //   case DEST_MUTATION_ITEM:
+          //     navigator.popAndPush(
+          //       AppRouteInfo.mutationItemPreview(item: widget.mutation),
+          //     );
+          // }
           // bypass-debug
         },
       ),

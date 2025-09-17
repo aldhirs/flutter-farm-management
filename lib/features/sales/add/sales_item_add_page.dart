@@ -133,6 +133,55 @@ class _SalesItemAddPageState
                   },
                 ),
               );
+              return;
+            }
+            if (state.cattle.id.isNotEmpty &&
+                (state.cattle.ear_tag.isEmpty == true ||
+                    state.cattle.actual_weight <= 0)) {
+              navigator.showAppDialog(
+                useRootNavigator: true,
+                barrierDismissible: false,
+                Popup(
+                  title: 'Data Sapi Ditemukan',
+                  illustration: ClipRRect(
+                    borderRadius: BorderRadius.circular(20), // adjust radius
+                    child: Assets.images.ilCowSuccess.image(
+                      height: Dimens.d240,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  description: [
+                    TextSpan(
+                      style: TextStyle(color: Colors.black), // style default
+                      children: [
+                        TextSpan(text: 'Data sapi dengan RFID '),
+                        TextSpan(
+                          text: state.cattle.rfid_tag,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        TextSpan(text: ' ini masih dalam '),
+                        TextSpan(
+                          text: 'Proses Drafting',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        TextSpan(
+                          text:
+                              '. Tekan Lanjutkan jika ingin menambahkan kedalam item penjualan.',
+                        ),
+                      ],
+                    ),
+                  ],
+                  negativeButtonText: "Kembali",
+                  positiveButtonText: "Lanjutkan",
+                  onNegativeButtonPressed: () async {
+                    _onPreviousPage();
+                  },
+                  onPositiveButtonPressed: () async {
+                    navigator.pop();
+                  },
+                ),
+              );
+              return;
             }
           },
         ),
@@ -197,7 +246,7 @@ class _SalesItemAddPageState
   }
 
   Widget _errorWidget() {
-    final isNotFound = bloc.state.errorMessage == 'record not found';
+    final isNotFound = bloc.state.errorMessage.contains('record not found');
     return EmptyState(
       title: isNotFound ? 'Data tidak ditemukan' : 'Terjadi Kesalahan',
       description: isNotFound
@@ -279,7 +328,6 @@ class _SalesItemAddPageState
               fulLWidth: true,
               onPressed: () {
                 if (state.selectedPen?.id.isEmpty == true ||
-                    state.weight == "0" ||
                     state.weight == null) {
                   navigator.showAppDialog(
                     useRootNavigator: true,
