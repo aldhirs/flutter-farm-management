@@ -24,6 +24,13 @@ abstract class FilterStatusChanged extends PenDraftingEvent
 }
 
 @freezed
+abstract class ResetBottomsheet extends PenDraftingEvent
+    with _$ResetBottomsheet {
+  const factory ResetBottomsheet() = _ResetBottomsheet;
+  const ResetBottomsheet._();
+}
+
+@freezed
 abstract class Load extends PenDraftingEvent with _$Load {
   const factory Load({@Default(false) bool withFilter}) = _Load;
   const Load._();
@@ -44,7 +51,7 @@ abstract class LoadMore extends PenDraftingEvent with _$LoadMore {
 
 @freezed
 abstract class GetBarns extends PenDraftingEvent with _$GetBarns {
-  const factory GetBarns() = _GetBarns;
+  const factory GetBarns({String? search}) = _GetBarns;
 
   const GetBarns._();
 }

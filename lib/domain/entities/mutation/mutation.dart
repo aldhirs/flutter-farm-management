@@ -10,6 +10,7 @@ part 'mutation.g.dart';
 abstract class Mutation extends BaseOutput with _$Mutation {
   const factory Mutation({
     @Default('') String id,
+    @Default('') String number,
     @Default('') String from_project_id,
     @Default('') String to_project_id,
     @Default('') String from_project_name,

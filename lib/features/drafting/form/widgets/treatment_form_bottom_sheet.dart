@@ -75,15 +75,21 @@ class _TreatmentFormBottomSheetState extends State<TreatmentFormBottomSheet> {
           padding: const EdgeInsets.all(Dimens.d16),
           alignment: Alignment.topLeft,
           child: Column(
-            spacing: Dimens.d8,
+            spacing: 2,
             children: [
               Text("Input Treatment Sapi", style: TextStyles.heading5()),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               _errorWidget(),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
+              const TickerView(
+                type: TickerViewType.info,
+                message:
+                    'Isi data treatment sapi pada formulir di bawah, lalu tekan “Lanjut” untuk menyimpan. Menekan “Tutup” akan membatalkan penyimpanan.',
+              ),
+              const SizedBox(height: 16),
               _dropdownType(),
               _textInputDate(),
-              const SizedBox(height: 12),
+              const SizedBox(height: 18),
               _textInputNote(),
 
               const SizedBox(height: 24),
@@ -166,7 +172,7 @@ class _TreatmentFormBottomSheetState extends State<TreatmentFormBottomSheet> {
         buildWhen: (p, c) => p.treatmentTypes != c.treatmentTypes,
         builder: (context, state) {
           return DropdownViewField(
-            title: 'Tipe Treatment',
+            title: 'Jenis Treatment',
             items: ValueNotifier<List<DropdownCheckboxModel>>(
               state.treatmentTypes
                   .map(

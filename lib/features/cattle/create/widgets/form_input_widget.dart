@@ -56,7 +56,8 @@ class _FormInputWidgetState extends State<FormInputWidget> {
         children: [
           const TickerView(
             type: TickerViewType.info,
-            message: "Silakan lengkapi data sapi untuk ditambahkan.",
+            message:
+                "Formulir ini digunakan untuk menambahkan data sapi secara manual ketika RFID diterima tapi tidak ditemukan di database, atau ketika RFID sama sekali tidak tersedia.",
           ),
           const SizedBox(height: 8),
           _errorWidget(),
@@ -222,6 +223,7 @@ class _FormInputWidgetState extends State<FormInputWidget> {
             enabled: false,
             hintText: 'RFID',
             keyboardType: TextInputType.number,
+            additionalInfo: "Otomatis terisi ketika RFID diterima",
             prefixIcon: Icon(
               Icons.barcode_reader,
               color: AppColors.current.mint700,

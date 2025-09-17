@@ -12,9 +12,11 @@ import 'package:farm/features/mutation/items/widgets/result_cattle_bottom_sheet.
 import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
+import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/views/view.dart';
 import 'package:farm/widgets/checkbox/checkbox_button.dart';
 import 'package:farm/widgets/popup/popup.dart';
+import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -142,31 +144,99 @@ class _MutationPageState
     return BlocBuilder<MutationItemsBloc, MutationItemsState>(
       builder: (context, state) {
         return CommonScaffold(
-          appBar: CommonAppBar(
-            titleText: 'Mutasi #${widget.item.id}',
-            forceMaterialTransparency: false,
-            actions: [
-              Visibility(
-                visible: widget.item.isDraft() && !widget.isIn,
-                child: IconButton(
-                  onPressed: () => bloc.add(const EditModeToggled()),
-                  icon: Icon(state.isEditMode ? Icons.close : Icons.edit),
-                ),
-              ),
-              IconButton(
-                onPressed: () => _onShowInfo(),
-                icon: const Icon(Icons.info_outline_rounded),
-              ),
+          body: NestedScrollView(
+            controller: _scrollController,
+            headerSliverBuilder: (context, innerBoxScrolled) => [
+              _buildAppBar(context, state),
+              _buildSummarySection(state),
             ],
+            body: _listWidget(),
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: state.isEditMode
               ? _actionButton(state)
               : _addButton(),
-          body: _listWidget(),
         );
       },
+    );
+  }
+
+  SliverAppBar _buildAppBar(BuildContext context, MutationItemsState state) {
+    return SliverAppBar(
+      expandedHeight: 220.0,
+      pinned: true,
+      floating: false,
+      forceElevated: true,
+      backgroundColor: AppColors.current.mint700,
+      foregroundColor: Colors.white,
+      flexibleSpace: LayoutBuilder(
+        builder: (context, constraints) {
+          final double maxHeight = 220;
+          final double minHeight = kToolbarHeight;
+          final double currentHeight = constraints.maxHeight;
+
+          // Hitung persentase collapse
+          final double collapsePercentage =
+              (maxHeight - currentHeight) / (maxHeight - minHeight);
+          final double titleOpacity = collapsePercentage.clamp(0.0, 1.0);
+
+          return FlexibleSpaceBar(
+            collapseMode: CollapseMode.parallax,
+            title: Opacity(
+              opacity: titleOpacity,
+              child: Text(
+                'Rincian Mutasi',
+                style: TextStyles.heading5().copyWith(color: Colors.white),
+              ),
+            ),
+            background: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.current.mint700,
+                    AppColors.current.mint200,
+                    AppColors.current.mint200,
+                  ],
+                ),
+              ),
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DetailBottomSheet(
+                        item: state.mutation,
+                        onDismiss: () {},
+                        isShowTitle: false,
+                        showBottomSheet: false,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+      actions: [
+        Visibility(
+          visible: widget.item.isDraft() && !widget.isIn,
+          child: IconButton(
+            onPressed: () => bloc.add(const EditModeToggled()),
+            icon: Icon(state.isEditMode ? Icons.close : Icons.edit),
+          ),
+        ),
+        IconButton(
+          onPressed: () => _onShowInfo(),
+          icon: const Icon(Icons.info_outline_rounded),
+        ),
+      ],
     );
   }
 
@@ -199,8 +269,7 @@ class _MutationPageState
             },
             // Pull from top to show refresh indicator.
             child: ListView.separated(
-              controller: _scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
               itemCount:
                   state.mutationItems.length + (state.isLoadMore ? 1 : 0),
               separatorBuilder: (context, index) => const SizedBox(height: 8),
@@ -233,9 +302,7 @@ class _MutationPageState
                   ],
                 );
 
-                return index == 0
-                    ? Column(children: [const SizedBox(height: 8), content])
-                    : content;
+                return content;
               },
             ),
           );
@@ -376,6 +443,27 @@ class _MutationPageState
         onDismiss: () {
           navigator.pop();
         },
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _buildSummarySection(MutationItemsState state) {
+    if (widget.isIn) {
+      return const SliverToBoxAdapter();
+    }
+    return SliverToBoxAdapter(
+      child: Container(
+        color: Colors.grey.shade50,
+        margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        child: const Column(
+          children: [
+            TickerView(
+              type: TickerViewType.info,
+              message:
+                  "Anda dapat mengubah dan menghapus dengan menekan tombol pensil yang berada pada area kanan atas.",
+            ),
+          ],
+        ),
       ),
     );
   }

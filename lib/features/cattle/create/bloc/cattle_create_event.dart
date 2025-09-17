@@ -73,7 +73,7 @@ abstract class PenChanged extends CattleCreateEvent with _$PenChanged {
 
 @freezed
 abstract class GetBarns extends CattleCreateEvent with _$GetBarns {
-  const factory GetBarns() = _GetBarns;
+  const factory GetBarns({String? search}) = _GetBarns;
 
   const GetBarns._();
 }

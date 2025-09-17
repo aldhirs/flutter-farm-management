@@ -29,6 +29,7 @@ import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/reception/reception.dart';
 import 'package:farm/domain/entities/reception/reception_request.dart';
+import 'package:farm/domain/entities/sales/sale_id_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
 import 'package:farm/domain/entities/sales/sales_item_add_request.dart';
@@ -72,6 +73,7 @@ abstract class Repository {
   Future<DataResponse<void>> medicalCreate(MedicalFormRequest request);
 
   Future<DataListResponse<Sales>> sales(SalesRequest request);
+  Future<DataResponse<Sales>> saleByID(SaleIdRequest request);
   Future<DataListResponse<SalesItem>> salesItems(SalesItemRequest request);
   Future<DataResponse<void>> salesItemSave(SalesItemSaveRequest request);
   Future<DataResponse<void>> salesItemAdd(SalesItemAddRequest request);

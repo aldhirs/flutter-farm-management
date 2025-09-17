@@ -47,7 +47,7 @@ class ItemWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildChip(Icons.key_outlined, item.id.defaultValue('-')),
+                _buildChip(Icons.key_outlined, item.number.defaultValue('-')),
                 Align(
                   alignment: Alignment.topLeft,
                   child: TagCategory(

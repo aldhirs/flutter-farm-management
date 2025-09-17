@@ -8,6 +8,7 @@ part 'barn_request.g.dart';
 abstract class BarnRequest extends BaseInput with _$BarnRequest {
   const factory BarnRequest({
     @JsonKey(name: 'id_project') @Default('') String projectId,
+    @JsonKey(name: 'search') @Default('') String search,
     @JsonKey(name: 'category') @Default('Drafting') String category,
   }) = _BarnRequest;
   const BarnRequest._();

@@ -289,7 +289,7 @@ class _DropdownInputFieldState extends State<DropdownInputField> {
 
   Widget? _dropdownIcon() {
     return IconButton(
-      onPressed: () {},
+      onPressed: widget.onTap,
       icon: Icon(
         widget.isShowDropdown.defaultFalse()
             ? Icons.arrow_drop_up_outlined

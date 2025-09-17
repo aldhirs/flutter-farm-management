@@ -11,6 +11,7 @@ part 'sales.g.dart';
 abstract class Sales extends BaseOutput with _$Sales {
   const factory Sales({
     @JsonKey(name: 'id') @Default('') String id,
+    @JsonKey(name: 'sales_number') @Default('') String sales_number,
     @JsonKey(name: 'status') @Default('') String status,
     @JsonKey(name: 'issued_at') @Default('') String issued_at,
     @JsonKey(name: 'issued_by') @Default(0) int issued_by,

@@ -37,7 +37,8 @@ class _DetailBottomSheetState extends State<DetailBottomSheet> {
             child: Text("Informasi Penjualan", style: TextStyles.heading5()),
           ),
           const SizedBox(height: 12),
-          _item('ID', (widget.item.id).orEmpty()),
+          _itemChip('ID', (widget.item.id).orEmpty(), TagCategoryType.plain),
+          _item('No', (widget.item.sales_number).orEmpty()),
           _item(
             'Tanggal',
             (widget.item.created_at
@@ -49,6 +50,8 @@ class _DetailBottomSheetState extends State<DetailBottomSheet> {
                 .orEmpty(),
           ),
           _item('Pelanggan', (widget.item.customer_detail?.name).orEmpty()),
+          _item('No Telepon', (widget.item.customer_detail?.phone).orEmpty()),
+          _item('Alamat', (widget.item.customer_detail?.address).orEmpty()),
           _item(
             'Tipe Pelanggan',
             (widget.item.customer_detail?.type).orEmpty(),
@@ -80,6 +83,7 @@ class _DetailBottomSheetState extends State<DetailBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(name, style: TextStyles.label2()),
+          const SizedBox(height: 2),
           TagCategory(text: value, type: type),
         ],
       ),

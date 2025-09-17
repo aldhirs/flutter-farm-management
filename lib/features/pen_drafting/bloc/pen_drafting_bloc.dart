@@ -40,6 +40,16 @@ class PenDraftingBloc extends BaseBloc<PenDraftingEvent, PenDraftingState> {
     on<FilterStatusChanged>((event, emit) {
       emit(state.copyWith(filterStatus: event.value));
     }, transformer: log());
+    on<ResetBottomsheet>((event, emit) {
+      emit(
+        state.copyWith(
+          selectedBarn: null,
+          selectedPen: null,
+          errorMessage: '',
+          errorSnackMessage: '',
+        ),
+      );
+    }, transformer: log());
   }
 
   Future<void> _initialized(
@@ -127,6 +137,7 @@ class PenDraftingBloc extends BaseBloc<PenDraftingEvent, PenDraftingState> {
         }
         final response = await _barnsUseCase.execute(
           BarnRequest(
+            search: event.search.orEmpty(),
             projectId: appBloc.state.selectedProject!.id,
             category: barnCategoryMap
                 .filter((item) => item.key != "Drafting")

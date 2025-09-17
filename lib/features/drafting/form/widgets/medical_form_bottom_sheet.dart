@@ -67,12 +67,18 @@ class _MedicalFormBottomSheetState extends State<MedicalFormBottomSheet> {
           padding: const EdgeInsets.all(Dimens.d16),
           alignment: Alignment.topLeft,
           child: Column(
-            spacing: Dimens.d8,
+            spacing: 2,
             children: [
               Text("Input Medis Sapi", style: TextStyles.heading5()),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               _errorWidget(),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
+              const TickerView(
+                type: TickerViewType.info,
+                message:
+                    'Isi data medis sapi pada formulir di bawah, lalu tekan “Lanjut” untuk menyimpan. Menekan “Tutup” akan membatalkan penyimpanan.',
+              ),
+              const SizedBox(height: 16),
               _dropdownType(),
               _dropdownStatus(),
               _textInputNote(),
@@ -166,7 +172,7 @@ class _MedicalFormBottomSheetState extends State<MedicalFormBottomSheet> {
         buildWhen: (p, c) => p.medicalTypes != c.medicalTypes,
         builder: (context, state) {
           return DropdownViewField(
-            title: 'Tipe Medis',
+            title: 'Jenis Medis',
             items: ValueNotifier<List<DropdownCheckboxModel>>(
               state.medicalTypes
                   .map(

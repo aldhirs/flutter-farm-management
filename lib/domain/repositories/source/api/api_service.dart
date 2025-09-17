@@ -30,6 +30,7 @@ import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/reception/reception.dart';
 import 'package:farm/domain/entities/reception/reception_request.dart';
+import 'package:farm/domain/entities/sales/sale_id_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/domain/entities/sales/sales_item.dart';
 import 'package:farm/domain/entities/sales/sales_item_add_request.dart';
@@ -271,6 +272,14 @@ class ApiService {
       path: '/v1/sales',
       queryParameters: request.toJson(),
       successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: Sales.fromJson,
+    );
+  }
+
+  Future<DataResponse<Sales>> saleByID(SaleIdRequest request) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/sales/${request.id}',
       decoder: Sales.fromJson,
     );
   }

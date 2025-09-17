@@ -142,7 +142,7 @@ class _FormInputWidgetState extends State<FormInputWidget> {
             label: 'Timbang Ulang',
             hintText: 'Timbang Ulang',
             additionalInfo:
-                "Mohon masukkan berat sapi ketika proses timbang ulang.",
+                "Masukkan angka bobot sapi (dalam kilogram) pada kolom berikut.",
             keyboardType: TextInputType.number,
             prefixIcon: const Icon(
               Icons.monitor_weight,

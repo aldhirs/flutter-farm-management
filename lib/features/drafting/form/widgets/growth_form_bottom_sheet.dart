@@ -30,7 +30,7 @@ class _GrowthFormBottomSheetState extends State<GrowthFormBottomSheet> {
 
   @override
   void initState() {
-    _controller.text = widget.bloc.state.weight.orEmpty();
+    _controller.text = "";
     super.initState();
   }
 
@@ -51,7 +51,7 @@ class _GrowthFormBottomSheetState extends State<GrowthFormBottomSheet> {
           if (state.isGrowthSuccess) {
             ToastHelper().showToast(
               context: context,
-              message: 'Timbang berat sapi berhasil di perbarui',
+              message: 'Timbang bobot sapi berhasil di perbarui',
               type: ToastType.succes,
             );
             widget.bloc.navigator.pop();
@@ -61,12 +61,18 @@ class _GrowthFormBottomSheetState extends State<GrowthFormBottomSheet> {
           padding: const EdgeInsets.all(Dimens.d16),
           alignment: Alignment.topLeft,
           child: Column(
-            spacing: Dimens.d8,
+            spacing: 2,
             children: [
-              Text("Timbang Berat Sapi", style: TextStyles.heading5()),
-              const SizedBox(height: 12),
+              Text("Timbang Bobot Sapi", style: TextStyles.heading5()),
+              const SizedBox(height: 8),
               _errorWidget(),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
+              const TickerView(
+                type: TickerViewType.info,
+                message:
+                    'Isi bobot sapi pada formulir di bawah, lalu tekan “Lanjut” untuk menyimpan. Menekan “Tutup” akan membatalkan penyimpanan.',
+              ),
+              const SizedBox(height: 16),
               _textInputGrowth(),
 
               const SizedBox(height: 24),
@@ -110,9 +116,11 @@ class _GrowthFormBottomSheetState extends State<GrowthFormBottomSheet> {
         builder: (context, state) {
           return TextInputField(
             controller: _controller,
-            label: 'Berat',
-            hintText: 'Berat',
+            label: 'Bobot',
+            hintText: 'Bobot',
             keyboardType: TextInputType.number,
+            additionalInfo:
+                "Masukkan angka bobot sapi (dalam kilogram) pada kolom berikut.",
             prefixIcon: const Icon(
               Icons.monitor_weight,
               color: Colors.redAccent,

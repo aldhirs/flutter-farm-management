@@ -79,6 +79,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     on<OnSubmitGrowth>(_onSubmitGrowth, transformer: log());
     on<OnSubmitTreatment>(_onSubmitTreatment, transformer: log());
     on<OnSubmitMedical>(_onSubmitMedical, transformer: log());
+    on<GetBarns>(_barnsApi, transformer: log());
     on<GetPens>(_getPensApi, transformer: log());
     on<IdentitySuccessChanged>((event, emit) {
       emit(state.copyWith(isIdentitySuccess: event.value));
@@ -167,7 +168,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     IdentityInit event,
     Emitter<DraftingFormState> emit,
   ) async {
-    await _barnsApi(emit);
+    add(const GetBarns());
     await _getLevelsApi(emit);
   }
 
@@ -196,8 +197,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
         state.earTag == "") {
       emit(
         state.copyWith(
-          identityErrorMessage:
-              'Harap mengisi kandang, pen, grade atau ear tag.',
+          identityErrorMessage: 'Harap mengisi formulir dibawah ini',
         ),
       );
       return;
@@ -245,7 +245,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     );
   }
 
-  Future<void> _barnsApi(Emitter<DraftingFormState> emit) {
+  Future<void> _barnsApi(GetBarns event, Emitter<DraftingFormState> emit) {
     return runBlocCatching(
       handleLoading: false,
       action: () async {
@@ -253,7 +253,10 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
           return;
         }
         final response = await _barnsUseCase.execute(
-          BarnRequest(projectId: appBloc.state.selectedProject!.id),
+          BarnRequest(
+            projectId: appBloc.state.selectedProject!.id,
+            search: event.search.orEmpty(),
+          ),
         );
         switch (response.result) {
           case DataSuccess(:final data):
@@ -469,7 +472,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     emit(state.copyWith(growthErrorMessage: ''));
     if (state.weight == null) {
       emit(
-        state.copyWith(growthErrorMessage: 'Harap mengisi berat badan sapi.'),
+        state.copyWith(growthErrorMessage: 'Harap mengisi bobot badan sapi.'),
       );
       return;
     }
@@ -685,8 +688,8 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
       ListItem(name: 'Pen', description: data.pen?.name ?? '-'),
       ListItem(name: 'Ear Tag', description: data.ear_tag),
       ListItem(
-        name: 'Berat',
-        description: '${data.actual_weight.toString()} KG',
+        name: 'Bobot',
+        description: '${data.actual_weight.toString()} Kg',
       ),
       ListItem(name: 'Ras', description: data.id_breed),
       ListItem(name: 'Jenis Kelamin', description: data.genderLabel()),

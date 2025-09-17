@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dartx/dartx.dart';
 import 'package:farm/base/base_page_state.dart';
+import 'package:farm/constants/date_constant.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/extensions/string.dart';
 import 'package:farm/features/sales/items/bloc/sales_items_bloc.dart';
@@ -13,11 +15,19 @@ import 'package:farm/features/sales/items/widgets/move_bottom_sheet.dart';
 import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
+import 'package:farm/utils/string_utils.dart';
+import 'package:farm/utils/ui_utils.dart';
+import 'package:farm/utils/view_utils.dart';
+import 'package:farm/views/common_scaffold.dart';
 import 'package:farm/views/view.dart';
 import 'package:farm/widgets/checkbox/checkbox_button.dart';
 import 'package:farm/widgets/popup/popup.dart';
+import 'package:farm/widgets/tag/tag_category.dart';
+import 'package:farm/widgets/tag/tag_status.dart';
+import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
@@ -35,16 +45,15 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
   final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     bloc.add(Initiated(item: widget.item));
 
-    // Listen scroll untuk load more
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 200) {
-        // kurang dari 200px dari bawah, load more
         if (!bloc.state.isLoadMore && bloc.state.hasMore) {
           bloc.add(const LoadMore());
         }
@@ -86,14 +95,14 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
                   Popup(
                     title: 'Tidak dapat dilanjutkan',
                     illustration: ClipRRect(
-                      borderRadius: BorderRadius.circular(20), // adjust radius
+                      borderRadius: BorderRadius.circular(20),
                       child: Assets.images.ilCowDenied.image(
                         height: Dimens.d240,
                         fit: BoxFit.cover,
                       ),
                     ),
-                    description: [
-                      const TextSpan(
+                    description: const [
+                      TextSpan(
                         text:
                             'Data sapi ini tidak tersedia atau sudah dipesan.',
                       ),
@@ -136,31 +145,194 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
     return BlocBuilder<SalesItemsBloc, SalesItemsState>(
       builder: (context, state) {
         return CommonScaffold(
-          appBar: CommonAppBar(
-            titleText: 'Penjualan #${widget.item.customer_detail?.name}',
-            forceMaterialTransparency: false,
-            actions: [
-              Visibility(
-                visible: widget.item.isDraft(),
-                child: IconButton(
-                  onPressed: () => bloc.add(const EditModeToggled()),
-                  icon: Icon(state.isEditMode ? Icons.close : Icons.edit),
-                ),
-              ),
-              IconButton(
-                onPressed: () => _onShowInfo(),
-                icon: const Icon(Icons.info_outline_rounded),
-              ),
+          body: NestedScrollView(
+            controller: _scrollController,
+            headerSliverBuilder: (context, innerBoxScrolled) => [
+              _buildAppBar(context, state),
+              _buildSummarySection(state),
             ],
+            body: _listWidget(),
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: state.isEditMode
               ? _actionButton(state)
               : _addButton(),
-          body: _listWidget(),
         );
       },
+    );
+  }
+
+  SliverAppBar _buildAppBar(BuildContext context, SalesItemsState state) {
+    final sales = widget.item;
+    final customer = sales.customer_detail;
+
+    return SliverAppBar(
+      expandedHeight: 230.0,
+      pinned: true,
+      floating: false,
+      forceElevated: true,
+      backgroundColor: AppColors.current.mint700,
+      foregroundColor: Colors.white,
+      flexibleSpace: LayoutBuilder(
+        builder: (context, constraints) {
+          final double maxHeight = 230;
+          final double minHeight = kToolbarHeight;
+          final double currentHeight = constraints.maxHeight;
+
+          // Hitung persentase collapse
+          final double collapsePercentage =
+              (maxHeight - currentHeight) / (maxHeight - minHeight);
+          final double titleOpacity = collapsePercentage.clamp(0.0, 1.0);
+
+          return FlexibleSpaceBar(
+            collapseMode: CollapseMode.parallax,
+            title: Opacity(
+              opacity: titleOpacity,
+              child: Text(
+                'Penjualan #${customer?.name.orEmpty()}',
+                style: TextStyles.heading5().copyWith(color: Colors.white),
+              ),
+            ),
+            background: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.current.mint700,
+                    AppColors.current.mint600,
+                    AppColors.current.mint500,
+                  ],
+                ),
+              ),
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Sales Number and Status
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TagCategory(
+                            text: sales.statusLabel(),
+                            type: sales.statusType(),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Customer Information
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.person,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              customer?.name ?? 'Nama tidak tersedia',
+                              style: TextStyles.body2().copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (customer?.phone != null) ...[
+                        const SizedBox(height: 4),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 26),
+                          child: Text(
+                            customer!.phone!,
+                            style: TextStyles.paragraph2().copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today_outlined,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              sales.created_at
+                                  .formatDateString(
+                                    format: DateConstant.UTC,
+                                    newFormat: DateConstant.DATETIME_FULL_MONTH,
+                                  )
+                                  .defaultValue('-'),
+                              style: TextStyles.body2().copyWith(
+                                color: Colors.white,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.key_outlined,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 8),
+                          InkWell(
+                            child: TagCategory(
+                              text: sales.sales_number,
+                              type: TagCategoryType.plain,
+                            ),
+                            onTap: () async {
+                              await ViewUtils.copyToClipboard(
+                                context: context,
+                                sales.sales_number,
+                                message:
+                                    "${sales.sales_number} berhasil disalin.",
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+      actions: [
+        Visibility(
+          visible: widget.item.isDraft() && state.salesItems.isNotEmpty,
+          child: IconButton(
+            onPressed: () => bloc.add(const EditModeToggled()),
+            icon: Icon(
+              state.isEditMode ? Icons.close : Icons.edit,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        IconButton(
+          onPressed: () => _onShowInfo(),
+          icon: const Icon(Icons.info_outline_rounded, color: Colors.white),
+        ),
+      ],
     );
   }
 
@@ -175,10 +347,9 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
             p.isEditMode != c.isEditMode ||
             p.selectedItems != c.selectedItems,
         builder: (context, state) {
-          if (state.errorMessage.isNotEmpty == true) {
+          if (state.errorMessage.isNotEmpty) {
             return _errorWidget();
           }
-
           if (state.salesItems.isEmpty) {
             return _emptyWidget();
           }
@@ -187,16 +358,14 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
             key: _refreshIndicatorKey,
             color: Colors.white,
             backgroundColor: AppColors.current.mint700,
-            strokeWidth: 2.0,
+            strokeWidth: 2,
             onRefresh: () async {
               bloc.add(const Load());
             },
-            // Pull from top to show refresh indicator.
             child: ListView.separated(
-              controller: _scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
               itemCount: state.salesItems.length + (state.isLoadMore ? 1 : 0),
-              separatorBuilder: (context, index) => const SizedBox(height: 8),
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 if (index >= state.salesItems.length) {
                   return const Padding(
@@ -207,13 +376,17 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
                 final item = state.salesItems[index];
                 final isSelected = state.selectedItems.contains(item);
 
-                final content = Row(
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     if (state.isEditMode)
-                      CheckboxButton(
-                        value: isSelected,
-                        onChanged: (_) =>
-                            bloc.add(ItemSelectionToggled(item: item)),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: CheckboxButton(
+                          value: isSelected,
+                          onChanged: (_) =>
+                              bloc.add(ItemSelectionToggled(item: item)),
+                        ),
                       ),
                     Expanded(
                       child: ItemWidget(
@@ -225,10 +398,6 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
                     ),
                   ],
                 );
-
-                return index == 0
-                    ? Column(children: [const SizedBox(height: 8), content])
-                    : content;
               },
             ),
           );
@@ -238,9 +407,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
   }
 
   Widget _addButton() {
-    if (!widget.item.isDraft()) {
-      return const SizedBox.shrink();
-    }
+    if (!widget.item.isDraft()) return const SizedBox.shrink();
     return FloatingActionButton.extended(
       heroTag: 'addBtn',
       backgroundColor: AppColors.current.eucalyptus700,
@@ -296,21 +463,15 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
 
   void _onShowInfo() {
     navigator.showBottomSheet(
-      DetailBottomSheet(
-        item: widget.item,
-        onDismiss: () {
-          navigator.pop();
-        },
-      ),
+      isScrollControlled: true,
+      DetailBottomSheet(item: widget.item, onDismiss: () => navigator.pop()),
     );
   }
 
   Widget _actionButton(SalesItemsState state) {
     if (state.selectedItems.isEmpty) return const SizedBox.shrink();
-
-    return Row(
-      mainAxisAlignment:
-          MainAxisAlignment.center, // Aligns buttons to the right
+    return Wrap(
+      spacing: 16,
       children: [
         FloatingActionButton.extended(
           heroTag: 'moveBtn',
@@ -320,12 +481,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
               bloc.add(const SalesList());
             }
             navigator.showBottomSheet(
-              MoveBottomSheet(
-                bloc: bloc,
-                onDismiss: () {
-                  navigator.pop();
-                },
-              ),
+              MoveBottomSheet(bloc: bloc, onDismiss: () => navigator.pop()),
               isScrollControlled: true,
               isDismissible: false,
               enableDrag: false,
@@ -337,7 +493,6 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
           ),
           icon: const Icon(Icons.move_up, color: Colors.white),
         ),
-        const SizedBox(width: 16),
         FloatingActionButton.extended(
           heroTag: 'deleteBtn',
           backgroundColor: AppColors.current.crimson500,
@@ -346,12 +501,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
               bloc.add(const GetBarns());
             }
             navigator.showBottomSheet(
-              DeleteBottomSheet(
-                bloc: bloc,
-                onDismiss: () {
-                  navigator.pop();
-                },
-              ),
+              DeleteBottomSheet(bloc: bloc, onDismiss: () => navigator.pop()),
               isScrollControlled: true,
               isDismissible: false,
               enableDrag: false,
@@ -374,8 +524,8 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
       Popup(
         closeVisibility: true,
         title: 'Tambah Item Penjualan',
-        description: [
-          const TextSpan(
+        description: const [
+          TextSpan(
             text:
                 'Silakan pilih metode dalam penambahan item penjualan menggunakan alat pemindai atau manual dengan mencari berdasarkan sapi ear tag.',
           ),
@@ -399,11 +549,24 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
     await navigator.pop();
     await navigator.showBottomSheet(
       isScrollControlled: true,
-      AddManualBottomSheet(
-        bloc: bloc,
-        onDismiss: () {
-          navigator.pop();
-        },
+      AddManualBottomSheet(bloc: bloc, onDismiss: () => navigator.pop()),
+    );
+  }
+
+  SliverToBoxAdapter _buildSummarySection(SalesItemsState state) {
+    return SliverToBoxAdapter(
+      child: Container(
+        color: Colors.grey.shade50,
+        margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        child: const Column(
+          children: [
+            TickerView(
+              type: TickerViewType.info,
+              message:
+                  "Anda dapat mengubah dan menghapus dengan menekan tombol pensil yang berada pada area kanan atas.",
+            ),
+          ],
+        ),
       ),
     );
   }

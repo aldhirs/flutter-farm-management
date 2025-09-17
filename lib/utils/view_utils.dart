@@ -1,5 +1,6 @@
 import 'package:farm/constants/duration_constants.dart';
 import 'package:farm/helper/function/scope_functions.dart';
+import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -76,5 +77,25 @@ class ViewUtils {
     return (globalKey.currentContext?.findRenderObject() as RenderBox?)?.let(
       (it) => it.size.height,
     );
+  }
+
+  /// Menyalin teks ke clipboard dan menampilkan toast jika perlu
+  static Future<void> copyToClipboard(
+    String text, {
+    BuildContext? context,
+    String? message,
+  }) async {
+    if (text.isEmpty) return;
+
+    await Clipboard.setData(ClipboardData(text: text));
+
+    // Optional: tampilkan toast / snackbar
+    if (context != null) {
+      ToastHelper().showToast(
+        context: context,
+        message: message ?? "Teks berhasil disalin.",
+        type: ToastType.succes,
+      );
+    }
   }
 }

@@ -13,10 +13,12 @@ class DetailBottomSheet extends StatelessWidget {
     required this.item,
     required this.onDismiss,
     this.showBottomSheet = false,
+    this.isShowTitle = true,
   });
 
   final Mutation item;
   final VoidCallback onDismiss;
+  final bool isShowTitle;
   final bool showBottomSheet;
 
   @override
@@ -27,13 +29,15 @@ class DetailBottomSheet extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Informasi Mutasi", style: TextStyles.heading5()),
-          const SizedBox(height: 16),
+          isShowTitle
+              ? Text("Informasi Mutasi", style: TextStyles.heading5())
+              : const SizedBox.shrink(),
+          isShowTitle ? const SizedBox(height: 16) : const SizedBox.shrink(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _buildChip(Icons.key_outlined, item.id.defaultValue('-')),
+              _buildChip(Icons.key_outlined, item.number.defaultValue('-')),
               Align(
                 alignment: Alignment.topLeft,
                 child: TagCategory(
@@ -49,12 +53,12 @@ class DetailBottomSheet extends StatelessWidget {
           // KANDANG A -> KANDANG B (VERTICAL BOX)
           Row(
             children: [
-              _buildBarnBox(item.from_project_name.orEmpty(), Colors.green),
+              _buildBarnBox(item.from_project_name.orEmpty(), Colors.black87),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Icon(Icons.arrow_forward, color: Colors.grey, size: 28),
               ),
-              _buildBarnBox(item.to_project_name.orEmpty(), Colors.orange),
+              _buildBarnBox(item.to_project_name.orEmpty(), Colors.deepOrange),
             ],
           ),
           const SizedBox(height: 12),
@@ -97,7 +101,7 @@ class DetailBottomSheet extends StatelessWidget {
                 text,
                 style: TextStyles.label2().copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.current.mint700,
+                  color: Colors.black87,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -129,16 +133,16 @@ class DetailBottomSheet extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.lightGreen.withValues(alpha: 0.1),
+        color: Colors.black87.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 14, color: Colors.lightGreen),
+          Icon(icon, size: 14, color: Colors.black87),
           const SizedBox(width: 6),
           Text(
             text,
-            style: TextStyles.label3().copyWith(color: Colors.lightGreen),
+            style: TextStyles.label3().copyWith(color: Colors.black87),
           ),
         ],
       ),

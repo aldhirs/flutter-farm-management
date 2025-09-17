@@ -18,7 +18,6 @@ class ItemWidget extends StatelessWidget {
       onTap: onTap,
       splashColor: AppColors.current.mint400.withValues(alpha: 120),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: Dimens.d10),
         decoration: BoxDecoration(
           color: AppColors.current.neutral100,
           border: BoxBorder.all(width: 2, color: AppColors.current.neutral500),
@@ -82,7 +81,7 @@ class ItemWidget extends StatelessWidget {
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
-                                'Berat ${item.actual_weight} Kg',
+                                'Bobot ${item.actual_weight} Kg',
                                 style: TextStyles.label2().copyWith(
                                   color: Colors.grey.shade700,
                                 ),
@@ -103,19 +102,6 @@ class ItemWidget extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildDetail(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          Icon(icon, size: 20, color: Colors.grey.shade600),
-          const SizedBox(width: 10),
-          Expanded(child: Text(text, style: const TextStyle(fontSize: 14))),
-        ],
       ),
     );
   }

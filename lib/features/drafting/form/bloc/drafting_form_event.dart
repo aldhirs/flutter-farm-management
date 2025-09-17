@@ -94,6 +94,13 @@ abstract class ClearErrorIdentity extends DraftingFormEvent
 }
 
 @freezed
+abstract class GetBarns extends DraftingFormEvent with _$GetBarns {
+  const factory GetBarns({String? search}) = _GetBarns;
+
+  const GetBarns._();
+}
+
+@freezed
 abstract class BarnChanged extends DraftingFormEvent with _$BarnChanged {
   const factory BarnChanged({required Barn barn}) = _BarnChanged;
 

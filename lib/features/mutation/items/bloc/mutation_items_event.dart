@@ -62,7 +62,7 @@ abstract class DeleteMutationItems extends MutationItemsEvent
 
 @freezed
 abstract class GetBarns extends MutationItemsEvent with _$GetBarns {
-  const factory GetBarns() = _GetBarns;
+  const factory GetBarns({String? search}) = _GetBarns;
 
   const GetBarns._();
 }

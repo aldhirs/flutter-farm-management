@@ -60,30 +60,64 @@ class _HomeNavBarPageState
           bottomNavigationBar: BottomAppBar(
             shape: const CircularNotchedRectangle(),
             color: AppColors.current.neutral100,
-            notchMargin: 12.0, // Adjust margin as needed
+            notchMargin: 10.0,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.home,
-                    color: tabsRouter.activeIndex == 0
-                        ? AppColors.current.mint700
-                        : AppColors.current.neutral800,
+                // Home
+                InkWell(
+                  onTap: () => tabsRouter.setActiveIndex(0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.home_outlined,
+                        color: tabsRouter.activeIndex == 0
+                            ? AppColors.current.mint700
+                            : AppColors.current.neutral800,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Beranda',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: tabsRouter.activeIndex == 0
+                              ? AppColors.current.mint700
+                              : AppColors.current.neutral800,
+                        ),
+                      ),
+                    ],
                   ),
-                  onPressed: () => tabsRouter.setActiveIndex(0),
                 ),
-                const SizedBox(width: 30),
-                IconButton(
-                  icon: Icon(
-                    Icons.settings,
-                    color: tabsRouter.activeIndex == 1
-                        ? AppColors.current.mint700
-                        : AppColors.current.neutral800,
+
+                const SizedBox(width: 30), // Space for FAB
+                // Settings
+                InkWell(
+                  onTap: () => tabsRouter.setActiveIndex(1),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.settings_outlined,
+                        color: tabsRouter.activeIndex == 1
+                            ? AppColors.current.mint700
+                            : AppColors.current.neutral800,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Akun',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: tabsRouter.activeIndex == 1
+                              ? AppColors.current.mint700
+                              : AppColors.current.neutral800,
+                        ),
+                      ),
+                    ],
                   ),
-                  onPressed: () => tabsRouter.setActiveIndex(1),
                 ),
-                // Add more navigation items, leaving space for the FAB if necessary
               ],
             ),
           ),

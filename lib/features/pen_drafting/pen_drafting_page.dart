@@ -116,20 +116,26 @@ class _PenDraftingPageState
                 final item = state.items[index];
                 return ItemWidget(
                   item: item,
-                  onTap: () {
+                  onTap: () async {
                     bloc.add(const GetBarns());
-                    navigator.showBottomSheet(
-                      isScrollControlled: true,
-                      isDismissible: true,
-                      enableDrag: true,
-                      ChangeBottomSheet(
-                        bloc: bloc,
-                        item: item,
-                        onDismiss: () {
-                          navigator.pop();
-                        },
-                      ),
-                    );
+                    navigator
+                        .showBottomSheet(
+                          isScrollControlled: true,
+                          isDismissible: true,
+                          enableDrag: true,
+                          ChangeBottomSheet(
+                            bloc: bloc,
+                            item: item,
+                            onDismiss: () {
+                              navigator.pop();
+                            },
+                          ),
+                        )
+                        .then((_) {
+                          bloc.add(
+                            const ResetBottomsheet(),
+                          ); // reset saat bottom sheet ditutup
+                        });
                   },
                 );
               },

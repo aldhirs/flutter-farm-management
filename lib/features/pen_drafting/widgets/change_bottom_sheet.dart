@@ -34,17 +34,20 @@ class ChangeBottomSheet extends StatefulWidget {
 class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
   final TextEditingController _barnController = TextEditingController();
   final TextEditingController _penController = TextEditingController();
+  late final ValueNotifier<List<DropdownCheckboxModel>> _barnItems;
 
   @override
   void initState() {
+    super.initState();
     widget.bloc.add(const GetBarns());
     _barnController.text = "";
     _penController.text = "";
-    super.initState();
+    _barnItems = ValueNotifier([]);
   }
 
   @override
   void dispose() {
+    _barnItems.dispose();
     _barnController.dispose();
     _penController.dispose();
 
@@ -72,28 +75,41 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
           padding: const EdgeInsets.all(Dimens.d16),
           alignment: Alignment.topLeft,
           child: Column(
-            spacing: Dimens.d8,
+            spacing: Dimens.d2,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Pindah Pen Drafting", style: TextStyles.heading5()),
-              const SizedBox(height: 12),
+              Center(
+                child: Text(
+                  "Pindah Pen Drafting",
+                  style: TextStyles.heading5(),
+                ),
+              ),
+              const SizedBox(height: 8),
               _errorWidget(),
+              const SizedBox(height: 4),
+              const TickerView(
+                type: TickerViewType.info,
+                message:
+                    'Silakan pilih kandang terlebih dahulu kemudian pen tujuan untuk memindahkan sapi.',
+              ),
+              const SizedBox(height: 12),
 
               /// Bagian Asal
-              Text("Dari", style: TextStyles.label1()),
+              Text("Pen Asal", style: TextStyles.label1()),
               _buildInfoCard(
                 barn: widget.item.name_barn,
                 room: widget.item.name,
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 12),
-                child: Center(
-                  child: Icon(Icons.arrow_downward, color: Colors.grey),
-                ),
+                child: Icon(Icons.arrow_downward, color: Colors.grey),
               ),
-              Text("Tujuan", style: TextStyles.label1()),
+              Text("Pen Tujuan", style: TextStyles.label1()),
               const SizedBox(height: 6),
               _dropdownBarn(),
               _dropdownPen(),
+
               const SizedBox(height: 16),
               BlocProvider.value(
                 value: widget.bloc,
@@ -116,6 +132,12 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
                   },
                 ),
               ),
+              Button(
+                fulLWidth: true,
+                type: ButtonType.ghost,
+                text: 'Batalkan',
+                onPressed: () => widget.bloc.navigator.pop(),
+              ),
               const SizedBox(height: 24),
             ],
           ),
@@ -132,21 +154,28 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
             p.barns != c.barns || p.selectedBarn != c.selectedBarn,
         builder: (context, state) {
           _barnController.text = state.selectedBarn?.name ?? "";
+          // 🔥 jadwalkan update setelah frame, biar nggak bentrok dengan build
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _barnItems.value = state.barns
+                .map(
+                  (item) => DropdownCheckboxModel(
+                    id: item.id,
+                    text: item.name,
+                    selected: item.id == state.selectedBarn?.id,
+                    notes: item.category,
+                  ),
+                )
+                .toList();
+          });
           return DropdownViewField(
             controller: _barnController,
-            title: 'Kandang',
-            items: ValueNotifier<List<DropdownCheckboxModel>>(
-              state.barns
-                  .map(
-                    (item) => DropdownCheckboxModel(
-                      id: item.id,
-                      text: item.name,
-                      selected: item.id == state.selectedBarn?.id,
-                      notes: item.category,
-                    ),
-                  )
-                  .toList(),
-            ),
+            title: 'Pilih Kandang',
+            items: _barnItems,
+            showSearchBar: true,
+            searchHint: "cari minimal 3 karakter",
+            doOnKeywordSearch: (keyword) {
+              widget.bloc.add(GetBarns(search: keyword));
+            },
             navigator: widget.bloc.navigator,
             dropdownType: DropdownTypeEnum.single,
             onSelectedItems: (List<String> value) {
@@ -172,6 +201,7 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
           _penController.text = state.selectedPen?.name ?? "";
           return DropdownViewPenField(
             controller: _penController,
+            enabled: state.selectedBarn != null,
             title: 'Pen Tujuan',
             items: ValueNotifier<List<Pen>>(
               state.dropdownPens

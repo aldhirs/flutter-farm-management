@@ -102,7 +102,7 @@ class SalesItemAddBloc extends BaseBloc<SalesItemAddEvent, SalesItemAddState> {
       emit(
         state.copyWith(
           errorMessage:
-              'Harap mengisi kandang, pen, berat sapi terlebih dahulu.',
+              'Harap mengisi kandang, pen, bobot sapi terlebih dahulu.',
         ),
       );
       return;
@@ -271,8 +271,8 @@ class SalesItemAddBloc extends BaseBloc<SalesItemAddEvent, SalesItemAddState> {
       ListItem(name: 'Pen', description: data.pen?.name ?? '-'),
       ListItem(name: 'Ear Tag', description: data.ear_tag),
       ListItem(
-        name: 'Berat',
-        description: '${data.actual_weight.toString()} KG',
+        name: 'Bobot',
+        description: '${data.actual_weight.toString()} Kg',
       ),
       ListItem(name: 'Ras', description: data.id_breed),
       ListItem(name: 'Jenis Kelamin', description: data.genderLabel()),

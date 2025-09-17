@@ -55,11 +55,11 @@ class ItemWidget extends StatelessWidget {
                       children: [
                         Text(
                           (sale.customer_detail?.name).orEmpty(),
-                          style: TextStyles.heading5(),
+                          style: TextStyles.heading6(),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          (sale.customer_detail?.id).orEmpty(),
+                          (sale.customer_detail?.phone).orEmpty(),
                           style: TextStyles.label3(),
                         ),
                       ],
@@ -86,7 +86,10 @@ class ItemWidget extends StatelessWidget {
                     )
                     .defaultValue('-'),
               ),
-              _buildChip(Icons.key_outlined, (sale.id).defaultValue('-')),
+              _buildChip(
+                Icons.key_outlined,
+                (sale.sales_number).defaultValue('-'),
+              ),
             ],
           ),
         ),

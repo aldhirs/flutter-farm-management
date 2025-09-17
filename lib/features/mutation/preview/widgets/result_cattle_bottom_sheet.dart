@@ -165,7 +165,7 @@ class _ResultCattleBottomSheetState extends State<ResultCattleBottomSheet> {
       ListItem(name: 'Kandang', description: data.pen?.name_barn ?? '-'),
       ListItem(name: 'Pen', description: data.pen?.name ?? '-'),
       ListItem(name: 'Ear Tag', description: data.ear_tag),
-      ListItem(name: 'Berat', description: '${data.actual_weight} KG'),
+      ListItem(name: 'Bobot', description: '${data.actual_weight} Kg'),
       ListItem(name: 'Ras', description: data.id_breed),
       ListItem(name: 'Jenis Kelamin', description: data.genderLabel()),
       ListItem(name: 'Status', description: data.statusLabel()),

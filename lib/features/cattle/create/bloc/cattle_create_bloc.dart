@@ -155,6 +155,7 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
           BarnRequest(
             projectId: appBloc.state.selectedProject!.id,
             category: barnCategoryMap.keys.join(","),
+            search: event.search.orEmpty(),
           ),
         );
         switch (response.result) {

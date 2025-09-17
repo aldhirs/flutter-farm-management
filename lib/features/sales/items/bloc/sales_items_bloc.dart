@@ -4,6 +4,7 @@ import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/entities/barn/barn_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_request.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
+import 'package:farm/domain/entities/sales/sale_id_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_delete_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_move_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
@@ -11,6 +12,7 @@ import 'package:farm/domain/entities/sales/sales_request.dart';
 import 'package:farm/domain/usecases/barns_use_case.dart';
 import 'package:farm/domain/usecases/cattle_by_ear_tag_use_case.dart';
 import 'package:farm/domain/usecases/pens_use_case.dart';
+import 'package:farm/domain/usecases/sale_by_id_use_case.dart';
 import 'package:farm/domain/usecases/sales_item_delete_use_case.dart';
 import 'package:farm/domain/usecases/sales_item_move_use_case.dart';
 import 'package:farm/domain/usecases/sales_items_use_case.dart';
@@ -24,6 +26,7 @@ import 'package:injectable/injectable.dart';
 @Injectable()
 class SalesItemsBloc extends BaseBloc<SalesItemsEvent, SalesItemsState> {
   final SalesUseCase _salesUseCase;
+  final SaleByIdUseCase _saleByIdUseCase;
   final CattleByEarTagUseCase _cattleByEarTagUseCase;
   final SalesItemsUseCase _salesItemsUseCase;
   final SalesItemDeleteUseCase _salesItemDeleteUseCase;
@@ -39,6 +42,7 @@ class SalesItemsBloc extends BaseBloc<SalesItemsEvent, SalesItemsState> {
     this._salesItemsUseCase,
     this._salesItemDeleteUseCase,
     this._salesItemMoveUseCase,
+    this._saleByIdUseCase,
   ) : super(const SalesItemsState()) {
     on<Initiated>(_initialized, transformer: log());
     on<Load>(_load, transformer: log());
@@ -50,6 +54,7 @@ class SalesItemsBloc extends BaseBloc<SalesItemsEvent, SalesItemsState> {
     on<GetBarns>(_getBarnsApi, transformer: log());
     on<GetPens>(_getPensApi, transformer: log());
     on<SalesList>(_getSalesApi, transformer: log());
+    on<SaleByID>(_getSaleByIdApi, transformer: log());
     on<CheckCattleEarTag>(_getCattleEarTagApi, transformer: log());
     ;
     on<BarnChanged>((event, emit) {
@@ -77,6 +82,7 @@ class SalesItemsBloc extends BaseBloc<SalesItemsEvent, SalesItemsState> {
 
   Future<void> _load(Load event, Emitter<SalesItemsState> emit) async {
     await _loadApi(emit, event.withFilter, 1, false);
+    add(const SaleByID());
   }
 
   Future<void> _loadMore(LoadMore event, Emitter<SalesItemsState> emit) async {
@@ -272,6 +278,33 @@ class SalesItemsBloc extends BaseBloc<SalesItemsEvent, SalesItemsState> {
                 .toList();
 
             emit(state.copyWith(salesList: result, errorMessage: errorMessage));
+            break;
+          case DataError(:final errorMessage):
+            emit(state.copyWith(errorMessage: errorMessage.orEmpty()));
+          case null:
+            return;
+        }
+      },
+      doOnEventCompleted: () async {},
+      handleError: false,
+      doOnError: (e) async {
+        emit(state.copyWith(errorMessage: exceptionMessageMapper.map(e)));
+      },
+    );
+  }
+
+  Future<void> _getSaleByIdApi(SaleByID event, Emitter<SalesItemsState> emit) {
+    return runBlocCatching(
+      handleLoading: false,
+      action: () async {
+        if (!_isProjectChosen(emit)) {
+          return;
+        }
+        final req = SaleIdRequest(id: state.sales.id);
+        final response = await _saleByIdUseCase.execute(req);
+        switch (response.result) {
+          case DataSuccess(:final data):
+            emit(state.copyWith(sales: data, errorMessage: ''));
             break;
           case DataError(:final errorMessage):
             emit(state.copyWith(errorMessage: errorMessage.orEmpty()));

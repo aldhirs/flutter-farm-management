@@ -23,6 +23,7 @@ class DropdownViewPenField extends StatefulWidget {
     this.maxSelection,
     this.sheetSize = BottomSheetSize.fitContent,
     this.emptyStateMessage,
+    this.enabled = true,
   });
 
   final Function(String keyword)? doOnKeywordSearch;
@@ -39,6 +40,7 @@ class DropdownViewPenField extends StatefulWidget {
   final int? maxSelection;
   final BottomSheetSize sheetSize;
   final String? emptyStateMessage;
+  final bool enabled;
 
   @override
   State<StatefulWidget> createState() => _DropdownViewPenFieldState();
@@ -82,6 +84,7 @@ class _DropdownViewPenFieldState extends State<DropdownViewPenField> {
             dropdownInputState: textInputState,
             label: widget.title,
             hintText: widget.searchHint,
+            enabled: widget.enabled,
             isShowDropdown: isShowDropdown,
             onTap: _onShowBottomsheet,
           );

@@ -35,17 +35,20 @@ class IdentityFormBottomSheet extends StatefulWidget {
 class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
   final TextEditingController _earTagController = TextEditingController();
   final TextEditingController _penController = TextEditingController();
+  late final ValueNotifier<List<DropdownCheckboxModel>> _barnItems;
 
   @override
   void initState() {
     widget.bloc.add(const IdentityInit());
     _earTagController.text = widget.bloc.state.earTag.orEmpty();
     _penController.text = widget.bloc.state.selectedPen?.id ?? "";
+    _barnItems = ValueNotifier([]);
     super.initState();
   }
 
   @override
   void dispose() {
+    _barnItems.dispose();
     _earTagController.dispose();
     _penController.dispose();
     super.dispose();
@@ -74,9 +77,15 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
           child: Column(
             children: [
               Text("Input Identitas Sapi", style: TextStyles.heading5()),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               _errorWidget(),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
+              const TickerView(
+                type: TickerViewType.info,
+                message:
+                    'Isi semua data sapi pada formulir di bawah, lalu tekan “Lanjut” untuk menyimpan. Menekan “Tutup” akan membatalkan penyimpanan.',
+              ),
+              const SizedBox(height: 16),
 
               _textInputEarTag(),
               const SizedBox(height: 16),
@@ -130,6 +139,8 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
             hintText: 'Ear Tag',
             keyboardType: TextInputType.text,
             prefixIcon: Icon(Icons.earbuds, color: AppColors.current.mint700),
+            additionalInfo:
+                "Masukkan ear tag untuk memberikan kode kepada sapi terkait.",
             onChanged: (value) {
               widget.bloc.add(EarTagChanged(value: value));
             },
@@ -145,22 +156,29 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
       child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
         buildWhen: (p, c) => p.barns != c.barns,
         builder: (context, state) {
+          // 🔥 jadwalkan update setelah frame, biar nggak bentrok dengan build
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _barnItems.value = state.barns
+                .map(
+                  (item) => DropdownCheckboxModel(
+                    id: item.id,
+                    text: item.name,
+                    selected: item.id == state.selectedBarn?.id,
+                    notes: item.category,
+                  ),
+                )
+                .toList();
+          });
           return DropdownViewField(
             title: 'Kandang',
-            items: ValueNotifier<List<DropdownCheckboxModel>>(
-              state.barns
-                  .map(
-                    (item) => DropdownCheckboxModel(
-                      id: item.id,
-                      text: item.name,
-                      selected: item.id == state.selectedBarn?.id,
-                      notes: item.category,
-                    ),
-                  )
-                  .toList(),
-            ),
+            items: _barnItems,
             navigator: widget.bloc.navigator,
             dropdownType: DropdownTypeEnum.single,
+            showSearchBar: true,
+            searchHint: "cari minimal 3 karakter",
+            doOnKeywordSearch: (keyword) {
+              widget.bloc.add(GetBarns(search: keyword));
+            },
             onSelectedItems: (List<String> value) {
               final selected = state.barns
                   .where((item) => item.id == value.first)

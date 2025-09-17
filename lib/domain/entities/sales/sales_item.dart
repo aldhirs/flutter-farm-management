@@ -43,7 +43,7 @@ abstract class SalesItem extends BaseOutput with _$SalesItem {
       case AVAILABLE:
         return TagCategoryType.eucalyptus;
       case BOOKED:
-        return TagCategoryType.crismon;
+        return TagCategoryType.deepLemon;
     }
     return TagCategoryType.plain;
   }
