@@ -11,6 +11,7 @@ abstract class UserData extends BaseOutput with _$UserData {
     @JsonKey(name: 'client_slug') @Default('') String clientSlug,
     @JsonKey(name: 'role_id') @Default(0) double roleId,
     @JsonKey(name: 'username') @Default('') String username,
+    @JsonKey(name: 'full_name') @Default('') String full_name,
     @JsonKey(name: 'email') @Default('') String email,
     @JsonKey(name: 'token') @Default('') String token,
   }) = _UserData;

@@ -6,7 +6,6 @@ import 'package:farm/features/account/account/bloc/account_event.dart';
 import 'package:farm/features/account/account/bloc/account_state.dart';
 import 'package:farm/features/account/account/widgets/avatar_widget.dart';
 import 'package:farm/features/account/account/widgets/list_item_widget.dart';
-import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/view_utils.dart';
 import 'package:farm/views/view.dart';
@@ -182,16 +181,17 @@ class _AccountPageState extends BasePageState<AccountPage, AccountBloc> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     BlocSelector<AccountBloc, AccountState, String>(
-                      selector: (state) => state.userData.username,
+                      selector: (state) => state.userData.full_name,
                       builder: (context, value) {
                         return Text(
                           value,
-                          style: TextStyles.button3().copyWith(
+                          style: TextStyles.body2().copyWith(
                             color: AppColors.current.mint800,
                           ),
                         );
                       },
                     ),
+                    SizedBox(height: 8),
                     BlocSelector<AccountBloc, AccountState, String>(
                       selector: (state) => state.userData.email,
                       builder: (context, value) {

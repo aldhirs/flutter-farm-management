@@ -6,12 +6,14 @@ import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/string_utils.dart';
 import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class DetailBottomSheet extends StatelessWidget {
   const DetailBottomSheet({
     super.key,
     required this.item,
     required this.onDismiss,
+    this.isIn = false,
     this.showBottomSheet = false,
     this.isShowTitle = true,
   });
@@ -19,6 +21,7 @@ class DetailBottomSheet extends StatelessWidget {
   final Mutation item;
   final VoidCallback onDismiss;
   final bool isShowTitle;
+  final bool isIn;
   final bool showBottomSheet;
 
   @override
@@ -51,16 +54,23 @@ class DetailBottomSheet extends StatelessWidget {
           const SizedBox(height: 8),
 
           // KANDANG A -> KANDANG B (VERTICAL BOX)
-          Row(
-            children: [
-              _buildBarnBox(item.from_project_name.orEmpty(), Colors.black87),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Icon(Icons.arrow_forward, color: Colors.grey, size: 28),
-              ),
-              _buildBarnBox(item.to_project_name.orEmpty(), Colors.deepOrange),
-            ],
+          _buildBarnBox(
+            isIn
+                ? "Dari: ${item.from_project_name.orEmpty()}"
+                : "Ke: ${item.to_project_name.orEmpty()}",
+            showBottomSheet
+                ? (isIn ? Colors.green : Colors.orange)
+                : Colors.white,
           ),
+          const SizedBox(height: 12),
+
+          Text(
+            item.notes,
+            style: TextStyles.label2().copyWith(
+              color: showBottomSheet ? Colors.grey.shade800 : Colors.black87,
+            ),
+          ),
+
           const SizedBox(height: 12),
 
           // DETAIL INFO
@@ -73,9 +83,10 @@ class DetailBottomSheet extends StatelessWidget {
                 )
                 .defaultValue('-'),
           ),
-          showBottomSheet
-              ? const SizedBox(height: 16)
-              : const SizedBox.shrink(),
+          Visibility(
+            visible: showBottomSheet,
+            child: const SizedBox(height: 12),
+          ),
         ],
       ),
     );
@@ -83,34 +94,21 @@ class DetailBottomSheet extends StatelessWidget {
 
   // ==================== BARN BOX VERTICAL ====================
   Widget _buildBarnBox(String text, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          border: Border.all(color: color, width: 1),
-          borderRadius: BorderRadius.circular(8),
+    return Row(
+      children: [
+        Icon(LucideIcons.warehouse, color: color, size: 28),
+        const SizedBox(width: 10),
+        Text(
+          text,
+          style: TextStyles.body1().copyWith(
+            fontWeight: FontWeight.bold,
+            color: showBottomSheet ? AppColors.current.mint700 : Colors.white,
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.home_work_outlined, color: color, size: 18),
-            const SizedBox(height: 4),
-            Flexible(
-              child: Text(
-                text,
-                style: TextStyles.label2().copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 
@@ -118,11 +116,17 @@ class DetailBottomSheet extends StatelessWidget {
   Widget _buildDetail(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: Colors.blueGrey),
+        Icon(
+          icon,
+          size: 16,
+          color: showBottomSheet ? Colors.blueGrey : Colors.black54,
+        ),
         const SizedBox(width: 6),
         Text(
           text,
-          style: TextStyles.label3().copyWith(color: Colors.grey.shade800),
+          style: TextStyles.label3().copyWith(
+            color: showBottomSheet ? Colors.grey.shade800 : Colors.black87,
+          ),
         ),
       ],
     );
@@ -133,16 +137,24 @@ class DetailBottomSheet extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.black87.withValues(alpha: 0.1),
+        color: showBottomSheet
+            ? Colors.lightGreen.withValues(alpha: 0.1)
+            : Colors.white24.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 14, color: Colors.black87),
+          Icon(
+            icon,
+            size: 14,
+            color: showBottomSheet ? Colors.lightGreen : Colors.white,
+          ),
           const SizedBox(width: 6),
           Text(
             text,
-            style: TextStyles.label3().copyWith(color: Colors.black87),
+            style: TextStyles.label3().copyWith(
+              color: showBottomSheet ? Colors.lightGreen : Colors.white,
+            ),
           ),
         ],
       ),

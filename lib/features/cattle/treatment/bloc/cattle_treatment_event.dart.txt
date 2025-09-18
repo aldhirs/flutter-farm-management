@@ -1,0 +1,37 @@
+import 'package:farm/base/base.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'sales_event.freezed.dart';
+
+abstract class CattleTreatmentEvent extends BaseBlocEvent {
+  const CattleTreatmentEvent();
+}
+
+@freezed
+abstract class Initiated extends CattleTreatmentEvent with _$Initiated {
+  const factory Initiated() = _Initiated;
+  const Initiated._();
+}
+
+@freezed
+abstract class FilterStatusChanged extends CattleTreatmentEvent
+    with _$FilterStatusChanged {
+  const factory FilterStatusChanged({required String value}) =
+      _FilterStatusChanged;
+  const FilterStatusChanged._();
+}
+
+@freezed
+abstract class LoadCattleTreatment extends CattleTreatmentEvent
+    with _$LoadCattleTreatment {
+  const factory LoadCattleTreatment({@Default(false) bool withFilter}) =
+      _LoadCattleTreatment;
+  const LoadCattleTreatment._();
+}
+
+@freezed
+abstract class LoadMoreCattleTreatment extends CattleTreatmentEvent
+    with _$LoadMoreCattleTreatment {
+  const factory LoadMoreCattleTreatment() = _LoadMoreCattleTreatment;
+  const LoadMoreCattleTreatment._();
+}

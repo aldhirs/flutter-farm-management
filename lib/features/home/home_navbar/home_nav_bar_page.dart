@@ -52,7 +52,7 @@ class _HomeNavBarPageState
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
           floatingActionButton: FloatingActionButton.large(
-            backgroundColor: AppColors.current.mint700,
+            backgroundColor: AppColors.current.mint600,
             onPressed: () => _onDraftingClicked(),
             shape: const CircleBorder(),
             child: const Icon(Icons.barcode_reader, color: Colors.white),

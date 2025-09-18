@@ -25,6 +25,12 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
     MutationListOutRoute(),
   ];
 
+  final cattleSearchNavBarRoutes = const [
+    CattleSearchRoute(),
+    CattleSearchRoute(),
+    CattleSearchRoute(),
+  ];
+
   TabsRouter? tabsRouter;
 
   final AppRouter _appRouter;

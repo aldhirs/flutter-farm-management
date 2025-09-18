@@ -55,6 +55,7 @@ class _MutationListPageState
     return BlocBuilder<MutationListBloc, MutationListState>(
       builder: (context, state) {
         return CommonScaffold(
+          backgroundColor: AppColors.current.neutral400,
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: _filterButton(),

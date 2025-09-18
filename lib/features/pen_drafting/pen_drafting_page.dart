@@ -54,6 +54,7 @@ class _PenDraftingPageState
     return BlocBuilder<PenDraftingBloc, PenDraftingState>(
       builder: (context, state) {
         return CommonScaffold(
+          backgroundColor: AppColors.current.neutral400,
           appBar: CommonAppBar(
             titleText: 'Daftar Pen Drafting',
             forceMaterialTransparency: false,

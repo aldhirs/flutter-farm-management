@@ -21,6 +21,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.elevation,
     this.shadowColor,
     this.actions,
+    this.bottom,
     this.titleSpacing = 0,
     this.centeredTitle = true,
     this.forceMaterialTransparency = true,
@@ -41,6 +42,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double? height;
   final double? elevation;
   final double? titleSpacing;
+  final dynamic? bottom;
   final VoidCallback? onLeadingPressed;
 
   @override
@@ -54,16 +56,29 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: automaticallyImplyLeading,
       leadingWidth: leadingWidth,
       title: titleText?.isNotEmpty == true ? _title() : title,
-      backgroundColor: backgroundColor,
       foregroundColor: foregroundColor,
       surfaceTintColor: surfaceTintColor,
       scrolledUnderElevation: 0.0,
       forceMaterialTransparency: forceMaterialTransparency.defaultTrue(),
+      flexibleSpace: backgroundColor == null
+          ? Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [const Color(0xFF25AFCB), AppColors.current.mint500],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            )
+          : null,
+      backgroundColor:
+          backgroundColor ?? Colors.transparent, // biar gradient yang tampil
       elevation: elevation,
       shadowColor: shadowColor,
       leading:
           leading ?? (automaticallyImplyLeading ? _leading(context) : null),
       actions: actions,
+      bottom: bottom,
     );
   }
 

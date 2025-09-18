@@ -6,10 +6,12 @@ import 'package:farm/app/bloc/app_state.dart';
 import 'package:farm/base/base_page_state.dart';
 import 'package:farm/extensions/string.dart';
 import 'package:farm/features/home/home/bloc/home_bloc.dart';
+import 'package:farm/features/home/home/bloc/home_state.dart';
+import 'package:farm/features/home/home/dashboard_page.dart';
 import 'package:farm/features/home/home/widgets/quick_action_card.dart';
-import 'package:farm/features/home/home/widgets/stat_card.dart';
 import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
+import 'package:farm/navigation/routes/app_router.gr.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/views/view.dart';
@@ -19,6 +21,7 @@ import 'package:farm/widgets/popup/popup.dart';
 import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 @RoutePage()
 class HomePage extends StatefulWidget {
@@ -78,125 +81,67 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
       ],
       child: CommonScaffold(
         backgroundColor: AppColors.current.neutral400,
-        appBar: CommonAppBar(
-          automaticallyImplyLeading: false,
-          titleSpacing: NavigationToolbar.kMiddleSpacing,
-          forceMaterialTransparency: false,
-          title: BlocProvider.value(
-            value: appBloc,
-            child: BlocBuilder<AppBloc, AppState>(
-              buildWhen: (p, c) => p.selectedProject != c.selectedProject,
-              builder: (context, state) {
-                final selectedProject = state.selectedProject?.name;
-                return InkWell(
-                  onTap: () {
-                    appBloc.add(const GetProjects());
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.home_work_outlined),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: Text(
-                          selectedProject
-                              .defaultValue('Belum dipilih')
-                              .orEmpty(),
-                          style: TextStyles.body1().copyWith(
-                            color: Colors.white,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          softWrap: false,
-                        ),
-                      ),
-                      const Icon(Icons.arrow_drop_down),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
         body: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 48),
               _fadeSlide(
                 fade: _fadeStats,
                 slide: _slideStats,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Selamat datang, Anda berada pada feedlot:',
-                      style: TextStyles.heading6(),
-                    ),
-                    const SizedBox(height: 8),
-                    BlocProvider.value(
-                      value: appBloc,
-                      child: BlocBuilder<AppBloc, AppState>(
-                        buildWhen: (p, c) =>
-                            p.selectedProject != c.selectedProject,
-                        builder: (context, state) {
-                          final selectedProject = state.selectedProject?.name;
-                          return InkWell(
-                            onTap: () {
-                              appBloc.add(const GetProjects());
-                            },
-                            child: TagCategory(
-                              text: selectedProject
-                                  .defaultValue('Belum dipilih')
-                                  .orEmpty(),
-                              type: selectedProject?.isNotEmpty == true
-                                  ? TagCategoryType.mintSolid
-                                  : TagCategoryType.crismon,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Klik untuk mengganti Feedlot',
-                      style: TextStyles.body3(),
-                    ),
-                  ],
+                child: Text(
+                  'Selamat Datang, ${appBloc.state.userData?.full_name}',
+                  style: TextStyles.heading5(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
+              ),
+              const SizedBox(height: 24),
+              _fadeSlide(
+                fade: _fadeStats,
+                slide: _slideStats,
+                child: _summaryWidget(),
               ),
               const SizedBox(height: 16),
               _fadeSlide(
+                fade: _fadeShortcutTitle,
+                slide: _slideShortcutTitle,
+                child: const Text(
+                  "Discover",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              _fadeSlide(
                 fade: _fadeStats,
                 slide: _slideStats,
-                child: const Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 1.45,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.zero,
                   children: [
-                    StatCard(
-                      title: "Drafting",
-                      count: "120",
-                      color: Colors.green,
-                      icon: Icons.pets,
+                    _buildSummaryCard("Draf Sapi", "120", LucideIcons.pawPrint),
+                    _buildSummaryCard(
+                      "Draf Penjualan",
+                      "3",
+                      LucideIcons.shoppingCart,
                     ),
-                    StatCard(
-                      title: "Sapi Sakit",
-                      count: "5",
-                      color: Colors.orange,
-                      icon: Icons.sick_outlined,
+                    _buildSummaryCard(
+                      "Mutasi Masuk",
+                      "2",
+                      LucideIcons.arrowDown,
                     ),
-                    StatCard(
-                      title: "Draf Penjualan",
-                      count: "30",
-                      color: Colors.red,
-                      icon: Icons.shopping_cart,
-                    ),
-                    StatCard(
-                      title: "Draf Mutasi",
-                      count: "30",
-                      color: Colors.red,
-                      icon: Icons.multiline_chart,
+                    _buildSummaryCard(
+                      "Mutasi Keluar",
+                      "1",
+                      LucideIcons.arrowUp,
                     ),
                   ],
                 ),
@@ -206,7 +151,10 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
               _fadeSlide(
                 fade: _fadeShortcutTitle,
                 slide: _slideShortcutTitle,
-                child: Text("Menu", style: TextStyles.heading6()),
+                child: const Text(
+                  "Menu",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
               ),
 
               const SizedBox(height: 10),
@@ -214,74 +162,51 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
               _fadeSlide(
                 fade: _fadeQuickActions,
                 slide: _slideQuickActions,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  shrinkWrap: true,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  padding: EdgeInsets.zero,
+                  physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    Expanded(
-                      child: QuickActionCard(
-                        icon: Icons.multiline_chart,
-                        label: "Mutasi",
-                        onTap: () =>
-                            _onMenuClicked(const AppRouteInfo.mutationNavBar()),
+                    QuickActionCard(
+                      icon: LucideIcons.shuffle,
+                      label: "Mutasi",
+                      onTap: () =>
+                          _onMenuClicked(const AppRouteInfo.mutationNavBar()),
+                    ),
+                    QuickActionCard(
+                      icon: LucideIcons.dollarSign,
+                      label: "Penjualan",
+                      onTap: () => _onMenuClicked(const AppRouteInfo.sales()),
+                    ),
+                    QuickActionCard(
+                      icon: LucideIcons.layers,
+                      label: "Pen Drafting",
+                      onTap: () =>
+                          _onMenuClicked(const AppRouteInfo.penDrafting()),
+                    ),
+                    QuickActionCard(
+                      icon: LucideIcons.alignEndVertical,
+                      label: "Drafting",
+                      onTap: () => _onMenuClicked(
+                        const AppRouteInfo.scan(route: DEST_DRAFTING_DETAIL),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: QuickActionCard(
-                        icon: Icons.sell,
-                        label: "Penjualan",
-                        onTap: () => _onMenuClicked(const AppRouteInfo.sales()),
+                    QuickActionCard(
+                      icon: LucideIcons.plus,
+                      label: "Tambah Sapi",
+                      onTap: () =>
+                          _onMenuClicked(const AppRouteInfo.cattleCreate()),
+                    ),
+                    QuickActionCard(
+                      icon: LucideIcons.search,
+                      label: "Cari Sapi",
+                      onTap: () => _onMenuClicked(
+                        const AppRouteInfo.cattleSearchNavBar(),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              _fadeSlide(
-                fade: _fadeQuickActions,
-                slide: _slideQuickActions,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: QuickActionCard(
-                        icon: Icons.add,
-                        label: "Tambah Sapi",
-                        onTap: () =>
-                            _onMenuClicked(const AppRouteInfo.cattleCreate()),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: QuickActionCard(
-                        icon: Icons.change_circle_outlined,
-                        label: "Pen Drafting",
-                        onTap: () =>
-                            _onMenuClicked(const AppRouteInfo.penDrafting()),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              _fadeSlide(
-                fade: _fadeQuickActions,
-                slide: _slideQuickActions,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // const Expanded(child: SizedBox.shrink()),
-                    const SizedBox(width: 80),
-                    Expanded(
-                      child: QuickActionCard(
-                        icon: Icons.barcode_reader,
-                        label: "Drafting",
-                        onTap: () => _onMenuClicked(
-                          const AppRouteInfo.scan(route: DEST_DRAFTING_DETAIL),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 80),
                   ],
                 ),
               ),
@@ -322,6 +247,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
       );
     } else {
       await navigator.push(route);
+      // await navigator.pushRoute(DashboardRoute());
     }
   }
 
@@ -409,6 +335,102 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
     return FadeTransition(
       opacity: fade,
       child: SlideTransition(position: slide, child: child),
+    );
+  }
+
+  Widget _summaryWidget() {
+    return BlocProvider.value(
+      value: appBloc,
+      child: BlocBuilder<AppBloc, AppState>(
+        buildWhen: (p, c) => p.selectedProject != c.selectedProject,
+        builder: (context, state) {
+          return InkWell(
+            onTap: () {
+              appBloc.add(const GetProjects());
+            },
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [const Color(0xFF25ADCB), AppColors.current.mint500],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      LucideIcons.warehouse,
+                      size: 32,
+                      color: AppColors.current.mint700,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        (appBloc.state.selectedProject?.name).defaultValue(
+                          'Belum diset',
+                        ),
+                        style: TextStyles.heading4().copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        "Tekan untuk mengubah feedlot",
+                        style: TextStyles.label2().copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard(String title, String value, IconData icon) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 28, color: AppColors.current.mint700),
+          const Spacer(),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF333333),
+            ),
+          ),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 14, color: Colors.black54),
+          ),
+        ],
+      ),
     );
   }
 }

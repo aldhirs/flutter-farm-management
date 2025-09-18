@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/domain/usecases/is_logged_in_use_case.dart';
+import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/navigation/middleware/auth_guard.dart';
 import 'package:farm/navigation/middleware/first_launch_guard.dart';
 import 'package:farm/navigation/routes/app_router.gr.dart';
@@ -54,6 +55,13 @@ class AppRouter extends RootStackRouter {
     ),
     AutoRoute(page: MutationItemsRoute.page, guards: [authGuard()]),
     AutoRoute(page: MutationItemPreviewRoute.page, guards: [authGuard()]),
+    AutoRoute(page: CattleSearchRoute.page, guards: [authGuard()]),
+    AutoRoute(page: DashboardRoute.page),
+    AutoRoute(
+      page: CattleSearchNavBarRoute.page,
+      guards: [authGuard()],
+      children: [AutoRoute(page: CattleSearchRoute.page)],
+    ),
   ];
 
   @override

@@ -193,13 +193,9 @@ class _MutationPageState
             background: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.current.mint700,
-                    AppColors.current.mint200,
-                    AppColors.current.mint200,
-                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [const Color(0xFF25ADCB), AppColors.current.mint500],
                 ),
               ),
               child: SafeArea(
@@ -213,6 +209,7 @@ class _MutationPageState
                       DetailBottomSheet(
                         item: state.mutation,
                         onDismiss: () {},
+                        isIn: widget.isIn,
                         isShowTitle: false,
                         showBottomSheet: false,
                       ),
@@ -371,6 +368,7 @@ class _MutationPageState
     navigator.showBottomSheet(
       DetailBottomSheet(
         item: widget.item,
+        isIn: widget.isIn,
         onDismiss: () {
           navigator.pop();
         },

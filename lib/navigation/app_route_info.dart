@@ -44,6 +44,7 @@ abstract class AppRouteInfo with _$AppRouteInfo {
   }) = ScanPages;
   const factory AppRouteInfo.penDrafting() = PenDrafting;
 
+  const factory AppRouteInfo.cattleSearchNavBar() = CattleSearchNavBar;
   const factory AppRouteInfo.mutationNavBar() = MutationNavBar;
   const factory AppRouteInfo.mutationItem({
     required Mutation item,

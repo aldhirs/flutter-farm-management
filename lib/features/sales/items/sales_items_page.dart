@@ -197,13 +197,9 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
             background: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.current.mint700,
-                    AppColors.current.mint600,
-                    AppColors.current.mint500,
-                  ],
+                  colors: [const Color(0xFF25AFCB), AppColors.current.mint500],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
               child: SafeArea(

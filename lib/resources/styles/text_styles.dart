@@ -19,7 +19,7 @@ class TextStyles {
 
   static const _defaultLetterSpacing = 0.5;
 
-  static TextStyle _baseInterFontStyle() => GoogleFonts.inter(
+  static TextStyle _baseInterFontStyle() => GoogleFonts.notoSans(
     color: AppColors.current.text100,
     letterSpacing: _defaultLetterSpacing,
   );

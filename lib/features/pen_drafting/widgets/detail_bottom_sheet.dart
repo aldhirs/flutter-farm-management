@@ -20,11 +20,11 @@ class DetailBottomSheet extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             "Halaman yang menampilkan daftar seluruh pen pada feedlot. Aktivitas yang dapat dilakukan selain melihat daftar seluruh pen adalah dapat memindahkan sapi dari kandang/pen ke kandang/pen yang dituju.",
-            style: TextStyles.paragraph1(),
+            style: TextStyles.paragraph2(),
           ),
           Text(
             "Pilih pen yang pada daftar pen drafting untuk dilakukan pemindahan sapi ke kandang dan pen lainnya.",
-            style: TextStyles.paragraph1(),
+            style: TextStyles.paragraph2(),
           ),
           const SizedBox(height: 24),
         ],

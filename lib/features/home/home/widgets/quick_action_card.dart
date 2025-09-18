@@ -1,5 +1,4 @@
 import 'package:farm/resources/resource.dart';
-import 'package:farm/resources/styles/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class QuickActionCard extends StatelessWidget {
@@ -19,28 +18,30 @@ class QuickActionCard extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: onTap,
-      child: Card(
-        elevation: 0,
-        color: AppColors.current.neutral100,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: AppColors.current.neutral400,
-                child: Icon(icon, size: 28, color: AppColors.current.mint700),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                label,
-                style: TextStyles.button2(),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 30, color: AppColors.current.mint600),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+          ],
         ),
       ),
     );

@@ -8,6 +8,7 @@ import 'package:farm/resources/styles/text_styles.dart';
 import 'package:farm/utils/string_utils.dart';
 import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class ItemWidget extends StatelessWidget {
   final Mutation item;
@@ -30,13 +31,17 @@ class ItemWidget extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: Dimens.d12, vertical: 6),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppColors.current.neutral100,
-          borderRadius: BorderRadius.circular(Dimens.d12),
+          gradient: LinearGradient(
+            colors: [Colors.white, Colors.grey.shade50],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(Dimens.d16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
+              color: Colors.black12.withValues(alpha: 0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -61,26 +66,19 @@ class ItemWidget extends StatelessWidget {
             const SizedBox(height: 8),
 
             // KANDANG A -> KANDANG B (VERTICAL BOX)
-            Row(
-              children: [
-                _buildBarnBox(
-                  item.from_project_name.orEmpty(),
-                  isIn ? Colors.green : Colors.orange,
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Icon(
-                    Icons.arrow_forward,
-                    color: Colors.grey,
-                    size: 28,
-                  ),
-                ),
-                _buildBarnBox(
-                  item.to_project_name.orEmpty(),
-                  !isIn ? Colors.green : Colors.orange,
-                ),
-              ],
+            _buildBarnBox(
+              isIn
+                  ? "Dari: ${item.from_project_name.orEmpty()}"
+                  : "Ke: ${item.to_project_name.orEmpty()}",
+              isIn ? Colors.green : Colors.orange,
             ),
+            const SizedBox(height: 12),
+
+            Text(
+              item.notes,
+              style: TextStyles.label2().copyWith(color: Colors.grey.shade800),
+            ),
+
             const SizedBox(height: 12),
 
             // DETAIL INFO
@@ -101,34 +99,21 @@ class ItemWidget extends StatelessWidget {
 
   // ==================== BARN BOX VERTICAL ====================
   Widget _buildBarnBox(String text, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          border: Border.all(color: color, width: 1),
-          borderRadius: BorderRadius.circular(8),
+    return Row(
+      children: [
+        Icon(LucideIcons.warehouse, color: color, size: 28),
+        const SizedBox(width: 10),
+        Text(
+          text,
+          style: TextStyles.body1().copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppColors.current.mint700,
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.home_work_outlined, color: color, size: 18),
-            const SizedBox(height: 4),
-            Flexible(
-              child: Text(
-                text,
-                style: TextStyles.label2().copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.current.mint700,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 
