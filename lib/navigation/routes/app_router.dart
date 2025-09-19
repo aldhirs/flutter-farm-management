@@ -55,13 +55,9 @@ class AppRouter extends RootStackRouter {
     ),
     AutoRoute(page: MutationItemsRoute.page, guards: [authGuard()]),
     AutoRoute(page: MutationItemPreviewRoute.page, guards: [authGuard()]),
+    AutoRoute(page: CattlePreviewRoute.page, guards: [authGuard()]),
     AutoRoute(page: CattleSearchRoute.page, guards: [authGuard()]),
     AutoRoute(page: DashboardRoute.page),
-    AutoRoute(
-      page: CattleSearchNavBarRoute.page,
-      guards: [authGuard()],
-      children: [AutoRoute(page: CattleSearchRoute.page)],
-    ),
   ];
 
   @override

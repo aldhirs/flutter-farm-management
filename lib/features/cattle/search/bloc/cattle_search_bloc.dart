@@ -1,22 +1,31 @@
 import 'package:dartx/dartx.dart';
 import 'package:farm/base/base.dart';
-import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/cattle/cattle_request.dart';
-import 'package:farm/domain/usecases/cattle_by_ear_tag_use_case.dart';
+import 'package:farm/domain/entities/medical/medical_request.dart';
+import 'package:farm/domain/entities/treatment/treatment_request.dart';
+import 'package:farm/domain/usecases/cattle_by_rfid_use_case.dart';
+import 'package:farm/domain/usecases/medicals_use_case.dart';
+import 'package:farm/domain/usecases/treatments_use_case.dart';
 import 'package:farm/features/cattle/search/bloc/cattle_search_event.dart';
 import 'package:farm/features/cattle/search/bloc/cattle_search_state.dart';
-import 'package:farm/features/cattle/search/model/list_item.dart';
 import 'package:farm/utils/domain_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 @Injectable()
 class CattleSearchBloc extends BaseBloc<CattleSearchEvent, CattleSearchState> {
-  final CattleByEarTagUseCase _cattleByEarTagUseCase;
-  CattleSearchBloc(this._cattleByEarTagUseCase)
-    : super(const CattleSearchState()) {
+  final CattleByRFIDUseCase _cattleByRFIDUseCase;
+  final TreatmentsUseCase _treatmentsUseCase;
+  final MedicalsUseCase _medicalsUseCase;
+  CattleSearchBloc(
+    this._cattleByRFIDUseCase,
+    this._treatmentsUseCase,
+    this._medicalsUseCase,
+  ) : super(const CattleSearchState()) {
     on<Initiated>(_initialized, transformer: log());
-    on<CheckCattleEarTag>(_getCattleEarTagApi, transformer: log());
+    on<CheckCattle>(_getCattleApi, transformer: log());
+    on<GetTreatments>(_getTreatmentsApi, transformer: log());
+    on<GetMedicals>(_getMedicalsApi, transformer: log());
     on<EarTagChanged>((event, emit) {
       emit(state.copyWith(earTag: event.value, errorMessage: ''));
     }, transformer: log());
@@ -25,10 +34,24 @@ class CattleSearchBloc extends BaseBloc<CattleSearchEvent, CattleSearchState> {
   Future<void> _initialized(
     Initiated event,
     Emitter<CattleSearchState> emit,
-  ) async {}
+  ) async {
+    emit(
+      state.copyWith(
+        earTag: "ear-0001",
+        cattle: event.cattle,
+        rfid: event.rfid.orEmpty(),
+      ),
+    );
+    if (event.rfid != null) {
+      add(const CheckCattle());
+    } else {
+      add(GetTreatments(id_cattle: (event.cattle?.id).orEmpty()));
+      add(GetMedicals(id_cattle: (event.cattle?.id).orEmpty()));
+    }
+  }
 
-  Future<void> _getCattleEarTagApi(
-    CheckCattleEarTag event,
+  Future<void> _getCattleApi(
+    CheckCattle event,
     Emitter<CattleSearchState> emit,
   ) {
     return runBlocCatching(
@@ -40,24 +63,21 @@ class CattleSearchBloc extends BaseBloc<CattleSearchEvent, CattleSearchState> {
         emit(state.copyWith(loading: true, cattle: null));
         final req = CattleRequest(
           id_project: appBloc.state.selectedProject?.id ?? '',
-          eartag: state.earTag,
+          rfid: state.rfid.orEmpty(),
         );
-        final response = await _cattleByEarTagUseCase.execute(req);
+        final response = await _cattleByRFIDUseCase.execute(req);
         switch (response.result) {
           case DataSuccess(:final data):
-            emit(
-              state.copyWith(
-                cattle: data,
-                listItems: _getCattleItems(data),
-                errorMessage: '',
-              ),
-            );
+            add(GetTreatments(id_cattle: data.id));
+            add(GetMedicals(id_cattle: data.id));
+            emit(state.copyWith(cattle: data, errorMessage: ''));
             break;
           case DataError(:final errorMessage):
             emit(
               state.copyWith(
                 cattle: null,
-                listItems: [],
+                treatments: [],
+                medicals: [],
                 errorMessage: errorMessage.orEmpty(),
               ),
             );
@@ -75,22 +95,80 @@ class CattleSearchBloc extends BaseBloc<CattleSearchEvent, CattleSearchState> {
     );
   }
 
-  List<ListItem> _getCattleItems(Cattle data) {
-    final items = [
-      ListItem(name: 'ID', description: data.id),
-      ListItem(name: 'RFID', description: data.rfid_tag),
-      ListItem(name: 'Kandang', description: data.pen?.name_barn ?? '-'),
-      ListItem(name: 'Pen', description: data.pen?.name ?? '-'),
-      ListItem(name: 'Ear Tag', description: data.ear_tag),
-      ListItem(
-        name: 'Bobot',
-        description: '${data.actual_weight.toString()} Kg',
-      ),
-      ListItem(name: 'Ras', description: data.id_breed),
-      ListItem(name: 'Jenis Kelamin', description: data.genderLabel()),
-      ListItem(name: 'Status', description: data.statusLabel()),
-    ];
-    return items;
+  Future<void> _getTreatmentsApi(
+    GetTreatments event,
+    Emitter<CattleSearchState> emit,
+  ) {
+    return runBlocCatching(
+      handleLoading: true,
+      action: () async {
+        if (!_isProjectChosen(emit)) {
+          return;
+        }
+        emit(state.copyWith(loading: true, treatments: []));
+        final req = TreatmentRequest(
+          id_project: appBloc.state.selectedProject?.id ?? '',
+          client_slug: (appBloc.state.userData?.clientSlug).orEmpty(),
+          id_cattle: event.id_cattle,
+          limit: 3,
+        );
+        final response = await _treatmentsUseCase.execute(req);
+        switch (response.result) {
+          case DataSuccess(:final data):
+            emit(state.copyWith(treatments: data, errorMessage: ''));
+            break;
+          case DataError(:final errorMessage):
+            emit(state.copyWith(errorMessage: errorMessage.orEmpty()));
+          case null:
+            return;
+        }
+      },
+      doOnEventCompleted: () async {
+        emit(state.copyWith(loading: false));
+      },
+      handleError: false,
+      doOnError: (e) async {
+        emit(state.copyWith(errorMessage: exceptionMessageMapper.map(e)));
+      },
+    );
+  }
+
+  Future<void> _getMedicalsApi(
+    GetMedicals event,
+    Emitter<CattleSearchState> emit,
+  ) {
+    return runBlocCatching(
+      handleLoading: true,
+      action: () async {
+        if (!_isProjectChosen(emit)) {
+          return;
+        }
+        emit(state.copyWith(loading: true, medicals: []));
+        final req = MedicalRequest(
+          id_project: appBloc.state.selectedProject?.id ?? '',
+          client_slug: (appBloc.state.userData?.clientSlug).orEmpty(),
+          id_cattle: event.id_cattle,
+          limit: 3,
+        );
+        final response = await _medicalsUseCase.execute(req);
+        switch (response.result) {
+          case DataSuccess(:final data):
+            emit(state.copyWith(medicals: data, errorMessage: ''));
+            break;
+          case DataError(:final errorMessage):
+            emit(state.copyWith(errorMessage: errorMessage.orEmpty()));
+          case null:
+            return;
+        }
+      },
+      doOnEventCompleted: () async {
+        emit(state.copyWith(loading: false));
+      },
+      handleError: false,
+      doOnError: (e) async {
+        emit(state.copyWith(errorMessage: exceptionMessageMapper.map(e)));
+      },
+    );
   }
 
   bool _isProjectChosen(Emitter<CattleSearchState> emit) {

@@ -124,6 +124,10 @@ class ScanBloc extends BaseBloc<ScanEvent, ScanState> {
                 item: state.mutation,
               ),
             );
+          case DEST_CATTLE_DETAIL:
+            navigator.popAndPush(
+              AppRouteInfo.cattlePreview(connection: connection),
+            );
           default:
             navigator.push(AppRouteInfo.draftingDetail(connection: connection));
             break;

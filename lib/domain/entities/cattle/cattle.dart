@@ -3,6 +3,7 @@ import 'package:farm/domain/base/base.dart';
 import 'package:farm/domain/entities/level/level.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/reception/reception.dart';
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'cattle.freezed.dart';
@@ -41,6 +42,25 @@ abstract class Cattle extends BaseOutput with _$Cattle {
   String statusLabel() {
     if (status.isEmpty) return '-';
     return cattleStatusMap[status] ?? status;
+  }
+
+  Color statusColor() {
+    switch (status) {
+      case 'available':
+        return Colors.green;
+      case 'unavailable':
+        return Colors.purple;
+      case 'sold':
+      case 'booked':
+        return Colors.orange;
+      case 'sick':
+      case 'lost':
+        return Colors.deepOrange;
+      case 'mutating':
+        return Colors.blueGrey;
+      default:
+        return Colors.black;
+    }
   }
 
   String genderLabel() {

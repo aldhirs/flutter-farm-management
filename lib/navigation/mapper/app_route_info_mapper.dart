@@ -60,7 +60,13 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       ),
       MutationItemPreviewPage(:final item, :final connection) =>
         MutationItemPreviewRoute(item: item, connection: connection),
-      CattleSearchNavBar() => const CattleSearchNavBarRoute(),
+      CattlePreview(:final connection) => CattlePreviewRoute(
+        connection: connection,
+      ),
+      CattleSearch(:final rfid, :final cattle) => CattleSearchRoute(
+        rfid: rfid,
+        cattle: cattle,
+      ),
       _ => throw UnimplementedError('Unknown route: $appRouteInfo'),
     };
   }

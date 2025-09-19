@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/mutation/mutation.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/features/scan/bloc/scan_bloc.dart';
@@ -19,6 +20,7 @@ import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 const DEST_DRAFTING_DETAIL = 'drafting_detail';
 const DEST_SALES_ITEM = 'sales_item';
 const DEST_MUTATION_ITEM = 'mutation_item';
+const DEST_CATTLE_DETAIL = 'cattle_detail';
 
 @RoutePage()
 class ScanPage extends StatefulWidget {
@@ -228,6 +230,8 @@ class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
               navigator.popAndPush(
                 AppRouteInfo.mutationItemPreview(item: widget.mutation),
               );
+            case DEST_CATTLE_DETAIL:
+              navigator.popAndPush(const AppRouteInfo.cattlePreview());
           }
           // bypass-debug
         },

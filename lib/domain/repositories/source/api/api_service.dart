@@ -14,7 +14,9 @@ import 'package:farm/domain/entities/growth/growth.dart';
 import 'package:farm/domain/entities/growth/growth_form_request.dart';
 import 'package:farm/domain/entities/level/level.dart';
 import 'package:farm/domain/entities/level/level_request.dart';
+import 'package:farm/domain/entities/medical/medical.dart';
 import 'package:farm/domain/entities/medical/medical_form_request.dart';
+import 'package:farm/domain/entities/medical/medical_request.dart';
 import 'package:farm/domain/entities/medical/medical_type.dart';
 import 'package:farm/domain/entities/medical/medical_type_request.dart';
 import 'package:farm/domain/entities/model/data_response.dart';
@@ -41,7 +43,9 @@ import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
 import 'package:farm/domain/entities/supplier/supplier.dart';
 import 'package:farm/domain/entities/supplier/supplier_request.dart';
+import 'package:farm/domain/entities/treatment/treatment.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
+import 'package:farm/domain/entities/treatment/treatment_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_type.dart';
 import 'package:farm/domain/entities/treatment/treatment_type_request.dart';
 import 'package:farm/domain/repositories/source/source.dart';
@@ -375,6 +379,28 @@ class ApiService {
       path: '/v1/mutation-item/bulk',
       body: request.toJson(),
       decoder: (_) => null,
+    );
+  }
+
+  Future<DataListResponse<Treatment>> treatments(
+    TreatmentRequest request,
+  ) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/treatment',
+      queryParameters: request.toJson(),
+      successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: Treatment.fromJson,
+    );
+  }
+
+  Future<DataListResponse<Medical>> medicals(MedicalRequest request) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/medical',
+      queryParameters: request.toJson(),
+      successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: Medical.fromJson,
     );
   }
 }

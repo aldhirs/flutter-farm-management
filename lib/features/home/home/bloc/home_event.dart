@@ -12,3 +12,24 @@ abstract class Initiated extends HomeEvent with _$Initiated {
   const factory Initiated() = _Initiated;
   const Initiated._();
 }
+
+@freezed
+abstract class CheckCattleEarTag extends HomeEvent with _$CheckCattleEarTag {
+  const factory CheckCattleEarTag() = _CheckCattleEarTag;
+
+  const CheckCattleEarTag._();
+}
+
+@freezed
+abstract class EarTagChanged extends HomeEvent with _$EarTagChanged {
+  const factory EarTagChanged({required String value}) = _EarTagChanged;
+
+  const EarTagChanged._();
+}
+
+@freezed
+abstract class ClearData extends HomeEvent with _$ClearData {
+  const factory ClearData() = _ClearData;
+
+  const ClearData._();
+}

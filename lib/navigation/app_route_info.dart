@@ -44,7 +44,13 @@ abstract class AppRouteInfo with _$AppRouteInfo {
   }) = ScanPages;
   const factory AppRouteInfo.penDrafting() = PenDrafting;
 
-  const factory AppRouteInfo.cattleSearchNavBar() = CattleSearchNavBar;
+  const factory AppRouteInfo.cattlePreview({BluetoothConnection? connection}) =
+      CattlePreview;
+  const factory AppRouteInfo.cattleSearch({
+    String? rfid,
+    Cattle? cattle,
+    BluetoothConnection? connection,
+  }) = CattleSearch;
   const factory AppRouteInfo.mutationNavBar() = MutationNavBar;
   const factory AppRouteInfo.mutationItem({
     required Mutation item,

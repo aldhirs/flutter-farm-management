@@ -1,6 +1,6 @@
-import 'package:farm/features/cattle/search/bloc/cattle_search_bloc.dart';
-import 'package:farm/features/cattle/search/bloc/cattle_search_event.dart';
-import 'package:farm/features/cattle/search/bloc/cattle_search_state.dart';
+import 'package:farm/features/home/home/bloc/home_bloc.dart';
+import 'package:farm/features/home/home/bloc/home_event.dart';
+import 'package:farm/features/home/home/bloc/home_state.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/widgets/buttons/button.dart';
@@ -10,21 +10,21 @@ import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SearchBottomSheet extends StatefulWidget {
-  const SearchBottomSheet({
+class CattleSearchBottomSheet extends StatefulWidget {
+  const CattleSearchBottomSheet({
     super.key,
     required this.bloc,
     required this.onDismiss,
   });
 
-  final CattleSearchBloc bloc;
+  final HomeBloc bloc;
   final VoidCallback onDismiss;
 
   @override
-  State<SearchBottomSheet> createState() => _SearchBottomSheetState();
+  State<CattleSearchBottomSheet> createState() => _SearchBottomSheetState();
 }
 
-class _SearchBottomSheetState extends State<SearchBottomSheet> {
+class _SearchBottomSheetState extends State<CattleSearchBottomSheet> {
   final TextEditingController _controller = TextEditingController();
 
   @override
@@ -59,7 +59,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
             const SizedBox(height: 12),
             BlocProvider.value(
               value: widget.bloc,
-              child: BlocBuilder<CattleSearchBloc, CattleSearchState>(
+              child: BlocBuilder<HomeBloc, HomeState>(
                 buildWhen: (p, c) =>
                     p.loading != c.loading || p.earTag != c.earTag,
                 builder: (context, state) {
@@ -105,7 +105,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
   Widget _textInput() {
     return BlocProvider.value(
       value: widget.bloc,
-      child: BlocBuilder<CattleSearchBloc, CattleSearchState>(
+      child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
           return TextInputField(
             controller: _controller,
@@ -125,7 +125,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
   Widget _errorWidget() {
     return BlocProvider.value(
       value: widget.bloc,
-      child: BlocBuilder<CattleSearchBloc, CattleSearchState>(
+      child: BlocBuilder<HomeBloc, HomeState>(
         buildWhen: (p, c) => p.errorMessage != c.errorMessage,
         builder: (context, state) {
           return Column(

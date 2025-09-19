@@ -6,8 +6,10 @@ import 'package:farm/app/bloc/app_state.dart';
 import 'package:farm/base/base_page_state.dart';
 import 'package:farm/extensions/string.dart';
 import 'package:farm/features/home/home/bloc/home_bloc.dart';
+import 'package:farm/features/home/home/bloc/home_event.dart';
 import 'package:farm/features/home/home/bloc/home_state.dart';
 import 'package:farm/features/home/home/dashboard_page.dart';
+import 'package:farm/features/home/home/widgets/cattle_search_bottom_sheet.dart';
 import 'package:farm/features/home/home/widgets/quick_action_card.dart';
 import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
@@ -19,6 +21,7 @@ import 'package:farm/widgets/dropdownview/dropdown_model.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_bottomsheet.dart';
 import 'package:farm/widgets/popup/popup.dart';
 import 'package:farm/widgets/tag/tag_category.dart';
+import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -66,6 +69,16 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
               return;
             }
             _showFeedlot(state);
+          },
+        ),
+        BlocListener<HomeBloc, HomeState>(
+          listenWhen: (previous, current) => previous.cattle != current.cattle,
+          listener: (context, state) async {
+            if (state.cattle != null) {
+              navigator.popAndPush(
+                AppRouteInfo.cattleSearch(cattle: state.cattle),
+              );
+            }
           },
         ),
       ],
@@ -203,9 +216,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                     QuickActionCard(
                       icon: LucideIcons.search,
                       label: "Cari Sapi",
-                      onTap: () => _onMenuClicked(
-                        const AppRouteInfo.cattleSearchNavBar(),
-                      ),
+                      onTap: _onSearchCattleClicked,
                     ),
                   ],
                 ),
@@ -218,33 +229,37 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
     );
   }
 
+  void _onShowFeedlotAlert() {
+    navigator.showAppDialog(
+      useRootNavigator: true,
+      barrierDismissible: false,
+      Popup(
+        title: 'Feedlot belum diisi',
+        illustration: ClipRRect(
+          borderRadius: BorderRadius.circular(20), // adjust radius
+          child: Assets.images.ilCowFeedlot.image(
+            height: Dimens.d140,
+            fit: BoxFit.cover,
+          ),
+        ),
+        description: [
+          const TextSpan(
+            text:
+                "Silakan untuk memilih feedlot terlebih dahulu untuk melanjutkan aktivitas.",
+          ),
+        ],
+        positiveButtonText: "Pilih Feedlot",
+        onPositiveButtonPressed: () async {
+          navigator.pop();
+          appBloc.add(const ShowProjects());
+        },
+      ),
+    );
+  }
+
   void _onMenuClicked(AppRouteInfo route) async {
     if (appBloc.state.selectedProject == null) {
-      navigator.showAppDialog(
-        useRootNavigator: true,
-        barrierDismissible: false,
-        Popup(
-          title: 'Feedlot belum diisi',
-          illustration: ClipRRect(
-            borderRadius: BorderRadius.circular(20), // adjust radius
-            child: Assets.images.ilCowFeedlot.image(
-              height: Dimens.d140,
-              fit: BoxFit.cover,
-            ),
-          ),
-          description: [
-            const TextSpan(
-              text:
-                  "Silakan untuk memilih feedlot terlebih dahulu untuk melanjutkan aktivitas.",
-            ),
-          ],
-          positiveButtonText: "Pilih Feedlot",
-          onPositiveButtonPressed: () async {
-            navigator.pop();
-            appBloc.add(const ShowProjects());
-          },
-        ),
-      );
+      _onShowFeedlotAlert();
     } else {
       await navigator.push(route);
       // await navigator.pushRoute(DashboardRoute());
@@ -431,6 +446,43 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
           ),
         ],
       ),
+    );
+  }
+
+  void _onSearchCattleClicked() async {
+    if (appBloc.state.selectedProject == null) {
+      _onShowFeedlotAlert();
+      return;
+    }
+    navigator.showAppDialog(
+      useRootNavigator: true,
+      barrierDismissible: false,
+      Popup(
+        closeVisibility: true,
+        title: 'Cari Sapi',
+        description: const [
+          TextSpan(
+            text:
+                'Silakan pilih metode dalam pencarian sapi menggunakan alat pemindai atau manual berdasarakan ear tag.',
+          ),
+        ],
+        positiveButtonText: "Cari dengan Alat",
+        negativeButtonText: "Cari Manual",
+        onNegativeButtonPressed: _searchCattleManualBottomSheet,
+        onPositiveButtonPressed: () async {
+          final result = await navigator.popAndPush(
+            const AppRouteInfo.scan(route: DEST_CATTLE_DETAIL),
+          );
+        },
+      ),
+    );
+  }
+
+  void _searchCattleManualBottomSheet() async {
+    await navigator.pop();
+    await navigator.showBottomSheet(
+      isScrollControlled: true,
+      CattleSearchBottomSheet(bloc: bloc, onDismiss: () => navigator.pop()),
     );
   }
 }

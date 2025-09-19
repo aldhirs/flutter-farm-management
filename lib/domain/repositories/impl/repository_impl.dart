@@ -14,7 +14,9 @@ import 'package:farm/domain/entities/growth/growth.dart';
 import 'package:farm/domain/entities/growth/growth_form_request.dart';
 import 'package:farm/domain/entities/level/level.dart';
 import 'package:farm/domain/entities/level/level_request.dart';
+import 'package:farm/domain/entities/medical/medical.dart';
 import 'package:farm/domain/entities/medical/medical_form_request.dart';
+import 'package:farm/domain/entities/medical/medical_request.dart';
 import 'package:farm/domain/entities/medical/medical_type.dart';
 import 'package:farm/domain/entities/medical/medical_type_request.dart';
 import 'package:farm/domain/entities/mutation/mutation.dart';
@@ -40,7 +42,9 @@ import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
 import 'package:farm/domain/entities/supplier/supplier.dart';
 import 'package:farm/domain/entities/supplier/supplier_request.dart';
+import 'package:farm/domain/entities/treatment/treatment.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
+import 'package:farm/domain/entities/treatment/treatment_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_type.dart';
 import 'package:farm/domain/entities/treatment/treatment_type_request.dart';
 import 'package:farm/domain/repositories/repository.dart';
@@ -263,6 +267,20 @@ class RepositoryImpl implements Repository {
     MutationItemDeleteRequest request,
   ) async {
     final response = await _apiService.mutationItemDelete(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<Treatment>> treatments(
+    TreatmentRequest request,
+  ) async {
+    final response = await _apiService.treatments(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<Medical>> medicals(MedicalRequest request) async {
+    final response = await _apiService.medicals(request);
     return response;
   }
 
