@@ -154,9 +154,20 @@ class _MutationPageState
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: state.isEditMode
-              ? _actionButton(state)
-              : _addButton(),
+          floatingActionButton: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 350),
+            transitionBuilder: (child, anim) => SlideTransition(
+              position:
+                  Tween<Offset>(
+                    begin: const Offset(0, 1), // dari bawah
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(parent: anim, curve: Curves.easeOutCubic),
+                  ),
+              child: FadeTransition(opacity: anim, child: child),
+            ),
+            child: state.isEditMode ? _actionButton(state) : _addButton(),
+          ),
         );
       },
     );
@@ -282,12 +293,18 @@ class _MutationPageState
 
                 final content = Row(
                   children: [
-                    if (state.isEditMode)
-                      CheckboxButton(
-                        value: isSelected,
-                        onChanged: (_) =>
-                            bloc.add(ItemSelectionToggled(item: item)),
-                      ),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      transitionBuilder: (child, anim) =>
+                          ScaleTransition(scale: anim, child: child),
+                      child: (state.isEditMode)
+                          ? CheckboxButton(
+                              value: isSelected,
+                              onChanged: (_) =>
+                                  bloc.add(ItemSelectionToggled(item: item)),
+                            )
+                          : const SizedBox.shrink(key: ValueKey("empty")),
+                    ),
                     Expanded(
                       child: ItemWidget(
                         item: item,
@@ -378,29 +395,39 @@ class _MutationPageState
   }
 
   Widget _actionButton(MutationItemsState state) {
-    if (state.selectedItems.isEmpty) return const SizedBox.shrink();
-
-    return FloatingActionButton.extended(
-      heroTag: 'deleteBtn',
-      backgroundColor: AppColors.current.crimson500,
-      onPressed: () async {
-        navigator.showBottomSheet(
-          DeleteBottomSheet(
-            bloc: bloc,
-            onDismiss: () {
-              navigator.pop();
-            },
-          ),
-          isScrollControlled: true,
-          isDismissible: false,
-          enableDrag: false,
-        );
-      },
-      label: Text(
-        'Hapus (${state.selectedItems.length})',
-        style: TextStyles.button2().copyWith(color: Colors.white),
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 350),
+      transitionBuilder: (child, anim) => SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 1), // dari bawah
+          end: Offset.zero,
+        ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
+        child: FadeTransition(opacity: anim, child: child),
       ),
-      icon: const Icon(Icons.delete, color: Colors.white),
+      child: state.selectedItems.isEmpty
+          ? const SizedBox.shrink(key: ValueKey("emptyActions"))
+          : FloatingActionButton.extended(
+              heroTag: 'deleteBtn',
+              backgroundColor: AppColors.current.crimson500,
+              onPressed: () async {
+                navigator.showBottomSheet(
+                  DeleteBottomSheet(
+                    bloc: bloc,
+                    onDismiss: () {
+                      navigator.pop();
+                    },
+                  ),
+                  isScrollControlled: true,
+                  isDismissible: false,
+                  enableDrag: false,
+                );
+              },
+              label: Text(
+                'Hapus (${state.selectedItems.length})',
+                style: TextStyles.button2().copyWith(color: Colors.white),
+              ),
+              icon: const Icon(Icons.delete, color: Colors.white),
+            ),
     );
   }
 
@@ -411,6 +438,13 @@ class _MutationPageState
       Popup(
         closeVisibility: true,
         title: 'Tambah Item Mutasi',
+        illustration: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Assets.images.ilCowSearch.image(
+            height: Dimens.d160,
+            fit: BoxFit.cover,
+          ),
+        ),
         description: [
           const TextSpan(
             text:

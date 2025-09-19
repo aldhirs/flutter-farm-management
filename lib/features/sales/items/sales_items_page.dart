@@ -155,9 +155,20 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: state.isEditMode
-              ? _actionButton(state)
-              : _addButton(),
+          floatingActionButton: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 350),
+            transitionBuilder: (child, anim) => SlideTransition(
+              position:
+                  Tween<Offset>(
+                    begin: const Offset(0, 1), // dari bawah
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(parent: anim, curve: Curves.easeOutCubic),
+                  ),
+              child: FadeTransition(opacity: anim, child: child),
+            ),
+            child: state.isEditMode ? _actionButton(state) : _addButton(),
+          ),
         );
       },
     );
@@ -375,15 +386,21 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    if (state.isEditMode)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: CheckboxButton(
-                          value: isSelected,
-                          onChanged: (_) =>
-                              bloc.add(ItemSelectionToggled(item: item)),
-                        ),
-                      ),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      transitionBuilder: (child, anim) =>
+                          ScaleTransition(scale: anim, child: child),
+                      child: (state.isEditMode)
+                          ? Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: CheckboxButton(
+                                value: isSelected,
+                                onChanged: (_) =>
+                                    bloc.add(ItemSelectionToggled(item: item)),
+                              ),
+                            )
+                          : const SizedBox.shrink(key: ValueKey("empty")),
+                    ),
                     Expanded(
                       child: ItemWidget(
                         item: item,
@@ -465,51 +482,68 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
   }
 
   Widget _actionButton(SalesItemsState state) {
-    if (state.selectedItems.isEmpty) return const SizedBox.shrink();
-    return Wrap(
-      spacing: 16,
-      children: [
-        FloatingActionButton.extended(
-          heroTag: 'moveBtn',
-          backgroundColor: AppColors.current.mint700,
-          onPressed: () async {
-            if (state.salesList.isEmpty) {
-              bloc.add(const SalesList());
-            }
-            navigator.showBottomSheet(
-              MoveBottomSheet(bloc: bloc, onDismiss: () => navigator.pop()),
-              isScrollControlled: true,
-              isDismissible: false,
-              enableDrag: false,
-            );
-          },
-          label: Text(
-            'Pindah Penjualan (${state.selectedItems.length})',
-            style: TextStyles.button2().copyWith(color: Colors.white),
-          ),
-          icon: const Icon(Icons.move_up, color: Colors.white),
-        ),
-        FloatingActionButton.extended(
-          heroTag: 'deleteBtn',
-          backgroundColor: AppColors.current.crimson500,
-          onPressed: () async {
-            if (state.barns.isEmpty) {
-              bloc.add(const GetBarns());
-            }
-            navigator.showBottomSheet(
-              DeleteBottomSheet(bloc: bloc, onDismiss: () => navigator.pop()),
-              isScrollControlled: true,
-              isDismissible: false,
-              enableDrag: false,
-            );
-          },
-          label: Text(
-            'Hapus (${state.selectedItems.length})',
-            style: TextStyles.button2().copyWith(color: Colors.white),
-          ),
-          icon: const Icon(Icons.delete, color: Colors.white),
-        ),
-      ],
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 350),
+      transitionBuilder: (child, anim) => SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 1), // dari bawah
+          end: Offset.zero,
+        ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
+        child: FadeTransition(opacity: anim, child: child),
+      ),
+      child: state.selectedItems.isEmpty
+          ? const SizedBox.shrink(key: ValueKey("emptyActions"))
+          : Wrap(
+              spacing: 16,
+              children: [
+                FloatingActionButton.extended(
+                  heroTag: 'moveBtn',
+                  backgroundColor: AppColors.current.mint700,
+                  onPressed: () async {
+                    if (state.salesList.isEmpty) {
+                      bloc.add(const SalesList());
+                    }
+                    navigator.showBottomSheet(
+                      MoveBottomSheet(
+                        bloc: bloc,
+                        onDismiss: () => navigator.pop(),
+                      ),
+                      isScrollControlled: true,
+                      isDismissible: false,
+                      enableDrag: false,
+                    );
+                  },
+                  label: Text(
+                    'Pindah Penjualan (${state.selectedItems.length})',
+                    style: TextStyles.button2().copyWith(color: Colors.white),
+                  ),
+                  icon: const Icon(Icons.move_up, color: Colors.white),
+                ),
+                FloatingActionButton.extended(
+                  heroTag: 'deleteBtn',
+                  backgroundColor: AppColors.current.crimson500,
+                  onPressed: () async {
+                    if (state.barns.isEmpty) {
+                      bloc.add(const GetBarns());
+                    }
+                    navigator.showBottomSheet(
+                      DeleteBottomSheet(
+                        bloc: bloc,
+                        onDismiss: () => navigator.pop(),
+                      ),
+                      isScrollControlled: true,
+                      isDismissible: false,
+                      enableDrag: false,
+                    );
+                  },
+                  label: Text(
+                    'Hapus (${state.selectedItems.length})',
+                    style: TextStyles.button2().copyWith(color: Colors.white),
+                  ),
+                  icon: const Icon(Icons.delete, color: Colors.white),
+                ),
+              ],
+            ),
     );
   }
 
@@ -520,6 +554,13 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
       Popup(
         closeVisibility: true,
         title: 'Tambah Item Penjualan',
+        illustration: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Assets.images.ilCowSearch.image(
+            height: Dimens.d160,
+            fit: BoxFit.cover,
+          ),
+        ),
         description: const [
           TextSpan(
             text:

@@ -6,22 +6,17 @@ import 'package:farm/app/bloc/app_state.dart';
 import 'package:farm/base/base_page_state.dart';
 import 'package:farm/extensions/string.dart';
 import 'package:farm/features/home/home/bloc/home_bloc.dart';
-import 'package:farm/features/home/home/bloc/home_event.dart';
 import 'package:farm/features/home/home/bloc/home_state.dart';
-import 'package:farm/features/home/home/dashboard_page.dart';
 import 'package:farm/features/home/home/widgets/cattle_search_bottom_sheet.dart';
 import 'package:farm/features/home/home/widgets/quick_action_card.dart';
 import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
-import 'package:farm/navigation/routes/app_router.gr.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/views/view.dart';
 import 'package:farm/widgets/dropdownview/dropdown_model.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_bottomsheet.dart';
 import 'package:farm/widgets/popup/popup.dart';
-import 'package:farm/widgets/tag/tag_category.dart';
-import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -460,6 +455,13 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
       Popup(
         closeVisibility: true,
         title: 'Cari Sapi',
+        illustration: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Assets.images.ilCowSearch.image(
+            height: Dimens.d160,
+            fit: BoxFit.cover,
+          ),
+        ),
         description: const [
           TextSpan(
             text:
@@ -470,7 +472,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
         negativeButtonText: "Cari Manual",
         onNegativeButtonPressed: _searchCattleManualBottomSheet,
         onPositiveButtonPressed: () async {
-          final result = await navigator.popAndPush(
+          await navigator.popAndPush(
             const AppRouteInfo.scan(route: DEST_CATTLE_DETAIL),
           );
         },
