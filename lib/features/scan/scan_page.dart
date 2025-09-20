@@ -2,7 +2,6 @@ import 'dart:collection';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base.dart';
-import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/mutation/mutation.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
 import 'package:farm/features/scan/bloc/scan_bloc.dart';
@@ -16,6 +15,7 @@ import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 const DEST_DRAFTING_DETAIL = 'drafting_detail';
 const DEST_SALES_ITEM = 'sales_item';
@@ -50,6 +50,27 @@ class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
         route: widget.destinationRoute,
       ),
     );
+  }
+
+  Future<bool> requestLocationPermission() async {
+    var status = await Permission.location.status;
+
+    if (status.isGranted) {
+      return true; // sudah diizinkan
+    }
+
+    if (status.isDenied) {
+      status = await Permission.location.request();
+      return status.isGranted;
+    }
+
+    if (status.isPermanentlyDenied) {
+      // buka setting kalau user pilih "Don't ask again"
+      await openAppSettings();
+      return false;
+    }
+
+    return false;
   }
 
   @override
@@ -172,8 +193,17 @@ class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
           width: 210, // 👈 custom width
           child: FloatingActionButton.extended(
             backgroundColor: AppColors.current.mint700,
-            onPressed: () {
-              _onScanningClicked.call(isBluetoothOn);
+            onPressed: () async {
+              final granted = await requestLocationPermission();
+              if (granted) {
+                _onScanningClicked.call(isBluetoothOn);
+              } else {
+                ToastHelper().showToast(
+                  context: context,
+                  message: "Izin lokasi diperlukan untuk scan perangkat",
+                  type: ToastType.warning,
+                );
+              }
             },
             label: Text(
               text,
@@ -217,7 +247,8 @@ class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
         onNegativeButtonPressed: () => navigator.pop(),
         onPositiveButtonPressed: () async {
           navigator.pop();
-          // bloc.add(const StartScanning());
+          bloc.add(const StartScanning());
+          return;
           // bypass-debug
           switch (widget.destinationRoute) {
             case DEST_DRAFTING_DETAIL:

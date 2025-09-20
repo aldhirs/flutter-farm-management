@@ -12,7 +12,7 @@ import 'package:injectable/injectable.dart';
 
 @Injectable()
 class ScanBloc extends BaseBloc<ScanEvent, ScanState> {
-  final _flutterBlueClassicPlugin = FlutterBlueClassic();
+  final _flutterBlueClassicPlugin = FlutterBlueClassic(usesFineLocation: true);
   StreamSubscription? _adapterStateSubscription;
   StreamSubscription? _scanSubscription;
   StreamSubscription? _scanningStateSubscription;

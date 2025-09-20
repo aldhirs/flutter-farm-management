@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "647326804505",
+    "project_id": "farm-management-agrstw",
+    "storage_bucket": "farm-management-agrstw.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647326804505:android:7838883c41b04ce60f1888",
+        "android_client_info": {
+          "package_name": "com.agrisatwa.farm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfvODZwVmq7RtfMMxBp0Tbj7-TORDTL3M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

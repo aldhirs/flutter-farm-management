@@ -32,9 +32,9 @@ abstract class MutationItem extends BaseOutput with _$MutationItem {
   TagCategoryType statusType() {
     switch (mutation_do_status) {
       case AVAILABLE:
+        return TagCategoryType.mint;
+      case 'delivered':
         return TagCategoryType.eucalyptus;
-      case BOOKED:
-        return TagCategoryType.crismon;
     }
     return TagCategoryType.plain;
   }

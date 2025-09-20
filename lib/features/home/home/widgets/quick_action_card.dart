@@ -36,11 +36,7 @@ class QuickActionCard extends StatelessWidget {
           children: [
             Icon(icon, size: 30, color: AppColors.current.mint600),
             const SizedBox(height: 8),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-            ),
+            Text(label, textAlign: TextAlign.center, style: TextStyles.body3()),
           ],
         ),
       ),

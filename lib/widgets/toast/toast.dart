@@ -29,7 +29,7 @@ class ToastHelper {
         showAction,
       ),
       gravity: ToastGravity.BOTTOM,
-      toastDuration: const Duration(seconds: 5),
+      toastDuration: const Duration(seconds: 2),
     );
   }
 

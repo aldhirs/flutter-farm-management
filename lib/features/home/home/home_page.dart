@@ -124,19 +124,10 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Discover",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    Text("Discover", style: TextStyles.body2()),
                     Text(
                       "Terakhir diperbarui: ${DateTime.now().toString().formatDateString(format: DateConstant.UTC, newFormat: DateConstant.DATETIME_FULL_MONTH)}",
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
+                      style: TextStyles.label3(),
                     ),
                   ],
                 ),
@@ -187,10 +178,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
               _fadeSlide(
                 fade: _fadeShortcutTitle,
                 slide: _slideShortcutTitle,
-                child: const Text(
-                  "Menu",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
+                child: Text("Menu", style: TextStyles.body2()),
               ),
 
               const SizedBox(height: 10),
@@ -474,7 +462,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
           ),
           Text(
             title,
-            style: const TextStyle(fontSize: 14, color: Colors.black54),
+            style: TextStyles.body3().copyWith(color: Colors.black54),
           ),
         ],
       ),
