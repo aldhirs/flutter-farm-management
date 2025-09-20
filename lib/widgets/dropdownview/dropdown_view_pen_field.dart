@@ -22,6 +22,7 @@ class DropdownViewPenField extends StatefulWidget {
     this.searchDebounceDuration = const Duration(seconds: 1),
     this.maxSelection,
     this.sheetSize = BottomSheetSize.fitContent,
+    this.additionalInfo,
     this.emptyStateMessage,
     this.enabled = true,
   });
@@ -40,6 +41,7 @@ class DropdownViewPenField extends StatefulWidget {
   final int? maxSelection;
   final BottomSheetSize sheetSize;
   final String? emptyStateMessage;
+  final String? additionalInfo;
   final bool enabled;
 
   @override
@@ -86,6 +88,7 @@ class _DropdownViewPenFieldState extends State<DropdownViewPenField> {
             hintText: widget.searchHint,
             enabled: widget.enabled,
             isShowDropdown: isShowDropdown,
+            additionalInfo: widget.additionalInfo,
             onTap: _onShowBottomsheet,
           );
         },

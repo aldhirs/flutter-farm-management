@@ -1,5 +1,6 @@
 import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
+import 'package:farm/extensions/int.dart';
 import 'package:farm/features/sales/add/bloc/sales_item_add_bloc.dart';
 import 'package:farm/features/sales/add/bloc/sales_item_add_event.dart';
 import 'package:farm/features/sales/add/bloc/sales_item_add_state.dart';
@@ -123,6 +124,9 @@ class _FormInputWidgetState extends State<FormInputWidget> {
             emptyStateMessage: state.selectedBarn == null
                 ? 'Silakan pilih kandang terlebih dahulu.'
                 : 'Data tidak ditemukan',
+            additionalInfo: state.selectedPen != null
+                ? "Tersedia: ${(state.selectedPen?.capacity).defaultZero() - (state.selectedPen?.cattle_count).defaultZero()} ekor. (${(state.selectedPen?.cattle_count).defaultZero()}/${(state.selectedPen?.capacity).defaultZero()} ekor)"
+                : null,
             onSelectedItems: (List<Pen> value) {
               widget.bloc.add(PenChanged(pen: value.first));
             },

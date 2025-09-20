@@ -1,6 +1,7 @@
 import 'package:dartx/dartx.dart';
 import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
+import 'package:farm/extensions/int.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_bloc.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_event.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_state.dart';
@@ -213,6 +214,9 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
             dropdownType: DropdownTypeEnum.single,
             sheetSize: BottomSheetSize.full,
             emptyStateMessage: 'Silakan pilih pen terlebih dahulu.',
+            additionalInfo: state.selectedPen != null
+                ? "Tersedia: ${(state.selectedPen?.capacity).defaultZero() - (state.selectedPen?.cattle_count).defaultZero()} ekor. (${(state.selectedPen?.cattle_count).defaultZero()}/${(state.selectedPen?.capacity).defaultZero()} ekor)"
+                : null,
             onSelectedItems: (List<Pen> value) {
               widget.bloc.add(PenChanged(pen: value.first));
             },

@@ -23,7 +23,11 @@ class SalesBloc extends BaseBloc<SalesEvent, SalesState> {
   }
 
   Future<void> _initialized(Initiated event, Emitter<SalesState> emit) async {
-    await _salesApi(emit, false, 1, false);
+    final status = salesStatusMap.entries
+        .firstWhere((item) => item.key == DRAFT)
+        .value;
+    emit(state.copyWith(filterStatus: status));
+    await _salesApi(emit, true, 1, false);
   }
 
   Future<void> _loadSales(LoadSales event, Emitter<SalesState> emit) async {

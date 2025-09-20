@@ -1,8 +1,10 @@
 import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
+import 'package:farm/extensions/int.dart';
 import 'package:farm/features/pen_drafting/bloc/pen_drafting_bloc.dart';
 import 'package:farm/features/pen_drafting/bloc/pen_drafting_event.dart';
 import 'package:farm/features/pen_drafting/bloc/pen_drafting_state.dart';
+import 'package:farm/features/pen_drafting/widgets/item_widget.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/utils/ui_utils.dart';
@@ -97,10 +99,16 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
 
               /// Bagian Asal
               Text("Pen Asal", style: TextStyles.label1()),
-              _buildInfoCard(
-                barn: widget.item.name_barn,
-                room: widget.item.name,
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsetsGeometry.all(8),
+                child: ItemWidget(
+                  item: widget.item,
+                  onTap: () {},
+                  isPlain: true,
+                ),
               ),
+              const SizedBox(height: 8),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: Icon(Icons.arrow_downward, color: Colors.grey),
@@ -216,52 +224,14 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
             dropdownType: DropdownTypeEnum.single,
             sheetSize: BottomSheetSize.full,
             emptyStateMessage: 'Silakan pilih pen terlebih dahulu.',
+            additionalInfo: state.selectedPen != null
+                ? "Tersedia: ${(state.selectedPen?.capacity).defaultZero() - (state.selectedPen?.cattle_count).defaultZero()} ekor. (${(state.selectedPen?.cattle_count).defaultZero()}/${(state.selectedPen?.capacity).defaultZero()} ekor)"
+                : null,
             onSelectedItems: (List<Pen> value) {
               widget.bloc.add(PenChanged(pen: value.first));
             },
           );
         },
-      ),
-    );
-  }
-
-  /// Card untuk menampilkan info kamar asal
-  Widget _buildInfoCard({required String barn, required String room}) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.home_outlined, size: 18, color: Colors.teal),
-              const SizedBox(width: 6),
-              Expanded(child: Text(barn, style: TextStyles.label1())),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Row(
-            children: [
-              const Icon(
-                Icons.meeting_room_outlined,
-                size: 18,
-                color: Colors.indigo,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  room,
-                  style: TextStyles.label2().copyWith(color: Colors.grey[700]),
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
