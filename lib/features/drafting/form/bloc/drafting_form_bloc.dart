@@ -684,6 +684,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     final items = [
       ListItem(name: 'ID', description: data.id),
       ListItem(name: 'RFID', description: data.rfid_tag),
+      ListItem(name: 'Ear Tag', description: data.ear_tag),
       ListItem(name: 'Kandang', description: data.pen?.name_barn ?? '-'),
       ListItem(name: 'Pen', description: data.pen?.name ?? '-'),
       ListItem(name: 'Ear Tag', description: data.ear_tag),

@@ -75,7 +75,7 @@ abstract class SaleByID extends SalesItemsEvent with _$SaleByID {
 
 @freezed
 abstract class GetBarns extends SalesItemsEvent with _$GetBarns {
-  const factory GetBarns() = _GetBarns;
+  const factory GetBarns({String? search}) = _GetBarns;
 
   const GetBarns._();
 }

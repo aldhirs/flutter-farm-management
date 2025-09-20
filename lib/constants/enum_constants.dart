@@ -49,7 +49,7 @@ const barnCategoryMap = {
   "Penjualan": 'Penjualan',
 };
 
-const salesItemStatusMap = {AVAILABLE: 'Tersedia', BOOKED: 'Dipesan'};
+const salesItemStatusMap = {AVAILABLE: 'Tersedia', BOOKED: 'Terjual'};
 
 const genderMap = {"male": 'Jantan', "female": 'Betina'};
 

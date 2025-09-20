@@ -123,21 +123,30 @@ class _MedicalFormBottomSheetState extends State<MedicalFormBottomSheet> {
       value: widget.bloc,
       child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
         builder: (context, state) {
-          return Row(
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CheckboxButton(
-                value: state.isInfection,
-                onChanged: (value) {
-                  widget.bloc.add(
-                    InfectionChanged(value: value.defaultFalse()),
-                  );
-                },
+              Row(
+                children: [
+                  CheckboxButton(
+                    value: state.isInfection,
+                    onChanged: (value) {
+                      widget.bloc.add(
+                        InfectionChanged(value: value.defaultFalse()),
+                      );
+                    },
+                  ),
+                  InkWell(
+                    child: Text("Infeksius", style: TextStyles.body1()),
+                    onTap: () => widget.bloc.add(
+                      InfectionChanged(value: !state.isInfection),
+                    ),
+                  ),
+                ],
               ),
-              InkWell(
-                child: Text("Infeksi", style: TextStyles.body1()),
-                onTap: () => widget.bloc.add(
-                  InfectionChanged(value: !state.isInfection),
-                ),
+              Text(
+                "Ceklis infeksius ini jika sapi terdeteksi infeksi.",
+                style: TextStyles.label2(),
               ),
             ],
           );

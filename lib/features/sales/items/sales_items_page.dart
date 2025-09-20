@@ -466,11 +466,8 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
           fit: BoxFit.contain,
         ),
       ),
-      isEnabledPositifButton: true,
-      buttonText: 'Tambah Data',
       isButtonFullWidth: true,
       leftIconButton: const Icon(Icons.add, color: Colors.white),
-      onPressed: () => _addNew(),
     );
   }
 

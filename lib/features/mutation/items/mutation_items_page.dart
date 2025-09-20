@@ -481,7 +481,7 @@ class _MutationPageState
 
   SliverToBoxAdapter _buildSummarySection(MutationItemsState state) {
     if (widget.isIn) {
-      return const SliverToBoxAdapter();
+      return const SliverToBoxAdapter(child: SizedBox(height: 16));
     }
     return SliverToBoxAdapter(
       child: Container(

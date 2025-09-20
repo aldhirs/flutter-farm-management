@@ -154,17 +154,17 @@ class _SalesItemAddPageState
                     TextSpan(
                       style: TextStyle(color: Colors.black), // style default
                       children: [
-                        TextSpan(text: 'Data sapi dengan RFID '),
+                        const TextSpan(text: 'Data sapi dengan RFID '),
                         TextSpan(
                           text: state.cattle.rfid_tag,
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        TextSpan(text: ' ini masih dalam '),
-                        TextSpan(
+                        const TextSpan(text: ' ini masih dalam '),
+                        const TextSpan(
                           text: 'Proses Drafting',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        TextSpan(
+                        const TextSpan(
                           text:
                               '. Tekan Lanjutkan jika ingin menambahkan kedalam item penjualan.',
                         ),
@@ -267,10 +267,29 @@ class _SalesItemAddPageState
   }
 
   Widget _itemWidget(ListItem item) {
-    return ListTile(
-      visualDensity: const VisualDensity(horizontal: 0, vertical: -3),
-      title: Text(item.name, style: TextStyles.label2()),
-      subtitle: Text(item.description, style: TextStyles.heading6()),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              item.name,
+              style: TextStyles.body2().copyWith(fontWeight: FontWeight.w400),
+            ),
+          ),
+          Expanded(
+            flex: 4,
+            child: Text(
+              item.description.defaultValue('-'),
+              textAlign: TextAlign.end,
+              style: TextStyles.body2(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

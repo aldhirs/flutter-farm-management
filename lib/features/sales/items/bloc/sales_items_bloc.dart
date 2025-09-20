@@ -331,6 +331,7 @@ class SalesItemsBloc extends BaseBloc<SalesItemsEvent, SalesItemsState> {
           BarnRequest(
             projectId: appBloc.state.selectedProject!.id,
             category: 'Penggemukan,Karantina,Isolasi,Penjualan',
+            search: event.search.orEmpty(),
           ),
         );
         switch (response.result) {

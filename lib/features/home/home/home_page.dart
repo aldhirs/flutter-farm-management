@@ -4,6 +4,7 @@ import 'package:farm/app/bloc/app_bloc.dart';
 import 'package:farm/app/bloc/app_event.dart';
 import 'package:farm/app/bloc/app_state.dart';
 import 'package:farm/base/base_page_state.dart';
+import 'package:farm/constants/date_constant.dart';
 import 'package:farm/extensions/string.dart';
 import 'package:farm/features/home/home/bloc/home_bloc.dart';
 import 'package:farm/features/home/home/bloc/home_state.dart';
@@ -12,13 +13,16 @@ import 'package:farm/features/home/home/widgets/quick_action_card.dart';
 import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
+import 'package:farm/utils/date_time_utils.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
+import 'package:farm/utils/string_utils.dart';
 import 'package:farm/views/view.dart';
 import 'package:farm/widgets/dropdownview/dropdown_model.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_bottomsheet.dart';
 import 'package:farm/widgets/popup/popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 @RoutePage()
@@ -116,12 +120,28 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
               _fadeSlide(
                 fade: _fadeShortcutTitle,
                 slide: _slideShortcutTitle,
-                child: const Text(
-                  "Discover",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Discover",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      "Terakhir diperbarui: ${DateTime.now().toString().formatDateString(format: DateConstant.UTC, newFormat: DateConstant.DATETIME_FULL_MONTH)}",
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
 
               _fadeSlide(
                 fade: _fadeStats,
@@ -135,21 +155,29 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                   physics: const NeverScrollableScrollPhysics(),
                   padding: EdgeInsets.zero,
                   children: [
-                    _buildSummaryCard("Draf Sapi", "120", LucideIcons.pawPrint),
+                    _buildSummaryCard(
+                      "Draf Sapi",
+                      "120",
+                      LucideIcons.pawPrint,
+                      const [Colors.white, Color(0xFFFFE0F7)],
+                    ),
                     _buildSummaryCard(
                       "Draf Penjualan",
                       "3",
                       LucideIcons.shoppingCart,
+                      const [Colors.white, Color(0xFFFAD0C4)],
                     ),
                     _buildSummaryCard(
                       "Mutasi Masuk",
                       "2",
                       LucideIcons.arrowDown,
+                      const [Colors.white, Color(0xFFFFC3A0)],
                     ),
                     _buildSummaryCard(
                       "Mutasi Keluar",
                       "1",
                       LucideIcons.arrowUp,
+                      const [Colors.white, Color(0xFFA6C1EE)],
                     ),
                   ],
                 ),
@@ -408,16 +436,25 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
     );
   }
 
-  Widget _buildSummaryCard(String title, String value, IconData icon) {
+  Widget _buildSummaryCard(
+    String title,
+    String value,
+    IconData icon,
+    List<Color> colors,
+  ) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: LinearGradient(
+          colors: colors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
           ),
         ],
       ),

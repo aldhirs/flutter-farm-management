@@ -58,6 +58,8 @@ class _ResultCattleBottomSheetState extends State<ResultCattleBottomSheet> {
                   DetailBottomSheet(
                     item: widget.bloc.state.mutation,
                     onDismiss: () {},
+                    showBottomSheet: true,
+                    isShowTitle: false,
                   ),
                   _animalIdentityWidget(),
                 ],
@@ -90,17 +92,39 @@ class _ResultCattleBottomSheetState extends State<ResultCattleBottomSheet> {
           ListView.separated(
             separatorBuilder: (context, index) => const Divider(),
             shrinkWrap: true,
-            physics:
-                const NeverScrollableScrollPhysics(), // biar ikut parent scroll
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: _getCattleItems().length,
             itemBuilder: (context, index) {
               final item = _getCattleItems()[index];
-              return ListTile(
-                visualDensity: const VisualDensity(horizontal: 0, vertical: -3),
-                title: Text(item.name, style: TextStyles.label2()),
-                subtitle: Text(item.description, style: TextStyles.heading6()),
-              );
+              return _itemWidget(item);
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _itemWidget(ListItem item) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              item.name,
+              style: TextStyles.body2().copyWith(fontWeight: FontWeight.w400),
+            ),
+          ),
+          Expanded(
+            flex: 4,
+            child: Text(
+              item.description.defaultValue('-'),
+              textAlign: TextAlign.end,
+              style: TextStyles.body2(),
+            ),
           ),
         ],
       ),

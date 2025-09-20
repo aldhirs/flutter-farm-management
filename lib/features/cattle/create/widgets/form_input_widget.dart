@@ -30,16 +30,19 @@ class _FormInputWidgetState extends State<FormInputWidget> {
   final TextEditingController _earTagController = TextEditingController();
   final TextEditingController _penController = TextEditingController();
   late final ValueNotifier<List<DropdownCheckboxModel>> _receptionItems;
+  late final ValueNotifier<List<DropdownCheckboxModel>> _barnItems;
 
   @override
   void initState() {
     _rfidController.text = widget.rfid.defaultValue('-');
     _receptionItems = ValueNotifier([]);
+    _barnItems = ValueNotifier([]);
     super.initState();
   }
 
   @override
   void dispose() {
+    _barnItems.dispose();
     _rfidController.dispose();
     _earTagController.dispose();
     _penController.dispose();
@@ -151,22 +154,29 @@ class _FormInputWidgetState extends State<FormInputWidget> {
       child: BlocBuilder<CattleCreateBloc, CattleCreateState>(
         buildWhen: (p, c) => p.barns != c.barns,
         builder: (context, state) {
+          // 🔥 jadwalkan update setelah frame, biar nggak bentrok dengan build
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _barnItems.value = state.barns
+                .map(
+                  (item) => DropdownCheckboxModel(
+                    id: item.id,
+                    text: item.name,
+                    selected: item.id == state.selectedBarn?.id,
+                    notes: item.category,
+                  ),
+                )
+                .toList();
+          });
           return DropdownViewField(
             title: 'Kandang',
-            items: ValueNotifier<List<DropdownCheckboxModel>>(
-              state.barns
-                  .map(
-                    (item) => DropdownCheckboxModel(
-                      id: item.id,
-                      text: item.name,
-                      selected: item.id == state.selectedBarn?.id,
-                      notes: item.category,
-                    ),
-                  )
-                  .toList(),
-            ),
+            items: _barnItems,
             navigator: widget.bloc.navigator,
             dropdownType: DropdownTypeEnum.single,
+            showSearchBar: true,
+            searchHint: "cari minimal 3 karakter",
+            doOnKeywordSearch: (keyword) {
+              widget.bloc.add(GetBarns(search: keyword));
+            },
             onSelectedItems: (List<String> value) {
               final selected = state.barns
                   .where((item) => item.id == value.first)

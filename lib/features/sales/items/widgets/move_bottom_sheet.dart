@@ -1,5 +1,3 @@
-import 'package:farm/constants/enum_constants.dart';
-import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/extensions/string.dart';
 import 'package:farm/features/sales/items/bloc/sales_items_bloc.dart';
 import 'package:farm/features/sales/items/bloc/sales_items_event.dart';
@@ -10,7 +8,6 @@ import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/widgets/buttons/button.dart';
 import 'package:farm/widgets/dropdownview/dropdown_model.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_field.dart';
-import 'package:farm/widgets/dropdownview/dropdown_view_pen_field.dart';
 import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';

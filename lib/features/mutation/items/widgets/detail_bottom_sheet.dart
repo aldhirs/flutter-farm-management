@@ -64,14 +64,20 @@ class DetailBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          Text(
-            item.notes,
-            style: TextStyles.label2().copyWith(
-              color: showBottomSheet ? Colors.grey.shade800 : Colors.black87,
+          Visibility(
+            visible: item.notes.isNotEmpty,
+            child: Column(
+              children: [
+                Text(
+                  item.notes,
+                  style: TextStyles.label2().copyWith(
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
             ),
           ),
-
-          const SizedBox(height: 12),
 
           // DETAIL INFO
           _buildDetail(

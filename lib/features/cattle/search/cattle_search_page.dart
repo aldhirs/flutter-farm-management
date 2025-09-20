@@ -311,17 +311,25 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 15, color: Colors.black54),
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style: TextStyles.body2().copyWith(fontWeight: FontWeight.w400),
+            ),
           ),
-          Text(
-            value.defaultValue('-'),
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          Expanded(
+            flex: 4,
+            child: Text(
+              value.defaultValue('-'),
+              textAlign: TextAlign.end,
+              style: TextStyles.body2(),
+            ),
           ),
         ],
       ),
@@ -513,7 +521,7 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      item.is_infection ? 'Terinfeksi' : 'Tidak Terinfeksi',
+                      item.is_infection ? 'Infeksius' : 'Non Infeksius',
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.black54,
