@@ -54,7 +54,7 @@ class SalesItemPreviewBloc
     emit(state.copyWith(loading: true));
     // bypass-debug
     Future.delayed(const Duration(seconds: 1), () {
-      add(RFIDChanged(rfid: "942 000048311690"));
+      add(RFIDChanged(rfid: "1002"));
     });
   }
 

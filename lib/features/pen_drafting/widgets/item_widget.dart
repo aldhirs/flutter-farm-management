@@ -148,7 +148,9 @@ class ItemWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Tersedia: $available ekor",
+              available < 0
+                  ? 'Melebihi kapasitas sapi'
+                  : "Tersedia: $available ekor",
               style: TextStyles.label3().copyWith(color: Colors.grey.shade700),
             ),
             Text(

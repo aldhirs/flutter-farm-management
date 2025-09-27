@@ -89,7 +89,7 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
             backgroundColor: AppColors.current.mint700,
             strokeWidth: 2.0,
             onRefresh: () async {
-              bloc.add(const LoadSales());
+              bloc.add(const LoadSales(withFilter: true));
             },
             // Pull from top to show refresh indicator.
             child: ListView.builder(

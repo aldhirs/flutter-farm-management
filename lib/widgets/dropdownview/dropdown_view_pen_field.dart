@@ -62,36 +62,39 @@ class _DropdownViewPenFieldState extends State<DropdownViewPenField> {
       });
     }
 
-    return SafeArea(
-      child: ValueListenableBuilder<List<Pen>>(
-        valueListenable: widget.items,
-        builder: (context, items, _) {
-          final selectedItems = items.where((item) => item.selected).toList();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: SafeArea(
+        child: ValueListenableBuilder<List<Pen>>(
+          valueListenable: widget.items,
+          builder: (context, items, _) {
+            final selectedItems = items.where((item) => item.selected).toList();
 
-          if (selectedItems.isNotEmpty) {
-            if (widget.dropdownType == DropdownTypeEnum.single) {
-              _controller.text =
-                  "${selectedItems.first.name_barn} -  ${selectedItems.first.name}";
+            if (selectedItems.isNotEmpty) {
+              if (widget.dropdownType == DropdownTypeEnum.single) {
+                _controller.text =
+                    "${selectedItems.first.name_barn} -  ${selectedItems.first.name}";
+              } else {
+                _controller.text = '${selectedItems.length} opsi dipilih';
+              }
             } else {
-              _controller.text = '${selectedItems.length} opsi dipilih';
+              if (_controller.value.text.isEmpty) {
+                _controller.clear();
+              }
             }
-          } else {
-            if (_controller.value.text.isEmpty) {
-              _controller.clear();
-            }
-          }
 
-          return DropdownInputField(
-            controller: _controller,
-            dropdownInputState: textInputState,
-            label: widget.title,
-            hintText: widget.searchHint,
-            enabled: widget.enabled,
-            isShowDropdown: isShowDropdown,
-            additionalInfo: widget.additionalInfo,
-            onTap: _onShowBottomsheet,
-          );
-        },
+            return DropdownInputField(
+              controller: _controller,
+              dropdownInputState: textInputState,
+              label: widget.title,
+              hintText: widget.searchHint,
+              enabled: widget.enabled,
+              isShowDropdown: isShowDropdown,
+              additionalInfo: widget.additionalInfo,
+              onTap: _onShowBottomsheet,
+            );
+          },
+        ),
       ),
     );
   }

@@ -91,7 +91,7 @@ class ItemWidget extends StatelessWidget {
 
             // DETAIL INFO
             _buildDetail(
-              Icons.calendar_today_outlined,
+              LucideIcons.calendar,
               item.created_at
                   .formatDateString(
                     format: DateConstant.UTC,
@@ -99,6 +99,8 @@ class ItemWidget extends StatelessWidget {
                   )
                   .defaultValue('-'),
             ),
+            const SizedBox(height: 4),
+            _buildDetail(LucideIcons.user, item.created_by.defaultValue('-')),
           ],
         ),
       ),

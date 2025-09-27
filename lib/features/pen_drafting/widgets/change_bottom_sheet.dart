@@ -204,9 +204,18 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
       value: widget.bloc,
       child: BlocBuilder<PenDraftingBloc, PenDraftingState>(
         buildWhen: (p, c) =>
-            p.dropdownPens != c.dropdownPens || p.selectedPen != c.selectedPen,
+            p.selectedBarn != c.selectedBarn ||
+            p.dropdownPens != c.dropdownPens ||
+            p.selectedPen != c.selectedPen,
         builder: (context, state) {
           _penController.text = state.selectedPen?.name ?? "";
+          final total = (state.selectedPen?.capacity).defaultZero();
+          final filled = (state.selectedPen?.cattle_count).defaultZero();
+          final available = total - filled;
+          final infoText = available < 0
+              ? 'Melebihi kapasitas sapi'
+              : 'Tersedia: $available ekor';
+
           return DropdownViewPenField(
             controller: _penController,
             enabled: state.selectedBarn != null,
@@ -223,9 +232,11 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
             navigator: widget.bloc.navigator,
             dropdownType: DropdownTypeEnum.single,
             sheetSize: BottomSheetSize.full,
-            emptyStateMessage: 'Silakan pilih pen terlebih dahulu.',
+            emptyStateMessage: state.selectedBarn == null
+                ? 'Silakan pilih kandang terlebih dahulu.'
+                : 'Data tidak tersedia',
             additionalInfo: state.selectedPen != null
-                ? "Tersedia: ${(state.selectedPen?.capacity).defaultZero() - (state.selectedPen?.cattle_count).defaultZero()} ekor. (${(state.selectedPen?.cattle_count).defaultZero()}/${(state.selectedPen?.capacity).defaultZero()} ekor)"
+                ? "$infoText. ($filled/$total ekor)"
                 : null,
             onSelectedItems: (List<Pen> value) {
               widget.bloc.add(PenChanged(pen: value.first));

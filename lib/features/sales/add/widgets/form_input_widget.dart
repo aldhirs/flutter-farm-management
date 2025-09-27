@@ -106,6 +106,12 @@ class _FormInputWidgetState extends State<FormInputWidget> {
       value: widget.bloc,
       child: BlocBuilder<SalesItemAddBloc, SalesItemAddState>(
         builder: (context, state) {
+          final total = (state.selectedPen?.capacity).defaultZero();
+          final filled = (state.selectedPen?.cattle_count).defaultZero();
+          final available = total - filled;
+          final infoText = available < 0
+              ? 'Melebihi kapasitas sapi'
+              : 'Tersedia: $available ekor';
           return DropdownViewPenField(
             controller: _penController,
             title: 'Pen Tujuan',
@@ -123,9 +129,9 @@ class _FormInputWidgetState extends State<FormInputWidget> {
             sheetSize: BottomSheetSize.full,
             emptyStateMessage: state.selectedBarn == null
                 ? 'Silakan pilih kandang terlebih dahulu.'
-                : 'Data tidak ditemukan',
+                : 'Data tidak tersedia',
             additionalInfo: state.selectedPen != null
-                ? "Tersedia: ${(state.selectedPen?.capacity).defaultZero() - (state.selectedPen?.cattle_count).defaultZero()} ekor. (${(state.selectedPen?.cattle_count).defaultZero()}/${(state.selectedPen?.capacity).defaultZero()} ekor)"
+                ? "$infoText. ($filled/$total ekor)"
                 : null,
             onSelectedItems: (List<Pen> value) {
               widget.bloc.add(PenChanged(pen: value.first));

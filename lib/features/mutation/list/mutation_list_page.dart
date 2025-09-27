@@ -88,7 +88,7 @@ class _MutationListPageState
             backgroundColor: AppColors.current.mint700,
             strokeWidth: 2.0,
             onRefresh: () async {
-              bloc.add(const LoadMutationList());
+              bloc.add(const LoadMutationList(withFilter: true));
             },
             // Pull from top to show refresh indicator.
             child: ListView.builder(

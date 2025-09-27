@@ -406,7 +406,9 @@ class _DropdownViewPenBottomsheetState
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Tersedia: $available ekor",
+                                  available < 0
+                                      ? 'Melebihi kapasitas sapi'
+                                      : "Tersedia: $available ekor",
                                   style: TextStyles.body3().copyWith(
                                     fontSize: 10,
                                     color: Colors.grey.shade700,

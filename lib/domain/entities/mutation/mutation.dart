@@ -16,7 +16,7 @@ abstract class Mutation extends BaseOutput with _$Mutation {
     @Default('') String from_project_name,
     @Default('') String to_project_name,
     @Default('') String notes,
-    @Default(0) int created_by,
+    @Default('') String created_by,
     @Default('') String status,
     @Default('') String created_at,
   }) = _Mutation;

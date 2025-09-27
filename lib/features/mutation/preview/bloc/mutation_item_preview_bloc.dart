@@ -73,7 +73,7 @@ class MutationItemPreviewBloc
     emit(state.copyWith(loading: true));
     // bypass-debug
     Future.delayed(const Duration(seconds: 1), () {
-      add(RFIDChanged(rfid: "747 494892645299"));
+      add(RFIDChanged(rfid: "1003"));
     });
   }
 

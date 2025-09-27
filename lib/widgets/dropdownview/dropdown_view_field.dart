@@ -59,33 +59,36 @@ class _DropdownViewFieldState extends State<DropdownViewField> {
       });
     }
 
-    return SafeArea(
-      child: ValueListenableBuilder<List<DropdownCheckboxModel>>(
-        valueListenable: widget.items,
-        builder: (context, items, _) {
-          final selectedItems = items.where((item) => item.selected).toList();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: SafeArea(
+        child: ValueListenableBuilder<List<DropdownCheckboxModel>>(
+          valueListenable: widget.items,
+          builder: (context, items, _) {
+            final selectedItems = items.where((item) => item.selected).toList();
 
-          if (selectedItems.isNotEmpty) {
-            if (widget.dropdownType == DropdownTypeEnum.single) {
-              _controller.text = selectedItems.first.text;
+            if (selectedItems.isNotEmpty) {
+              if (widget.dropdownType == DropdownTypeEnum.single) {
+                _controller.text = selectedItems.first.text;
+              } else {
+                _controller.text = '${selectedItems.length} opsi dipilih';
+              }
             } else {
-              _controller.text = '${selectedItems.length} opsi dipilih';
+              if (_controller.value.text.isEmpty) {
+                _controller.clear();
+              }
             }
-          } else {
-            if (_controller.value.text.isEmpty) {
-              _controller.clear();
-            }
-          }
 
-          return DropdownInputField(
-            controller: _controller,
-            dropdownInputState: textInputState,
-            label: widget.title,
-            hintText: widget.searchHint,
-            isShowDropdown: isShowDropdown,
-            onTap: _onShowBottomsheet,
-          );
-        },
+            return DropdownInputField(
+              controller: _controller,
+              dropdownInputState: textInputState,
+              label: widget.title,
+              hintText: widget.searchHint,
+              isShowDropdown: isShowDropdown,
+              onTap: _onShowBottomsheet,
+            );
+          },
+        ),
       ),
     );
   }

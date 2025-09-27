@@ -198,6 +198,12 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
       value: widget.bloc,
       child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
         builder: (context, state) {
+          final total = (state.selectedPen?.capacity).defaultZero();
+          final filled = (state.selectedPen?.cattle_count).defaultZero();
+          final available = total - filled;
+          final infoText = available < 0
+              ? 'Melebihi kapasitas sapi'
+              : 'Tersedia: $available ekor';
           return DropdownViewPenField(
             controller: _penController,
             title: 'Pen Tujuan',
@@ -213,9 +219,11 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
             navigator: widget.bloc.navigator,
             dropdownType: DropdownTypeEnum.single,
             sheetSize: BottomSheetSize.full,
-            emptyStateMessage: 'Silakan pilih pen terlebih dahulu.',
+            emptyStateMessage: state.selectedBarn == null
+                ? 'Silakan pilih kandang terlebih dahulu.'
+                : 'Data tidak tersedia',
             additionalInfo: state.selectedPen != null
-                ? "Tersedia: ${(state.selectedPen?.capacity).defaultZero() - (state.selectedPen?.cattle_count).defaultZero()} ekor. (${(state.selectedPen?.cattle_count).defaultZero()}/${(state.selectedPen?.capacity).defaultZero()} ekor)"
+                ? "$infoText. ($filled/$total ekor)"
                 : null,
             onSelectedItems: (List<Pen> value) {
               widget.bloc.add(PenChanged(pen: value.first));
