@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base.dart';
@@ -194,6 +195,11 @@ class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
           child: FloatingActionButton.extended(
             backgroundColor: AppColors.current.mint700,
             onPressed: () async {
+              if (Platform.isIOS) {
+                _showDeniedOnIOS();
+                return;
+              }
+
               final granted = await requestLocationPermission();
               if (granted) {
                 _onScanningClicked.call(isBluetoothOn);
@@ -247,8 +253,11 @@ class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
         onNegativeButtonPressed: () => navigator.pop(),
         onPositiveButtonPressed: () async {
           navigator.pop();
-          bloc.add(const StartScanning());
-          return;
+          if (widget.destinationRoute != DEST_DRAFTING_DETAIL) {
+            bloc.add(const StartScanning());
+            return;
+          }
+
           // bypass-debug
           switch (widget.destinationRoute) {
             case DEST_DRAFTING_DETAIL:
@@ -266,6 +275,30 @@ class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
           }
           // bypass-debug
         },
+      ),
+    );
+  }
+
+  void _showDeniedOnIOS() {
+    navigator.showAppDialog(
+      useRootNavigator: true,
+      barrierDismissible: false,
+      Popup(
+        title: 'Ups!',
+        description: [
+          const TextSpan(
+            text: "Scanner hanya dapat digunakan pada platform Android",
+          ),
+        ],
+        positiveButtonText: "Mengerti",
+        illustration: ClipRRect(
+          borderRadius: BorderRadius.circular(20), // adjust radius
+          child: Assets.images.ilCowDenied.image(
+            width: Dimens.d200,
+            fit: BoxFit.cover,
+          ),
+        ),
+        onPositiveButtonPressed: () => navigator.pop(),
       ),
     );
   }

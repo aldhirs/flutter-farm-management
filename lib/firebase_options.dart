@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'farm-management-agrstw.firebasestorage.app',
     measurementId: 'G-NYTE4867B6',
   );
+
 }
