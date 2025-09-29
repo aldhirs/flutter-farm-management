@@ -11,6 +11,7 @@ const ISSUED = 'issued';
 const COMPLETED = 'completed';
 const CANCELLED = 'cancelled';
 const AVAILABLE = 'available';
+const SICK = 'sick';
 const BOOKED = 'booked';
 
 const medicalStatusMap = {

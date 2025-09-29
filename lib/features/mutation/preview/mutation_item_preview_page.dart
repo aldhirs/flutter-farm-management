@@ -82,6 +82,34 @@ class _MutationItemPreviewPageState
           },
         ),
         BlocListener<MutationItemPreviewBloc, MutationItemPreviewState>(
+          listenWhen: (previous, current) =>
+              previous.cattleErrorMessage != current.cattleErrorMessage,
+          listener: (context, state) async {
+            if (state.cattleErrorMessage.isNotEmpty) {
+              navigator.showAppDialog(
+                useRootNavigator: true,
+                barrierDismissible: false,
+                Popup(
+                  title: 'Tidak dapat dilanjutkan',
+                  illustration: ClipRRect(
+                    borderRadius: BorderRadius.circular(20), // adjust radius
+                    child: Assets.images.ilCowDenied.image(
+                      height: Dimens.d240,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  description: [TextSpan(text: state.cattleErrorMessage)],
+                  positiveButtonText: "Mengerti",
+                  onPositiveButtonPressed: () async {
+                    bloc.add(const OnClear());
+                    navigator.pop();
+                  },
+                ),
+              );
+            }
+          },
+        ),
+        BlocListener<MutationItemPreviewBloc, MutationItemPreviewState>(
           listenWhen: (previous, current) => previous.cattle != current.cattle,
           listener: (context, state) async {
             if (state.cattle != null) {
@@ -299,9 +327,14 @@ class _MutationItemPreviewPageState
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(height: isTablet ? Dimens.d64 : 0),
-                  DetailBottomSheet(item: widget.item, onDismiss: () {}),
+                  DetailBottomSheet(
+                    item: widget.item,
+                    onDismiss: () {},
+                    isShowTitle: false,
+                    showBottomSheet: true,
+                  ),
                   const Divider(),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 28),
                   state.rfid.isNotEmpty
                       ? _received(state, width, isTablet)
                       : _emptyState(state, width, isTablet),

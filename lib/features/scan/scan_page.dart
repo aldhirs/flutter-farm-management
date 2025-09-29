@@ -253,10 +253,8 @@ class _ScanPageState extends BasePageState<ScanPage, ScanBloc> {
         onNegativeButtonPressed: () => navigator.pop(),
         onPositiveButtonPressed: () async {
           navigator.pop();
-          if (widget.destinationRoute != DEST_DRAFTING_DETAIL) {
-            bloc.add(const StartScanning());
-            return;
-          }
+          // bloc.add(const StartScanning());
+          // return;
 
           // bypass-debug
           switch (widget.destinationRoute) {

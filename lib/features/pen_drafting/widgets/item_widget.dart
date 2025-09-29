@@ -60,8 +60,6 @@ class ItemWidget extends StatelessWidget {
   Widget _itemPlain() {
     final int total = item.capacity;
     final int filled = item.cattle_count;
-    final int available = total - filled;
-
     final double percentage = total > 0 ? filled / total : 0.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,9 +146,7 @@ class ItemWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              available < 0
-                  ? 'Melebihi kapasitas sapi'
-                  : "Tersedia: $available ekor",
+              item.getAvailableLabel(),
               style: TextStyles.label3().copyWith(color: Colors.grey.shade700),
             ),
             Text(

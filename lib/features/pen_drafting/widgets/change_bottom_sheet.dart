@@ -209,13 +209,6 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
             p.selectedPen != c.selectedPen,
         builder: (context, state) {
           _penController.text = state.selectedPen?.name ?? "";
-          final total = (state.selectedPen?.capacity).defaultZero();
-          final filled = (state.selectedPen?.cattle_count).defaultZero();
-          final available = total - filled;
-          final infoText = available < 0
-              ? 'Melebihi kapasitas sapi'
-              : 'Tersedia: $available ekor';
-
           return DropdownViewPenField(
             controller: _penController,
             enabled: state.selectedBarn != null,
@@ -235,9 +228,7 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
             emptyStateMessage: state.selectedBarn == null
                 ? 'Silakan pilih kandang terlebih dahulu.'
                 : 'Data tidak tersedia',
-            additionalInfo: state.selectedPen != null
-                ? "$infoText. ($filled/$total ekor)"
-                : null,
+            additionalInfo: state.selectedPen?.getAvailableLabel(),
             onSelectedItems: (List<Pen> value) {
               widget.bloc.add(PenChanged(pen: value.first));
             },

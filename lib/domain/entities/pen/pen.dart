@@ -56,4 +56,17 @@ abstract class Pen extends BaseOutput with _$Pen {
       return Colors.red.shade500;
     }
   }
+
+  String getAvailableLabel() {
+    final int total = capacity;
+    final int filled = cattle_count;
+    final int available = total - filled;
+    if (available < 0) {
+      return "Sudah melebihi kapasitas sapi";
+    }
+    if (available == 0) {
+      return "Kapasitas sudah penuh";
+    }
+    return "Tersedia: $available ekor";
+  }
 }

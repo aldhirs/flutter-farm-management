@@ -308,7 +308,6 @@ class _DropdownViewPenBottomsheetState
               final selected = selectedItem.selected;
               final int total = selectedItem.capacity;
               final int filled = selectedItem.cattle_count;
-              final int available = total - filled;
               return GestureDetector(
                 onTap: () {
                   for (int i = 0; i < selectedItems.length; i++) {
@@ -351,14 +350,14 @@ class _DropdownViewPenBottomsheetState
                                 Row(
                                   children: [
                                     const Icon(
-                                      Icons.home_outlined,
+                                      Icons.meeting_room_outlined,
                                       size: 18,
                                       color: Colors.teal,
                                     ),
                                     const SizedBox(width: 6),
                                     Expanded(
                                       child: Text(
-                                        selectedItem.name_barn,
+                                        selectedItem.name,
                                         style: TextStyles.label1(),
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -369,14 +368,14 @@ class _DropdownViewPenBottomsheetState
                                 Row(
                                   children: [
                                     const Icon(
-                                      Icons.meeting_room_outlined,
+                                      Icons.home_outlined,
                                       size: 18,
                                       color: Colors.indigo,
                                     ),
                                     const SizedBox(width: 6),
                                     Expanded(
                                       child: Text(
-                                        selectedItem.name,
+                                        selectedItem.name_barn,
                                         style: TextStyles.label2().copyWith(
                                           color: Colors.grey.shade700,
                                         ),
@@ -406,9 +405,7 @@ class _DropdownViewPenBottomsheetState
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  available < 0
-                                      ? 'Melebihi kapasitas sapi'
-                                      : "Tersedia: $available ekor",
+                                  selectedItem.getAvailableLabel(),
                                   style: TextStyles.body3().copyWith(
                                     fontSize: 10,
                                     color: Colors.grey.shade700,

@@ -373,11 +373,8 @@ class _MutationPageState
           fit: BoxFit.contain,
         ),
       ),
-      isEnabledPositifButton: !widget.isIn,
-      buttonText: !widget.isIn ? 'Tambah Data' : '',
       isButtonFullWidth: true,
       leftIconButton: const Icon(Icons.add, color: Colors.white),
-      onPressed: () => _addNew(),
     );
   }
 

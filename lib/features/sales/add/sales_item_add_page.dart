@@ -106,7 +106,8 @@ class _SalesItemAddPageState
           listenWhen: (previous, current) => previous.cattle != current.cattle,
           listener: (context, state) {
             if (state.cattle.id.isNotEmpty &&
-                !state.cattle.isStatusAvailable()) {
+                (!state.cattle.isStatusAvailable() &&
+                    !state.cattle.isStatusSick())) {
               navigator.showAppDialog(
                 useRootNavigator: true,
                 barrierDismissible: false,

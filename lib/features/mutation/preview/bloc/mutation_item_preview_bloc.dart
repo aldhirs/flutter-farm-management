@@ -45,6 +45,7 @@ class MutationItemPreviewBloc
           isSuccessAdd: false,
           cattle: null,
           errorMessage: "",
+          cattleErrorMessage: "",
         ),
       );
     }, transformer: log());
@@ -102,10 +103,10 @@ class MutationItemPreviewBloc
         final response = await _cattleByRFIDUseCase.execute(req);
         switch (response.result) {
           case DataSuccess(:final data):
-            emit(state.copyWith(cattle: data, errorMessage: ''));
+            emit(state.copyWith(cattle: data, cattleErrorMessage: ''));
             break;
           case DataError(:final errorMessage):
-            emit(state.copyWith(errorMessage: errorMessage.orEmpty()));
+            emit(state.copyWith(cattleErrorMessage: errorMessage.orEmpty()));
           case null:
             return;
         }
@@ -115,7 +116,11 @@ class MutationItemPreviewBloc
       },
       handleError: false,
       doOnError: (e) async {
-        emit(state.copyWith(errorMessage: exceptionMessageMapper.map(e)));
+        var error = exceptionMessageMapper.map(e);
+        if (error == "-1: record not found") {
+          error = "Data sapi tidak ditemukan";
+        }
+        emit(state.copyWith(cattleErrorMessage: error));
       },
     );
   }

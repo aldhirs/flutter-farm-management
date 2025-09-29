@@ -211,7 +211,20 @@ class _DraftingFormPageState
     final isNotFound = bloc.state.errorMessage.contains('record not found');
     return FloatingActionButton.extended(
       backgroundColor: AppColors.current.eucalyptus700,
-      onPressed: () => navigator.pop(),
+      onPressed: () {
+        final state = bloc.state;
+        if (state.isIdentitySuccess ||
+            state.isGrowthSuccess ||
+            state.isMedicalSuccess ||
+            state.isTreatmentSuccess) {
+          ToastHelper().showToast(
+            context: context,
+            message: 'Data drafting sapi berhasil disimpan.',
+            type: ToastType.succes,
+          );
+        }
+        navigator.pop();
+      },
       label: Text(
         !isNotFound ? 'Selesai' : 'Kembali',
         style: TextStyles.button2().copyWith(color: Colors.white),

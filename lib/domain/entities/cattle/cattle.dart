@@ -39,6 +39,10 @@ abstract class Cattle extends BaseOutput with _$Cattle {
     return status == AVAILABLE;
   }
 
+  bool isStatusSick() {
+    return status == SICK;
+  }
+
   String statusLabel() {
     if (status.isEmpty) return '-';
     return cattleStatusMap[status] ?? status;

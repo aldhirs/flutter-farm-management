@@ -14,6 +14,7 @@ abstract class MutationItemPreviewState extends BaseBlocState
     @Default(null) Cattle? cattle,
     @Default(false) bool loading,
     @Default('') String errorMessage,
+    @Default('') String cattleErrorMessage,
     @Default(false) bool isSuccessAdd,
   }) = _MutationItemPreviewState;
 
