@@ -5,6 +5,7 @@ import 'package:farm/resources/styles/app_colors.dart';
 import 'package:farm/resources/styles/text_styles.dart';
 import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class ItemWidget extends StatelessWidget {
   final MutationItem item;
@@ -47,8 +48,6 @@ class ItemWidget extends StatelessWidget {
                   Expanded(
                     child: Row(
                       children: [
-                        _buildCircleIcon(Icons.tag, Colors.teal, 16),
-                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             item.ear_tag.defaultValue('-'),
@@ -68,20 +67,69 @@ class ItemWidget extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 4),
+              const SizedBox(height: 16),
+
+              Row(
+                children: [
+                  _buildCircleIcon(Icons.home_outlined, Colors.teal, 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      item.barn_name.defaultValue('-'),
+                      style: TextStyles.label1().copyWith(
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  _buildCircleIcon(
+                    Icons.meeting_room_outlined,
+                    Colors.indigo,
+                    16,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      item.pen_name.defaultValue('-'),
+                      style: TextStyles.label2().copyWith(
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 8),
 
               /// RFID
               _buildDetail(
                 icon: Icons.qr_code_2_outlined,
+                label: "RFID: ",
                 text: item.rfid.defaultValue('-'),
                 color: Colors.indigo,
+                size: 8,
               ),
 
               /// Weight
               _buildDetail(
                 icon: Icons.monitor_weight_outlined,
-                text: "Bobot ${item.weight} Kg",
+                label: "Bobot: ",
+                text: "${item.weight} Kg",
                 color: Colors.redAccent,
+                size: 8,
+              ),
+
+              /// Weight
+              _buildDetail(
+                icon: Icons.start,
+                label: "",
+                text: item.cattleStatusLabel(),
+                color: Colors.orange,
+                size: 8,
               ),
             ],
           ),
@@ -105,15 +153,22 @@ class ItemWidget extends StatelessWidget {
   /// Detail row
   Widget _buildDetail({
     required IconData icon,
+    required String label,
     required String text,
     required Color color,
+    required double size,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          _buildCircleIcon(icon, color, 8),
+          _buildCircleIcon(icon, color, size),
           const SizedBox(width: 10),
+          Text(
+            label,
+            style: TextStyles.label2().copyWith(color: Colors.grey.shade700),
+            overflow: TextOverflow.ellipsis,
+          ),
           Expanded(
             child: Text(
               text,

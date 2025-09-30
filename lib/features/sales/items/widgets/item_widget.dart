@@ -47,8 +47,6 @@ class ItemWidget extends StatelessWidget {
                   Expanded(
                     child: Row(
                       children: [
-                        _buildCircleIcon(Icons.tag, Colors.teal, 16),
-                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             item.ear_tag.defaultValue('-'),
@@ -68,7 +66,43 @@ class ItemWidget extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 4),
+              const SizedBox(height: 16),
+
+              Row(
+                children: [
+                  _buildCircleIcon(Icons.home_outlined, Colors.teal, 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      item.barn_name.defaultValue('-'),
+                      style: TextStyles.label1().copyWith(
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  _buildCircleIcon(
+                    Icons.meeting_room_outlined,
+                    Colors.indigo,
+                    16,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      item.pen_name.defaultValue('-'),
+                      style: TextStyles.label2().copyWith(
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 8),
 
               /// RFID
               _buildDetail(

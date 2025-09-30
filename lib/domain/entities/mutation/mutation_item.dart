@@ -13,9 +13,14 @@ abstract class MutationItem extends BaseOutput with _$MutationItem {
     @Default('') String id_mutation,
     @Default('') String id_cattle,
     @Default('') String rfid,
+    @Default('') String barn_id,
+    @Default('') String barn_name,
+    @Default('') String pen_id,
+    @Default('') String pen_name,
     @Default('') String ear_tag,
     @Default(0) double weight,
     @Default('') String mutation_do_status,
+    @Default('') String status,
     @Default('') String created_at,
   }) = _MutationItem;
 
@@ -27,6 +32,11 @@ abstract class MutationItem extends BaseOutput with _$MutationItem {
   String statusLabel() {
     if (mutation_do_status.isEmpty) return '-';
     return mutationItemStatusMap[mutation_do_status] ?? mutation_do_status;
+  }
+
+  String cattleStatusLabel() {
+    if (status.isEmpty) return '-';
+    return cattleStatusMap[status] ?? status;
   }
 
   TagCategoryType statusType() {

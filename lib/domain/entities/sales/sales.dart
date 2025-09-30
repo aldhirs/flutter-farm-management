@@ -14,9 +14,14 @@ abstract class Sales extends BaseOutput with _$Sales {
     @JsonKey(name: 'sales_number') @Default('') String sales_number,
     @JsonKey(name: 'status') @Default('') String status,
     @JsonKey(name: 'issued_at') @Default('') String issued_at,
-    @JsonKey(name: 'issued_by') @Default(0) int issued_by,
+    @JsonKey(name: 'issued_by') @Default('') String issued_by,
     @JsonKey(name: 'created_at') @Default('') String created_at,
     @JsonKey(name: 'updated_at') @Default('') String updated_at,
+    @JsonKey(name: 'created_by') @Default('') String created_by,
+    @JsonKey(name: 'cancelled_at') @Default('') String cancelled_at,
+    @JsonKey(name: 'cancelled_by') @Default('') String cancelled_by,
+    @JsonKey(name: 'completed_at') @Default('') String completed_at,
+    @JsonKey(name: 'completed_by') @Default('') String completed_by,
     @JsonKey(name: 'customer_detail')
     @Default(Customer())
     Customer? customer_detail,

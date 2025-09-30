@@ -89,6 +89,8 @@ class DetailBottomSheet extends StatelessWidget {
                 )
                 .defaultValue('-'),
           ),
+          const SizedBox(height: 8),
+          _buildDetail(LucideIcons.user, item.created_by.defaultValue('-')),
           Visibility(
             visible: showBottomSheet,
             child: const SizedBox(height: 12),

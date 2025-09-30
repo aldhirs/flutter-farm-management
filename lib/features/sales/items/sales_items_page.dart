@@ -175,7 +175,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
   }
 
   SliverAppBar _buildAppBar(BuildContext context, SalesItemsState state) {
-    final sales = widget.item;
+    final sales = state.sales;
     final customer = sales.customer_detail;
 
     return SliverAppBar(
@@ -326,7 +326,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
       ),
       actions: [
         Visibility(
-          visible: widget.item.isDraft() && state.salesItems.isNotEmpty,
+          visible: bloc.state.sales.isDraft() && state.salesItems.isNotEmpty,
           child: IconButton(
             onPressed: () => bloc.add(const EditModeToggled()),
             icon: Icon(
@@ -420,7 +420,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
   }
 
   Widget _addButton() {
-    if (!widget.item.isDraft()) return const SizedBox.shrink();
+    if (!bloc.state.sales.isDraft()) return const SizedBox.shrink();
     return FloatingActionButton.extended(
       heroTag: 'addBtn',
       backgroundColor: AppColors.current.eucalyptus700,
@@ -474,7 +474,10 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
   void _onShowInfo() {
     navigator.showBottomSheet(
       isScrollControlled: true,
-      DetailBottomSheet(item: widget.item, onDismiss: () => navigator.pop()),
+      DetailBottomSheet(
+        item: bloc.state.sales,
+        onDismiss: () => navigator.pop(),
+      ),
     );
   }
 
@@ -569,7 +572,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
         onNegativeButtonPressed: () => _addManualBottomSheet(),
         onPositiveButtonPressed: () async {
           final result = await navigator.popAndPush(
-            AppRouteInfo.scan(route: DEST_SALES_ITEM, sales: widget.item),
+            AppRouteInfo.scan(route: DEST_SALES_ITEM, sales: bloc.state.sales),
           );
           if (result == null) {
             bloc.add(const Load());

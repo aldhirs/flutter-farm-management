@@ -61,6 +61,46 @@ class _DetailBottomSheetState extends State<DetailBottomSheet> {
             (widget.item.statusLabel()).orEmpty(),
             widget.item.statusType(),
           ),
+          const SizedBox(height: 8),
+          const Divider(height: 1, color: Color(0xFFC5C5C5)),
+          _cardCreator(
+            'Dibuat oleh',
+            (widget.item.created_by).defaultValue('-'),
+            widget.item.created_at.formatDateString(
+              format: DateConstant.UTC,
+              newFormat: DateConstant.DATETIME_FULL_MONTH,
+            ),
+          ),
+          widget.item.issued_at.isNotEmpty
+              ? _cardCreator(
+                  'Diterbitkan oleh',
+                  (widget.item.issued_by).defaultValue('-'),
+                  widget.item.issued_at.formatDateString(
+                    format: DateConstant.UTC,
+                    newFormat: DateConstant.DATETIME_FULL_MONTH,
+                  ),
+                )
+              : const SizedBox.shrink(),
+          widget.item.cancelled_at.isNotEmpty
+              ? _cardCreator(
+                  'Dibatalkan oleh',
+                  (widget.item.cancelled_by).defaultValue('-'),
+                  widget.item.cancelled_at.formatDateString(
+                    format: DateConstant.UTC,
+                    newFormat: DateConstant.DATETIME_FULL_MONTH,
+                  ),
+                )
+              : const SizedBox.shrink(),
+          widget.item.completed_at.isNotEmpty
+              ? _cardCreator(
+                  'Diselesaikan oleh',
+                  (widget.item.completed_by).defaultValue('-'),
+                  widget.item.completed_at.formatDateString(
+                    format: DateConstant.UTC,
+                    newFormat: DateConstant.DATETIME_FULL_MONTH,
+                  ),
+                )
+              : const SizedBox.shrink(),
           const SizedBox(height: 24),
         ],
       ),
@@ -71,7 +111,21 @@ class _DetailBottomSheetState extends State<DetailBottomSheet> {
     return ListTile(
       visualDensity: const VisualDensity(horizontal: 0, vertical: -3),
       title: Text(name, style: TextStyles.label2()),
-      subtitle: Text(value, style: TextStyles.heading6()),
+      subtitle: Text(value, style: TextStyles.body2()),
+    );
+  }
+
+  Widget _cardCreator(String name, String value, String datetime) {
+    return ListTile(
+      visualDensity: const VisualDensity(horizontal: 0, vertical: -3),
+      title: Text(name, style: TextStyles.label2()),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(value, style: TextStyles.body2()),
+          Text(datetime, style: TextStyles.body2()),
+        ],
+      ),
     );
   }
 

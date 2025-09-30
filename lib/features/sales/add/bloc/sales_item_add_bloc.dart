@@ -227,7 +227,7 @@ class SalesItemAddBloc extends BaseBloc<SalesItemAddEvent, SalesItemAddState> {
           id_sale: state.sale.id,
           id_cattle: state.cattle?.id ?? '',
           id_pen: state.selectedPen?.id ?? '',
-          weight: state.weight?.toInt() ?? 0,
+          weight: int.tryParse(state.weight ?? '') ?? 0,
         );
         final response = await _salesItemAddUseCase.execute(payload);
         switch (response.result) {

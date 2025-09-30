@@ -521,7 +521,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
           id: isNewRecord ? null : state.growth?.id,
           cattle_id: state.cattle.id,
           date_activity: DateTimeUtils.getCurrentTimestamp(),
-          weight: state.weight?.toInt() ?? 0,
+          weight: int.tryParse(state.weight ?? '') ?? 0,
         );
 
         final response = isNewRecord

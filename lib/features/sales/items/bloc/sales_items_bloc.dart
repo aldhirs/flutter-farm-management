@@ -77,6 +77,7 @@ class SalesItemsBloc extends BaseBloc<SalesItemsEvent, SalesItemsState> {
     Emitter<SalesItemsState> emit,
   ) async {
     emit(state.copyWith(sales: event.item));
+    add(const SaleByID());
     await _loadApi(emit, false, 1, false);
   }
 

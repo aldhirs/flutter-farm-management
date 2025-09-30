@@ -38,7 +38,7 @@ const cattleStatusMap = {
   'sold': 'Terjual',
   'lost': 'Hilang',
   'sick': 'Sakit',
-  'mutating': 'Sedang dimutasi',
+  'mutating': 'Mutasi',
 };
 
 const barnCategoryMap = {
