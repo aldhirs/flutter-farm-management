@@ -6,6 +6,7 @@ import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/widgets/buttons/button.dart';
+import 'package:farm/widgets/datepicker/date_picker_input_widget.dart';
 import 'package:farm/widgets/datepicker/date_time_picker_input_widget.dart';
 import 'package:farm/widgets/dropdownview/dropdown_model.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_field.dart';
@@ -40,7 +41,7 @@ class _TreatmentFormBottomSheetState extends State<TreatmentFormBottomSheet> {
     widget.bloc.add(const TreatmentInit());
     final dateValue = DateTime.now();
     _datePickerController.text = DateFormat(
-      DateConstant.DATETIME_FULL_MONTH,
+      DateConstant.DATE_FULL_MONTH,
       'id_ID',
     ).format(dateValue);
     widget.bloc.add(TreatmentDateChanged(value: dateValue));
@@ -131,13 +132,13 @@ class _TreatmentFormBottomSheetState extends State<TreatmentFormBottomSheet> {
       value: widget.bloc,
       child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
         builder: (context, state) {
-          return DateTimePickerInputWidget(
+          return DatePickerInputWidget(
             controller: _datePickerController,
             navigator: widget.bloc.navigator,
             label: "Tanggal Treatment",
             hintText: 'Tanggal Treatment',
             datePickerLabel: 'Pilih Tanggal Treatment',
-            onApplyDateTime: (value, datetime) {
+            onApplyDate: (value, datetime) {
               widget.bloc.add(TreatmentDateChanged(value: datetime));
             },
           );
@@ -179,18 +180,21 @@ class _TreatmentFormBottomSheetState extends State<TreatmentFormBottomSheet> {
                     (item) => DropdownCheckboxModel(
                       id: item.id.toString(),
                       text: item.name,
-                      selected: item.id == state.selectedTreatmentType?.id,
+                      // selected: item.id == state.selectedTreatmentType?.id,
                     ),
                   )
                   .toList(),
             ),
             navigator: widget.bloc.navigator,
-            dropdownType: DropdownTypeEnum.single,
+            dropdownType: DropdownTypeEnum.multiple,
             onSelectedItems: (List<String> value) {
+              if (value.isEmpty) {
+                widget.bloc.add(const TreatmentTypeChanged(values: []));
+              }
               final selected = state.treatmentTypes
-                  .where((item) => item.id.toString() == value.first)
-                  .first;
-              widget.bloc.add(TreatmentTypeChanged(value: selected));
+                  .where((item) => value.contains(item.id.toString()))
+                  .toList();
+              widget.bloc.add(TreatmentTypeChanged(values: selected));
             },
           );
         },

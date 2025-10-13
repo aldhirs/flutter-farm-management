@@ -30,6 +30,8 @@ import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/reception/reception.dart';
+import 'package:farm/domain/entities/reception/reception_assignee.dart';
+import 'package:farm/domain/entities/reception/reception_assignee_request.dart';
 import 'package:farm/domain/entities/reception/reception_request.dart';
 import 'package:farm/domain/entities/sales/sale_id_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
@@ -40,9 +42,12 @@ import 'package:farm/domain/entities/sales/sales_item_move_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
+import 'package:farm/domain/entities/station/station.dart';
+import 'package:farm/domain/entities/station/station_request.dart';
 import 'package:farm/domain/entities/supplier/supplier.dart';
 import 'package:farm/domain/entities/supplier/supplier_request.dart';
 import 'package:farm/domain/entities/treatment/treatment.dart';
+import 'package:farm/domain/entities/treatment/treatment_bulk_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_type.dart';
@@ -57,7 +62,11 @@ abstract class Repository {
   Future<DataListResponse<Level>> levels(LevelRequest request);
   Future<DataListResponse<Breed>> breeds(BreedRequest request);
   Future<DataListResponse<Supplier>> suppliers(SupplierRequest request);
+  Future<DataListResponse<Station>> stations(StationRequest request);
   Future<DataListResponse<Reception>> receptions(ReceptionRequest request);
+  Future<DataListResponse<ReceptionAssignee>> receptionAssignees(
+    ReceptionAssigneeRequest request,
+  );
   Future<DataListResponse<TreatmentType>> treatmentTypes(
     TreatmentTypeRequest request,
   );
@@ -74,6 +83,9 @@ abstract class Repository {
   Future<DataResponse<Growth>> growthCreate(GrowthFormRequest request);
   Future<DataResponse<void>> growthUpdate(GrowthFormRequest request);
   Future<DataResponse<void>> treatmentCreate(TreatmentFormRequest request);
+  Future<DataResponse<void>> treatmentCreateBulk(
+    TreatmentBulkFormRequest request,
+  );
   Future<DataResponse<void>> medicalCreate(MedicalFormRequest request);
 
   Future<DataListResponse<Sales>> sales(SalesRequest request);

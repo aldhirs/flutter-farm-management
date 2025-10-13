@@ -92,9 +92,8 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
               const SizedBox(height: 16),
               _dropdownBarn(),
               _dropdownPen(),
-              _dropdownLevel(),
-              _dropdownGender(),
 
+              // _dropdownLevel(),
               const SizedBox(height: 24),
               BlocProvider.value(
                 value: widget.bloc,
@@ -253,39 +252,6 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
                   .where((item) => item.id.toString() == value.first)
                   .first;
               widget.bloc.add(LevelChanged(value: selected));
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _dropdownGender() {
-    return BlocProvider.value(
-      value: widget.bloc,
-      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
-        buildWhen: (p, c) => p.selectedGender != c.selectedGender,
-        builder: (context, state) {
-          return DropdownViewField(
-            title: 'Jenis Kelamin',
-            items: ValueNotifier<List<DropdownCheckboxModel>>(
-              genderMap.entries
-                  .map(
-                    (item) => DropdownCheckboxModel(
-                      id: item.key,
-                      text: item.value,
-                      selected: item.key == state.selectedGender,
-                    ),
-                  )
-                  .toList(),
-            ),
-            navigator: widget.bloc.navigator,
-            dropdownType: DropdownTypeEnum.single,
-            onSelectedItems: (List<String> value) {
-              final selected = genderMap.entries
-                  .where((item) => item.key == value.first)
-                  .first;
-              widget.bloc.add(GenderChanged(value: selected.key));
             },
           );
         },

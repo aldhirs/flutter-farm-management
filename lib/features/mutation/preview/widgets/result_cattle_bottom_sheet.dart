@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/extensions/string.dart';
 import 'package:farm/features/mutation/items/widgets/detail_bottom_sheet.dart';
@@ -166,8 +167,13 @@ class _ResultCattleBottomSheetState extends State<ResultCattleBottomSheet> {
       ListItem(name: 'Pen', description: data.pen?.name ?? '-'),
       ListItem(name: 'Ear Tag', description: data.ear_tag),
       ListItem(name: 'Bobot', description: '${data.actual_weight} Kg'),
-      ListItem(name: 'Ras', description: data.id_breed),
-      ListItem(name: 'Jenis Kelamin', description: data.genderLabel()),
+      ListItem(
+        name: 'Shipment',
+        description: (data.reception?.title).defaultValue('-'),
+      ),
+      ListItem(name: 'Breed', description: data.id_breed),
+      ListItem(name: 'IMP', description: data.id_supplier),
+      ListItem(name: 'POO', description: data.id_station),
       ListItem(name: 'Status', description: data.statusLabel()),
     ];
   }

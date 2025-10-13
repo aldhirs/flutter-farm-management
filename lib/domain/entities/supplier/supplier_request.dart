@@ -8,6 +8,7 @@ part 'supplier_request.g.dart';
 abstract class SupplierRequest extends BaseInput with _$SupplierRequest {
   const factory SupplierRequest({
     @Default('') String client_slug,
+    @Default('') String id_reception,
     @Default(1) int page,
     @Default(50) int limit,
   }) = _SupplierRequest;

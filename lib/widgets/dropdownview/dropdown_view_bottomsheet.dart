@@ -57,10 +57,19 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
   late List<DropdownCheckboxModel> selectedItems;
   late List<DropdownCheckboxModel> originalItems;
   Timer? _debounce;
+  bool _isInitialLoad = true;
 
   @override
   void initState() {
     super.initState();
+    originalItems = List.from(widget.items.value);
+    if (DropdownTypeEnum.getEnum(widget.dropdownType.value) ==
+        DropdownTypeEnum.multiple) {
+      selectedItems = sortSelectedFirst(originalItems);
+    } else {
+      selectedItems = List.from(originalItems);
+    }
+    _isInitialLoad = false;
   }
 
   @override
@@ -109,6 +118,7 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
 
   Future<void> _onChoose() async {
     widget.onChoose.call(selectedItems);
+    _isInitialLoad = true; // 👉 supaya next open, terurut lagi
     await widget.navigator.pop();
   }
 
@@ -170,12 +180,16 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
 
   @override
   Widget build(BuildContext context) {
-    originalItems = List.from(widget.items.value);
-    if (DropdownTypeEnum.getEnum(widget.dropdownType.value) ==
-        DropdownTypeEnum.single) {
-      selectedItems = List.from(originalItems);
-    } else {
-      selectedItems = sortSelectedFirst(originalItems);
+    // Jangan ubah selectedItems setiap build!
+    // Biarkan posisi list tetap stabil selama user memilih
+    if (_isInitialLoad) {
+      if (DropdownTypeEnum.getEnum(widget.dropdownType.value) ==
+          DropdownTypeEnum.multiple) {
+        selectedItems = sortSelectedFirst(originalItems);
+      } else {
+        selectedItems = List.from(originalItems);
+      }
+      _isInitialLoad = false;
     }
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,7 +393,8 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
           return _emptyStateWidget();
         }
 
-        selectedItems = sortSelectedFirst(List.from(value));
+        // selectedItems = sortSelectedFirst(List.from(value));
+        selectedItems = List.from(value); // biarkan urutan asli, no sort
         final isLimitReached =
             widget.maxSelection != null &&
             selectedItems.where((item) => item.selected).length >=
@@ -388,7 +403,7 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
         return Column(
           children: [
             SizedBox(
-              height: value.length > 12 ? ViewUtils.screenHeight() * 0.8 : null,
+              height: value.length > 12 ? ViewUtils.screenHeight() * 0.7 : null,
               child: ListView.separated(
                 shrinkWrap: true,
                 physics: const AlwaysScrollableScrollPhysics(),

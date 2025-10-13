@@ -14,6 +14,7 @@ import 'package:farm/domain/usecases/cattle_by_rfid_use_case.dart';
 import 'package:farm/domain/usecases/get_user_data_use_case.dart';
 import 'package:farm/domain/usecases/pens_use_case.dart';
 import 'package:farm/domain/usecases/sales_item_add_use_case.dart';
+import 'package:farm/extensions/string.dart';
 import 'package:farm/features/sales/add/model/list_item.dart';
 import 'package:farm/features/sales/add/bloc/sales_item_add_event.dart';
 import 'package:farm/features/sales/add/bloc/sales_item_add_state.dart';
@@ -274,8 +275,13 @@ class SalesItemAddBloc extends BaseBloc<SalesItemAddEvent, SalesItemAddState> {
         name: 'Bobot',
         description: '${data.actual_weight.toString()} Kg',
       ),
-      ListItem(name: 'Ras', description: data.id_breed),
-      ListItem(name: 'Jenis Kelamin', description: data.genderLabel()),
+      ListItem(
+        name: 'Shipment',
+        description: (data.reception?.title).defaultValue('-'),
+      ),
+      ListItem(name: 'Breed', description: data.id_breed),
+      ListItem(name: 'IMP', description: data.id_supplier),
+      ListItem(name: 'POO', description: data.id_station),
       ListItem(name: 'Status', description: data.statusLabel()),
     ];
     return items;

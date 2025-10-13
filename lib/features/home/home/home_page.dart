@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:dartx/dartx.dart';
 import 'package:farm/app/bloc/app_bloc.dart';
 import 'package:farm/app/bloc/app_event.dart';
 import 'package:farm/app/bloc/app_state.dart';
@@ -7,13 +6,13 @@ import 'package:farm/base/base_page_state.dart';
 import 'package:farm/constants/date_constant.dart';
 import 'package:farm/extensions/string.dart';
 import 'package:farm/features/home/home/bloc/home_bloc.dart';
+import 'package:farm/features/home/home/bloc/home_event.dart';
 import 'package:farm/features/home/home/bloc/home_state.dart';
 import 'package:farm/features/home/home/widgets/cattle_search_bottom_sheet.dart';
 import 'package:farm/features/home/home/widgets/quick_action_card.dart';
 import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
-import 'package:farm/utils/date_time_utils.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/utils/string_utils.dart';
 import 'package:farm/views/view.dart';
@@ -22,7 +21,6 @@ import 'package:farm/widgets/dropdownview/dropdown_view_bottomsheet.dart';
 import 'package:farm/widgets/popup/popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 @RoutePage()
@@ -48,6 +46,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
   void initState() {
     super.initState();
     _initAnimation();
+    appBloc.add(const GetProjects(showProject: false));
   }
 
   @override
@@ -300,6 +299,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
               .where((item) => item.name == selected.text)
               .first;
           appBloc.add(SelectedProject(project: selectedProject));
+          bloc.add(const Initiated());
         },
 
         dropdownType: DropdownTypeEnum.single,
@@ -372,7 +372,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
         builder: (context, state) {
           return InkWell(
             onTap: () {
-              appBloc.add(const GetProjects());
+              appBloc.add(const GetProjects(showProject: true));
             },
             child: Container(
               padding: const EdgeInsets.all(16),

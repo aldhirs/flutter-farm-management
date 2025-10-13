@@ -8,6 +8,7 @@ part 'breed_request.g.dart';
 abstract class BreedRequest extends BaseInput with _$BreedRequest {
   const factory BreedRequest({
     @Default('') String client_slug,
+    @Default('') String id_reception,
     @Default(1) int page,
     @Default(50) int limit,
   }) = _BreedRequest;

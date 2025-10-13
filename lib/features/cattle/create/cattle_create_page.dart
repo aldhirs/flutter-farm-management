@@ -77,11 +77,6 @@ class _CattleCreatePageState
                     ),
                   ],
                   positiveButtonText: "Lanjut Proses Drafting",
-                  negativeButtonText: "Kembali",
-                  onNegativeButtonPressed: () async {
-                    bloc.add(const OnClear());
-                    _onPreviousPage();
-                  },
                   onPositiveButtonPressed: () async {
                     bloc.add(const OnClear());
                     if (widget.rfid?.isNotEmpty == true) {

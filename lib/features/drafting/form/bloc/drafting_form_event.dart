@@ -131,7 +131,7 @@ abstract class LevelChanged extends DraftingFormEvent with _$LevelChanged {
 @freezed
 abstract class TreatmentTypeChanged extends DraftingFormEvent
     with _$TreatmentTypeChanged {
-  const factory TreatmentTypeChanged({required TreatmentType value}) =
+  const factory TreatmentTypeChanged({required List<TreatmentType> values}) =
       _TreatmentTypeChanged;
 
   const TreatmentTypeChanged._();
@@ -239,4 +239,13 @@ abstract class GenderChanged extends DraftingFormEvent with _$GenderChanged {
   const factory GenderChanged({required String value}) = _GenderChanged;
 
   const GenderChanged._();
+}
+
+class MedicalFileAdded extends DraftingFormEvent {
+  final String filePath;
+  const MedicalFileAdded({required this.filePath});
+}
+
+class MedicalFileRemoved extends DraftingFormEvent {
+  const MedicalFileRemoved();
 }

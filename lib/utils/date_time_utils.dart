@@ -20,6 +20,14 @@ class DateTimeUtils {
     return DateFormat(pattern, 'en_US').format(utcDate.toUtc());
   }
 
+  static String parseToString(
+    DateTime? date, {
+    String pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'",
+  }) {
+    if (date == null) return "";
+    return DateFormat(pattern, 'en_US').format(date);
+  }
+
   /// Parse string ISO8601 ke DateTime, lalu convert ke WIB
   static DateTime parseToWib(String isoString) {
     final utcDate = DateTime.parse(isoString); // otomatis UTC karena ada 'Z'

@@ -18,7 +18,7 @@ abstract class IsLoggedInStatusChanged extends AppEvent
 
 @freezed
 abstract class GetProjects extends AppEvent with _$GetProjects {
-  const factory GetProjects() = _GetProjects;
+  const factory GetProjects({required bool showProject}) = _GetProjects;
   const GetProjects._();
 }
 

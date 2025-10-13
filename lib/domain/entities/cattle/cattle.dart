@@ -15,6 +15,7 @@ abstract class Cattle extends BaseOutput with _$Cattle {
     @JsonKey(name: 'id') @Default('') String id,
     @JsonKey(name: 'id_breed') @Default('') String id_breed,
     @JsonKey(name: 'id_supplier') @Default('') String id_supplier,
+    @JsonKey(name: 'id_station') @Default('') String id_station,
     @JsonKey(name: 'rfid_tag') @Default('') String rfid_tag,
     @JsonKey(name: 'ear_tag') @Default('') String ear_tag,
     @JsonKey(name: 'initial_weight') @Default(0) int initial_weight,

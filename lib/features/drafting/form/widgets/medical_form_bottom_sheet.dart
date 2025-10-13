@@ -1,4 +1,5 @@
-import 'package:dartx/dartx.dart';
+import 'dart:io';
+
 import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/extensions/bool.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_bloc.dart';
@@ -14,6 +15,7 @@ import 'package:farm/widgets/dropdownview/dropdown_view_field.dart';
 import 'package:farm/widgets/inputs/text_input_field.dart';
 import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,10 +24,12 @@ class MedicalFormBottomSheet extends StatefulWidget {
     super.key,
     required this.bloc,
     required this.onDismiss,
+    required this.scrollController,
   });
 
   final DraftingFormBloc bloc;
   final VoidCallback onDismiss;
+  final ScrollController scrollController;
 
   @override
   State<MedicalFormBottomSheet> createState() => _MedicalFormBottomSheetState();
@@ -63,56 +67,86 @@ class _MedicalFormBottomSheetState extends State<MedicalFormBottomSheet> {
             widget.bloc.navigator.pop();
           }
         },
-        child: Container(
-          padding: const EdgeInsets.all(Dimens.d16),
-          alignment: Alignment.topLeft,
-          child: Column(
-            spacing: 2,
-            children: [
-              Text("Input Medis Sapi", style: TextStyles.heading5()),
-              const SizedBox(height: 8),
-              _errorWidget(),
-              const SizedBox(height: 4),
-              const TickerView(
-                type: TickerViewType.info,
-                message:
-                    'Isi data medis sapi pada formulir di bawah, lalu tekan “Lanjut” untuk menyimpan. Menekan “Tutup” akan membatalkan penyimpanan.',
-              ),
-              const SizedBox(height: 16),
-              _dropdownType(),
-              _dropdownStatus(),
-              _textInputNote(),
-              _textInputInfection(),
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                controller: widget.scrollController,
+                child: Container(
+                  padding: const EdgeInsets.all(Dimens.d16),
+                  child: Column(
+                    spacing: 2,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 24),
+                      Text("Input Medis Sapi", style: TextStyles.heading5()),
+                      const SizedBox(height: 8),
+                      _errorWidget(),
+                      const SizedBox(height: 4),
+                      const TickerView(
+                        type: TickerViewType.info,
+                        message:
+                            'Isi data medis sapi pada formulir di bawah, lalu tekan “Lanjut” untuk menyimpan. Menekan “Tutup” akan membatalkan penyimpanan.',
+                      ),
+                      const SizedBox(height: 16),
+                      _dropdownType(),
+                      _dropdownStatus(),
+                      _textInputNote(),
+                      _textInputInfection(),
+                      _fileUploader(),
 
-              const SizedBox(height: 24),
-              BlocProvider.value(
-                value: widget.bloc,
-                child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
-                  buildWhen: (p, c) => p.loading != c.loading,
-                  builder: (context, state) {
-                    return Button(
-                      fulLWidth: true,
-                      type: state.loading
-                          ? ButtonType.disabled
-                          : ButtonType.primary,
-                      loading: state.loading,
-                      text: 'Lanjut',
-                      onPressed: () {
-                        widget.bloc.add(const OnSubmitMedical());
-                      },
-                    );
-                  },
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
               ),
-              Button(
-                fulLWidth: true,
-                type: ButtonType.ghost,
-                text: 'Tutup',
-                onPressed: widget.onDismiss,
+            ),
+            Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    offset: Offset(0, -4), // arah ke atas
+                    blurRadius: 8, // lembutnya bayangan
+                    spreadRadius: 0,
+                  ),
+                ],
               ),
-              const SizedBox(height: 24),
-            ],
-          ),
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: Column(
+                children: [
+                  const SizedBox(height: 16),
+                  BlocProvider.value(
+                    value: widget.bloc,
+                    child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
+                      buildWhen: (p, c) => p.loading != c.loading,
+                      builder: (context, state) {
+                        return Button(
+                          fulLWidth: true,
+                          type: state.loading
+                              ? ButtonType.disabled
+                              : ButtonType.primary,
+                          loading: state.loading,
+                          text: 'Lanjut',
+                          onPressed: () {
+                            widget.bloc.add(const OnSubmitMedical());
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  Button(
+                    fulLWidth: true,
+                    type: ButtonType.ghost,
+                    text: 'Tutup',
+                    onPressed: widget.onDismiss,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -238,6 +272,127 @@ class _MedicalFormBottomSheetState extends State<MedicalFormBottomSheet> {
         },
       ),
     );
+  }
+
+  Widget _fileUploader() {
+    return BlocProvider.value(
+      value: widget.bloc,
+      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
+        buildWhen: (p, c) => p.medicalFile != c.medicalFile,
+        builder: (context, state) {
+          final path = state.medicalFile ?? '';
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              Text("Lampiran File Medis", style: TextStyles.body2()),
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: _pickFile,
+                child: Container(
+                  width: double.infinity,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.current.neutral300),
+                    color: AppColors.current.neutral500,
+                  ),
+                  child: path?.isNotEmpty == true
+                      ? Stack(
+                          alignment: Alignment.topRight,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child:
+                                  path.endsWith(".jpg") ||
+                                      path.endsWith(".jpeg") ||
+                                      path.endsWith(".png")
+                                  ? Image.file(
+                                      File(path),
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                    )
+                                  : Center(
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.insert_drive_file,
+                                            color:
+                                                AppColors.current.primaryColor,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Flexible(
+                                            child: Text(
+                                              path.split('/').last,
+                                              style: TextStyles.body2(),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                            ),
+                            Positioned(
+                              top: -4,
+                              right: -4,
+                              child: IconButton(
+                                icon: const Icon(Icons.close, size: 18),
+                                color: AppColors.current.neutral700,
+                                onPressed: () {
+                                  widget.bloc.add(const MedicalFileRemoved());
+                                },
+                              ),
+                            ),
+                          ],
+                        )
+                      : Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add_a_photo_outlined,
+                                color: AppColors.current.primaryColor,
+                                size: 32,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "Unggah File Medis",
+                                style: TextStyles.body2(),
+                              ),
+                              Text(
+                                "(klik untuk memilih file)",
+                                style: TextStyles.label2(),
+                              ),
+                            ],
+                          ),
+                        ),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text("Upload foto medis (opsional).", style: TextStyles.label2()),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> _pickFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
+    if (result != null && result.files.single.path != null) {
+      widget.bloc.add(MedicalFileAdded(filePath: result.files.single.path!));
+    } else {
+      ToastHelper().showToast(
+        context: context,
+        message: 'Tidak ada file dipilih.',
+        type: ToastType.warning,
+      );
+    }
   }
 
   Widget _errorWidget() {

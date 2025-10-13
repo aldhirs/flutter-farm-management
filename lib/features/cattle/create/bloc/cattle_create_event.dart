@@ -4,6 +4,7 @@ import 'package:farm/domain/entities/breed/breed.dart';
 import 'package:farm/domain/entities/level/level.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/reception/reception.dart';
+import 'package:farm/domain/entities/station/station.dart';
 import 'package:farm/domain/entities/supplier/supplier.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
@@ -86,6 +87,13 @@ abstract class GetBreeds extends CattleCreateEvent with _$GetBreeds {
 }
 
 @freezed
+abstract class GetStations extends CattleCreateEvent with _$GetStations {
+  const factory GetStations() = _GetStations;
+
+  const GetStations._();
+}
+
+@freezed
 abstract class GetLevels extends CattleCreateEvent with _$GetLevels {
   const factory GetLevels() = _GetLevels;
 
@@ -140,6 +148,13 @@ abstract class SupplierChanged extends CattleCreateEvent
   const factory SupplierChanged({required Supplier value}) = _SupplierChanged;
 
   const SupplierChanged._();
+}
+
+@freezed
+abstract class StationChanged extends CattleCreateEvent with _$StationChanged {
+  const factory StationChanged({required Station value}) = _StationChanged;
+
+  const StationChanged._();
 }
 
 @freezed

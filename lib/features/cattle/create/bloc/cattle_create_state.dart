@@ -6,7 +6,9 @@ import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/level/level.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/reception/reception.dart';
+import 'package:farm/domain/entities/reception/reception_assignee.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
+import 'package:farm/domain/entities/station/station.dart';
 import 'package:farm/domain/entities/supplier/supplier.dart';
 import 'package:farm/features/sales/add/model/list_item.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -21,8 +23,9 @@ abstract class CattleCreateState extends BaseBlocState
     @Default(Sales()) Sales sale,
     @Default(UserData()) UserData userData,
     @Default(Cattle()) Cattle cattle,
-    @Default([]) List<Reception> receptions,
+    @Default([]) List<ReceptionAssignee> receptions,
     @Default([]) List<Supplier> suppliers,
+    @Default([]) List<Station> stations,
     @Default([]) List<Breed> breeds,
     @Default([]) List<Level> levels,
     @Default([]) List<Barn> barns,
@@ -35,6 +38,7 @@ abstract class CattleCreateState extends BaseBlocState
     @Default(false) bool isFormValid,
 
     @Default(null) Supplier? selectedSupplier,
+    @Default(null) Station? selectedStation,
     @Default(null) Reception? selectedReception,
     @Default(null) Breed? selectedBreed,
     @Default(null) Level? selectedLevel,

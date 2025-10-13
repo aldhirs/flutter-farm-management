@@ -7,12 +7,14 @@ part 'reception.g.dart';
 @freezed
 abstract class Reception extends BaseOutput with _$Reception {
   const factory Reception({
-    @JsonKey(name: 'id') @Default('') String id,
-    @JsonKey(name: 'bl_number') @Default('') String bl_number,
-    @JsonKey(name: 'received_date') @Default('') String received_date,
-    @JsonKey(name: 'created_at') @Default('') String created_at,
-    @JsonKey(name: 'updated_at') @Default('') String updated_at,
-    @JsonKey(name: 'created_by') @Default(0) double created_by,
+    @Default('') String id,
+    @Default('') String title,
+    @Default('') String client_slug,
+    @Default('') String file_name,
+    @Default('') String received_date,
+    @Default('') String created_at,
+    @Default('') String updated_at,
+    @Default(0) double created_by,
   }) = _Reception;
   const Reception._();
   factory Reception.fromJson(Map<String, dynamic> json) =>

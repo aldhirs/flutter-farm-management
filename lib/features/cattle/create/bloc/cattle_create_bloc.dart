@@ -9,7 +9,8 @@ import 'package:farm/domain/entities/breed/breed_request.dart';
 import 'package:farm/domain/entities/cattle/cattle_form_request.dart';
 import 'package:farm/domain/entities/level/level_request.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
-import 'package:farm/domain/entities/reception/reception_request.dart';
+import 'package:farm/domain/entities/reception/reception_assignee_request.dart';
+import 'package:farm/domain/entities/station/station_request.dart';
 import 'package:farm/domain/entities/supplier/supplier_request.dart';
 import 'package:farm/domain/usecases/barns_use_case.dart';
 import 'package:farm/domain/usecases/breeds_use_case.dart';
@@ -17,7 +18,8 @@ import 'package:farm/domain/usecases/cattle_create_use_case.dart';
 import 'package:farm/domain/usecases/get_user_data_use_case.dart';
 import 'package:farm/domain/usecases/levels_use_case.dart';
 import 'package:farm/domain/usecases/pens_use_case.dart';
-import 'package:farm/domain/usecases/receptions_use_case.dart';
+import 'package:farm/domain/usecases/reception_assignees_use_case.dart';
+import 'package:farm/domain/usecases/stations_use_case.dart';
 import 'package:farm/domain/usecases/suppliers_use_case.dart';
 import 'package:farm/features/cattle/create/bloc/cattle_create_event.dart';
 import 'package:farm/features/cattle/create/bloc/cattle_create_state.dart';
@@ -35,7 +37,8 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
   final BreedsUseCase _breedsUseCase;
   final LevelsUseCase _levelsUseCase;
   final SuppliersUseCase _suppliersUseCase;
-  final ReceptionsUseCase _receptionsUseCase;
+  final StationsUseCase _stationsUseCase;
+  final ReceptionAssigneesUseCase _receptionAssigneesUseCase;
 
   final CattleCreateUseCase _cattleCreateUseCase;
 
@@ -47,7 +50,8 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
     this._breedsUseCase,
     this._levelsUseCase,
     this._suppliersUseCase,
-    this._receptionsUseCase,
+    this._stationsUseCase,
+    this._receptionAssigneesUseCase,
   ) : super(const CattleCreateState()) {
     on<Initiated>(_initialized, transformer: log());
     on<OnSubmit>(_onSubmit, transformer: log());
@@ -55,6 +59,7 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
     on<GetPens>(_getPensApi, transformer: log());
     on<GetBreeds>(_breedsApi, transformer: log());
     on<GetLevels>(_levelsApi, transformer: log());
+    on<GetStations>(_getStationsApi, transformer: log());
     on<GetReceptions>(_receptionsApi, transformer: log());
     on<GetSuppliers>(_suppliersApi, transformer: log());
     on<IsSuccessChanged>((event, emit) {
@@ -63,6 +68,9 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
     on<BarnChanged>((event, emit) {
       emit(state.copyWith(selectedBarn: event.barn, selectedPen: null));
       add(GetPens(barnId: event.barn.id));
+    }, transformer: log());
+    on<StationChanged>((event, emit) {
+      emit(state.copyWith(selectedStation: event.value));
     }, transformer: log());
     on<PenChanged>((event, emit) {
       emit(state.copyWith(selectedPen: event.pen));
@@ -81,6 +89,9 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
     }, transformer: log());
     on<ReceptionChanged>((event, emit) {
       emit(state.copyWith(selectedReception: event.value));
+      add(const GetBreeds());
+      add(const GetSuppliers());
+      add(const GetStations());
     }, transformer: log());
     on<GenderChanged>((event, emit) {
       emit(state.copyWith(selectedGender: event.value));
@@ -107,7 +118,7 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
     Emitter<CattleCreateState> emit,
   ) async {
     // add(const GetBarns());
-    add(const GetBreeds());
+    // add(const GetBreeds());
     add(const GetLevels());
     add(const GetReceptions());
     add(const GetSuppliers());
@@ -185,6 +196,7 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
         }
         final response = await _breedsUseCase.execute(
           BreedRequest(
+            id_reception: (state.selectedReception?.id).orEmpty(),
             client_slug: (appBloc.state.userData?.clientSlug).orEmpty(),
           ),
         );
@@ -279,8 +291,8 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
         if (!_isProjectChosen(emit)) {
           return;
         }
-        final response = await _receptionsUseCase.execute(
-          ReceptionRequest(
+        final response = await _receptionAssigneesUseCase.execute(
+          ReceptionAssigneeRequest(
             search: event.search.orEmpty(),
             id_project: appBloc.state.selectedProject!.id,
             client_slug: (appBloc.state.userData?.clientSlug).orEmpty(),
@@ -342,6 +354,40 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
     );
   }
 
+  Future<void> _getStationsApi(
+    GetStations event,
+    Emitter<CattleCreateState> emit,
+  ) {
+    return runBlocCatching(
+      action: () async {
+        if (!_isProjectChosen(emit)) {
+          return;
+        }
+        final response = await _stationsUseCase.execute(
+          StationRequest(
+            id_reception: (state.selectedReception?.id).toString(),
+          ),
+        );
+        switch (response.result) {
+          case DataSuccess(:final data):
+            emit(state.copyWith(stations: data, errorMessage: ''));
+            break;
+          case DataError(:final errorMessage):
+            emit(state.copyWith(errorMessage: errorMessage.orEmpty()));
+          case null:
+            return;
+        }
+      },
+      doOnEventCompleted: () async {
+        emit(state.copyWith(loading: false));
+      },
+      handleError: false,
+      doOnError: (e) async {
+        emit(state.copyWith(errorMessage: exceptionMessageMapper.map(e)));
+      },
+    );
+  }
+
   Future<void> _onSubmitApi(Emitter<CattleCreateState> emit) {
     return runBlocCatching(
       handleLoading: true,
@@ -357,9 +403,10 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
           project_id: (appBloc.state.selectedProject?.id).orEmpty(),
           // barn_id: (state.selectedBarn?.id).orEmpty(),
           // pen_id: (state.selectedPen?.id).orEmpty(),
-          breed_id: (state.selectedBreed?.id).orEmpty(),
+          breed_id: (state.selectedBreed?.id.toString()).orEmpty(),
           level_id: state.selectedLevel?.id ?? 0,
-          supplier_id: (state.selectedSupplier?.id).orEmpty(),
+          supplier_id: (state.selectedSupplier?.id).toString(),
+          station_id: (state.selectedStation?.id).toString(),
           reception_id: (state.selectedReception?.id).orEmpty(),
           ear_tag: (state.earTag).orEmpty(),
           gender: (state.selectedGender).orEmpty(),

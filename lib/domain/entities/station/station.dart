@@ -2,12 +2,12 @@ import 'package:farm/domain/base/base.dart';
 import 'package:farm/domain/entities/reception/reception.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'supplier.freezed.dart';
-part 'supplier.g.dart';
+part 'station.freezed.dart';
+part 'station.g.dart';
 
 @freezed
-abstract class Supplier extends BaseInput with _$Supplier {
-  const factory Supplier({
+abstract class Station extends BaseInput with _$Station {
+  const factory Station({
     @Default(0) int id,
     @Default('') String id_reception,
     @Default('') String name,
@@ -15,9 +15,9 @@ abstract class Supplier extends BaseInput with _$Supplier {
     @Default('') String updated_at,
     @Default(0) int created_by,
     @Default(Reception()) Reception reception,
-  }) = _Supplier;
-  const Supplier._();
+  }) = _Station;
+  const Station._();
 
-  factory Supplier.fromJson(Map<String, dynamic> json) =>
-      _$SupplierFromJson(json);
+  factory Station.fromJson(Map<String, dynamic> json) =>
+      _$StationFromJson(json);
 }

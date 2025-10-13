@@ -27,14 +27,38 @@ class MedicalFormWidget extends StatelessWidget {
           return InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: () {
-              navigator.showBottomSheet(
-                MedicalFormBottomSheet(
-                  bloc: bloc,
-                  onDismiss: () => navigator.pop(),
-                ),
-                isScrollControlled: true,
+              showModalBottomSheet(
+                context: context,
                 isDismissible: false,
                 enableDrag: false,
+                isScrollControlled:
+                    true, // <- wajib untuk tinggi dinamis dan scrollable
+                useSafeArea: true, // agar tidak ketutup notch / keyboard
+                backgroundColor:
+                    Colors.transparent, // opsional, biar bisa desain rounded
+                builder: (context) {
+                  return DraggableScrollableSheet(
+                    expand: false,
+                    initialChildSize: 0.9, // tinggi awal 90% layar
+                    minChildSize: 0.7,
+                    maxChildSize: 0.95,
+                    builder: (_, scrollController) {
+                      return Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(24),
+                          ),
+                        ),
+                        child: MedicalFormBottomSheet(
+                          scrollController: scrollController,
+                          bloc: bloc,
+                          onDismiss: () => Navigator.of(context).pop(),
+                        ),
+                      );
+                    },
+                  );
+                },
               );
             },
             child: Card(

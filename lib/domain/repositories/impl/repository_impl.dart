@@ -30,6 +30,8 @@ import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/reception/reception.dart';
+import 'package:farm/domain/entities/reception/reception_assignee.dart';
+import 'package:farm/domain/entities/reception/reception_assignee_request.dart';
 import 'package:farm/domain/entities/reception/reception_request.dart';
 import 'package:farm/domain/entities/sales/sale_id_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
@@ -40,9 +42,12 @@ import 'package:farm/domain/entities/sales/sales_item_move_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
+import 'package:farm/domain/entities/station/station.dart';
+import 'package:farm/domain/entities/station/station_request.dart';
 import 'package:farm/domain/entities/supplier/supplier.dart';
 import 'package:farm/domain/entities/supplier/supplier_request.dart';
 import 'package:farm/domain/entities/treatment/treatment.dart';
+import 'package:farm/domain/entities/treatment/treatment_bulk_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_type.dart';
@@ -129,6 +134,14 @@ class RepositoryImpl implements Repository {
   }
 
   @override
+  Future<DataResponse<void>> treatmentCreateBulk(
+    TreatmentBulkFormRequest request,
+  ) async {
+    final response = await _apiService.treatmentCreateBulk(request);
+    return response;
+  }
+
+  @override
   Future<DataResponse<void>> medicalCreate(MedicalFormRequest request) async {
     final response = await _apiService.medicalCreate(request);
     return response;
@@ -175,6 +188,12 @@ class RepositoryImpl implements Repository {
   }
 
   @override
+  Future<DataListResponse<Station>> stations(StationRequest request) async {
+    final response = await _apiService.stations(request);
+    return response;
+  }
+
+  @override
   Future<DataListResponse<Breed>> breeds(BreedRequest request) async {
     final response = await _apiService.breeds(request);
     return response;
@@ -191,6 +210,14 @@ class RepositoryImpl implements Repository {
     ReceptionRequest request,
   ) async {
     final response = await _apiService.receptions(request);
+    return response;
+  }
+
+  @override
+  Future<DataListResponse<ReceptionAssignee>> receptionAssignees(
+    ReceptionAssigneeRequest request,
+  ) async {
+    final response = await _apiService.receptionAssignees(request);
     return response;
   }
 

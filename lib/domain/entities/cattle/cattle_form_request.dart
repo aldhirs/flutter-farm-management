@@ -13,6 +13,7 @@ abstract class CattleFormRequest extends BaseInput with _$CattleFormRequest {
     @JsonKey(name: 'barn_id') @Default('') String barn_id,
     @JsonKey(name: 'pen_id') @Default('') String pen_id,
     @JsonKey(name: 'supplier_id') @Default('') String supplier_id,
+    @JsonKey(name: 'station_id') @Default('') String station_id,
     @JsonKey(name: 'breed_id') @Default('') String breed_id,
     @JsonKey(name: 'ear_tag') @Default('') String ear_tag,
     @JsonKey(name: 'level_id') @Default(0) int level_id,

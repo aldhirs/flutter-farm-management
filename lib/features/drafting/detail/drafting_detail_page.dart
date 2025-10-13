@@ -15,6 +15,7 @@ import 'package:farm/widgets/buttons/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_classic/flutter_blue_classic.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:vibration/vibration.dart';
 
 @RoutePage()
@@ -274,18 +275,16 @@ class _DraftingDetailPageState
           buildWhen: (p, c) => p.loading != c.loading,
           builder: (context, state) {
             return Button(
-              size: ButtonSize.extraLarge,
               fulLWidth: true,
-              type: !state.loading ? ButtonType.primary : ButtonType.disabled,
+              type: ButtonType.primary,
               loading: state.loading,
-              text: ' Perangkat Terhubung',
+              text: ' Tambah Manual Sapi',
               onPressed: () {
-                bloc.add(const StartScanning());
+                // bypass-debug
+                // navigator.push(const AppRouteInfo.cattleCreate());
+                bloc.add(RFIDChanged(rfid: '9821 123804744746'));
               },
-              leftIcon: const Icon(
-                Icons.bluetooth_connected,
-                color: Colors.white,
-              ),
+              leftIcon: const Icon(LucideIcons.plus, color: Colors.white),
             );
           },
         ),

@@ -31,6 +31,8 @@ import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/entities/reception/reception.dart';
+import 'package:farm/domain/entities/reception/reception_assignee.dart';
+import 'package:farm/domain/entities/reception/reception_assignee_request.dart';
 import 'package:farm/domain/entities/reception/reception_request.dart';
 import 'package:farm/domain/entities/sales/sale_id_request.dart';
 import 'package:farm/domain/entities/sales/sales.dart';
@@ -41,9 +43,12 @@ import 'package:farm/domain/entities/sales/sales_item_move_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_request.dart';
 import 'package:farm/domain/entities/sales/sales_item_save_request.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
+import 'package:farm/domain/entities/station/station.dart';
+import 'package:farm/domain/entities/station/station_request.dart';
 import 'package:farm/domain/entities/supplier/supplier.dart';
 import 'package:farm/domain/entities/supplier/supplier_request.dart';
 import 'package:farm/domain/entities/treatment/treatment.dart';
+import 'package:farm/domain/entities/treatment/treatment_bulk_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_type.dart';
@@ -141,7 +146,7 @@ class ApiService {
   Future<DataListResponse<Supplier>> suppliers(SupplierRequest request) async {
     return _authAppServerApiClient.request(
       method: RestMethod.get,
-      path: '/v1/supplier',
+      path: '/v1/reception/suppliers/${request.id_reception}',
       queryParameters: request.toJson(),
       successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
       decoder: Supplier.fromJson,
@@ -157,6 +162,19 @@ class ApiService {
       queryParameters: request.toJson(),
       successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
       decoder: Reception.fromJson,
+    );
+  }
+
+  Future<DataListResponse<ReceptionAssignee>> receptionAssignees(
+    ReceptionAssigneeRequest request,
+  ) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path:
+          '/v1/reception/assignee/${request.client_slug}/${request.id_project}',
+      queryParameters: request.toJson(),
+      successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: ReceptionAssignee.fromJson,
     );
   }
 
@@ -190,6 +208,16 @@ class ApiService {
     );
   }
 
+  Future<DataListResponse<Station>> stations(StationRequest request) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/reception/stations/${request.id_reception}',
+      queryParameters: request.toJson(),
+      successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
+      decoder: Station.fromJson,
+    );
+  }
+
   Future<DataListResponse<TreatmentType>> treatmentTypes(
     TreatmentTypeRequest request,
   ) async {
@@ -217,7 +245,7 @@ class ApiService {
   Future<DataListResponse<Breed>> breeds(BreedRequest request) async {
     return _authAppServerApiClient.request(
       method: RestMethod.get,
-      path: '/v1/breed',
+      path: '/v1/reception/breeds/${request.id_reception}',
       queryParameters: request.toJson(),
       successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
       decoder: Breed.fromJson,
@@ -253,6 +281,19 @@ class ApiService {
     return _authAppServerApiClient.request(
       method: RestMethod.post,
       path: '/v1/treatment',
+      queryParameters: queryParameters,
+      body: request.toJson(),
+      decoder: (_) => null,
+    );
+  }
+
+  Future<DataResponse<void>> treatmentCreateBulk(
+    TreatmentBulkFormRequest request,
+  ) async {
+    const Map<String, dynamic> queryParameters = {};
+    return _authAppServerApiClient.request(
+      method: RestMethod.post,
+      path: '/v1/treatment/bulk',
       queryParameters: queryParameters,
       body: request.toJson(),
       decoder: (_) => null,

@@ -15,7 +15,9 @@ import 'package:farm/domain/entities/medical/medical_form_request.dart';
 import 'package:farm/domain/entities/medical/medical_type_request.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
+import 'package:farm/domain/entities/treatment/treatment_bulk_form_request.dart';
 import 'package:farm/domain/entities/treatment/treatment_form_request.dart';
+import 'package:farm/domain/entities/treatment/treatment_type.dart';
 import 'package:farm/domain/entities/treatment/treatment_type_request.dart';
 import 'package:farm/domain/usecases/barns_use_case.dart';
 import 'package:farm/domain/usecases/cattle_by_rfid_use_case.dart';
@@ -26,8 +28,10 @@ import 'package:farm/domain/usecases/levels_use_case.dart';
 import 'package:farm/domain/usecases/medical_create_use_case.dart';
 import 'package:farm/domain/usecases/medical_types_use_case.dart';
 import 'package:farm/domain/usecases/pens_use_case.dart';
+import 'package:farm/domain/usecases/treatment_create_bulk_use_case.dart';
 import 'package:farm/domain/usecases/treatment_create_use_case.dart';
 import 'package:farm/domain/usecases/treatment_types_use_case.dart';
+import 'package:farm/extensions/string.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_event.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_state.dart';
 import 'package:farm/features/drafting/form/model/list_item.dart';
@@ -51,7 +55,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
   final GrowthCreateUseCase _growthUpdateUseCase;
   final MedicalTypesUseCase _medicalTypesUseCase;
   final TreatmentTypesUseCase _treatmentTypesUseCase;
-  final TreatmentCreateUseCase _treatmentCreateUseCase;
+  final TreatmentCreateBulkUseCase _treatmentCreateBulkUseCase;
   final MedicalCreateUseCase _medicalCreateUseCase;
 
   DraftingFormBloc(
@@ -65,7 +69,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     this._growthUpdateUseCase,
     this._medicalTypesUseCase,
     this._treatmentTypesUseCase,
-    this._treatmentCreateUseCase,
+    this._treatmentCreateBulkUseCase,
     this._medicalCreateUseCase,
   ) : super(const DraftingFormState()) {
     on<Initiated>(_initialized, transformer: log());
@@ -119,7 +123,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
       emit(state.copyWith(weight: event.value));
     }, transformer: log());
     on<TreatmentTypeChanged>((event, emit) {
-      emit(state.copyWith(selectedTreatmentType: event.value));
+      emit(state.copyWith(selectedTreatmentType: event.values));
     }, transformer: log());
     on<MedicalTypeChanged>((event, emit) {
       emit(state.copyWith(selectedMedicalType: event.value));
@@ -139,6 +143,12 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     on<MedicalStatusChanged>((event, emit) {
       emit(state.copyWith(medicalStatus: event.value));
     }, transformer: log());
+    on<MedicalFileAdded>((event, emit) {
+      emit(state.copyWith(medicalFile: event.filePath));
+    });
+    on<MedicalFileRemoved>((event, emit) {
+      emit(state.copyWith(medicalFile: null));
+    });
   }
 
   Future<void> _initialized(
@@ -169,7 +179,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     Emitter<DraftingFormState> emit,
   ) async {
     add(const GetBarns());
-    await _getLevelsApi(emit);
+    // await _getLevelsApi(emit);
   }
 
   Future<void> _medicalInit(
@@ -256,6 +266,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
           BarnRequest(
             projectId: appBloc.state.selectedProject!.id,
             search: event.search.orEmpty(),
+            category: "Drafting,Isolasi",
           ),
         );
         switch (response.result) {
@@ -568,17 +579,22 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
           return;
         }
         emit(state.copyWith(loading: true, isTreatmentSuccess: false));
-        final payload = TreatmentFormRequest(
-          client_slug: appBloc.state.userData?.clientSlug ?? '',
-          id_project: appBloc.state.selectedProject?.id ?? '0',
-          id_cattle: state.cattle.id,
-          id_treatment_type: state.selectedTreatmentType?.id ?? 0,
-          treatment_date: DateTimeUtils.wibToUtcString(state.treatmentDate),
-          notes: state.treatmentNote.orEmpty(),
-          administered_by: (state.userData.id).toInt(),
-        );
-
-        final response = await _treatmentCreateUseCase.execute(payload);
+        final payloads = <TreatmentFormRequest>[];
+        for (var item in state.selectedTreatmentType) {
+          payloads.add(
+            TreatmentFormRequest(
+              client_slug: appBloc.state.userData?.clientSlug ?? '',
+              id_project: appBloc.state.selectedProject?.id ?? '0',
+              id_cattle: state.cattle.id,
+              id_treatment_type: item.id,
+              treatment_date: DateTimeUtils.parseToString(state.treatmentDate),
+              notes: state.treatmentNote.orEmpty(),
+              administered_by: (state.userData.id).toInt(),
+            ),
+          );
+        }
+        final payload = TreatmentBulkFormRequest(treatments: payloads);
+        final response = await _treatmentCreateBulkUseCase.execute(payload);
 
         switch (response.result) {
           case DataSuccess(:final data):
@@ -692,8 +708,13 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
         name: 'Bobot',
         description: '${data.actual_weight.toString()} Kg',
       ),
-      ListItem(name: 'Ras', description: data.id_breed),
-      ListItem(name: 'Jenis Kelamin', description: data.genderLabel()),
+      ListItem(
+        name: 'Shipment',
+        description: (data.reception?.title).defaultValue('-'),
+      ),
+      ListItem(name: 'Breed', description: data.id_breed),
+      ListItem(name: 'IMP', description: data.id_supplier),
+      ListItem(name: 'POO', description: data.id_station),
       ListItem(name: 'Status', description: data.statusLabel()),
     ];
     return items;

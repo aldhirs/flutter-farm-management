@@ -25,7 +25,7 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
     on<SelectedProject>(_selectedProject, transformer: log());
     on<ShowProjects>((event, emit) async {
       if (state.projects.isEmpty) {
-        add(const GetProjects());
+        add(const GetProjects(showProject: true));
       } else {
         emit(state.copyWith(showProjects: true));
       }
@@ -95,7 +95,9 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
           );
           switch (response.result) {
             case DataSuccess(:final data):
-              emit(state.copyWith(projects: data, showProjects: true));
+              emit(
+                state.copyWith(projects: data, showProjects: event.showProject),
+              );
               break;
             case DataError(:final errorMessage):
               navigator.showErrorSnackBar(errorMessage.orEmpty());

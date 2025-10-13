@@ -45,13 +45,14 @@ abstract class DraftingFormState extends BaseBlocState
     @Default(null) String? earTag,
     @Default(null) Level? selectedLevel,
     @Default(null) String? weight,
-    @Default(null) TreatmentType? selectedTreatmentType,
+    @Default([]) List<TreatmentType> selectedTreatmentType,
     @Default(null) DateTime? treatmentDate,
     @Default(null) String? treatmentNote,
     @Default(null) MedicalType? selectedMedicalType,
     @Default(null) String? medicalNote,
     @Default(false) bool isInfection,
     @Default(null) String? medicalStatus,
+    @Default(null) String? medicalFile,
 
     // growth
     @Default(null) Growth? growth,
