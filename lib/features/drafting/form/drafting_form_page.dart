@@ -66,7 +66,7 @@ class _DraftingFormPageState
                 useRootNavigator: true,
                 barrierDismissible: false,
                 Popup(
-                  title: 'Tidak dapat dilanjutkan',
+                  title: 'Sapi Sudah di Drafting',
                   illustration: ClipRRect(
                     borderRadius: BorderRadius.circular(20), // adjust radius
                     child: Assets.images.ilCowDenied.image(

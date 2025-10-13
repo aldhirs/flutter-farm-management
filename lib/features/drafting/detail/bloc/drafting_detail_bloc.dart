@@ -50,13 +50,7 @@ class DraftingDetailBloc
   Future<void> _startScanning(
     StartScanning event,
     Emitter<DraftingDetailState> emit,
-  ) async {
-    emit(state.copyWith(loading: true));
-    // bypass-debug
-    Future.delayed(const Duration(seconds: 1), () {
-      add(RFIDChanged(rfid: '9821 123804744746'));
-    });
-  }
+  ) async {}
 
   @override
   Future<void> close() async {

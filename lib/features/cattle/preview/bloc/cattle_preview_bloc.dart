@@ -50,13 +50,7 @@ class CattlePreviewBloc
   Future<void> _startScanning(
     StartScanning event,
     Emitter<CattlePreviewState> emit,
-  ) async {
-    emit(state.copyWith(loading: true));
-    // bypass-debug
-    Future.delayed(const Duration(seconds: 1), () {
-      add(RFIDChanged(rfid: "1001"));
-    });
-  }
+  ) async {}
 
   @override
   Future<void> close() async {

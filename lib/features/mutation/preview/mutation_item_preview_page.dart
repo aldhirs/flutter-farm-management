@@ -381,11 +381,11 @@ class _MutationItemPreviewPageState
             return Button(
               size: ButtonSize.extraLarge,
               fulLWidth: true,
-              type: !state.loading ? ButtonType.primary : ButtonType.disabled,
+              type: ButtonType.disabled,
               loading: state.loading,
               text: ' Perangkat Terhubung',
               onPressed: () {
-                bloc.add(const StartScanning());
+                // bloc.add(const StartScanning());
               },
               leftIcon: const Icon(
                 Icons.bluetooth_connected,

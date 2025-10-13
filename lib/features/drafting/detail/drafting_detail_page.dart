@@ -280,9 +280,9 @@ class _DraftingDetailPageState
               loading: state.loading,
               text: ' Tambah Manual Sapi',
               onPressed: () {
+                navigator.push(const AppRouteInfo.cattleCreate());
                 // bypass-debug
-                // navigator.push(const AppRouteInfo.cattleCreate());
-                bloc.add(RFIDChanged(rfid: '9821 123804744746'));
+                // bloc.add(RFIDChanged(rfid: '9821 123804744746'));
               },
               leftIcon: const Icon(LucideIcons.plus, color: Colors.white),
             );
