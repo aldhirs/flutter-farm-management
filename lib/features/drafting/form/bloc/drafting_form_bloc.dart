@@ -161,7 +161,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     }
 
     if (event.cattle != null) {
-      _prepareCattle(event.cattle ?? const Cattle(), emit);
+      await _cattleApi((event.cattle?.rfid_tag).orEmpty(), emit);
     }
 
     // user data
@@ -415,8 +415,6 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
           barn_id: state.selectedBarn?.id ?? '',
           pen_id: state.selectedPen?.id ?? '',
           ear_tag: state.earTag.orEmpty(),
-          gender: state.selectedGender.orEmpty(),
-          level_id: state.selectedLevel?.id ?? 0,
         );
         final response = await _cattleUpdateUseCase.execute(payload);
         switch (response.result) {

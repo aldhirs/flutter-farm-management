@@ -11,6 +11,7 @@ abstract class HomeState extends BaseBlocState with _$HomeState {
     @Default(false) bool loading,
     @Default('') String errorMessage,
     @Default(null) Cattle? cattle,
+    @Default(0) int cattleDestination,
   }) = _HomeState;
   const HomeState._();
 }

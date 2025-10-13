@@ -15,7 +15,8 @@ abstract class Initiated extends HomeEvent with _$Initiated {
 
 @freezed
 abstract class CheckCattleEarTag extends HomeEvent with _$CheckCattleEarTag {
-  const factory CheckCattleEarTag() = _CheckCattleEarTag;
+  const factory CheckCattleEarTag({required int destination}) =
+      _CheckCattleEarTag;
 
   const CheckCattleEarTag._();
 }

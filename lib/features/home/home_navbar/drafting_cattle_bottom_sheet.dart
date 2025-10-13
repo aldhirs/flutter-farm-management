@@ -1,6 +1,6 @@
-import 'package:farm/features/home/home/bloc/home_bloc.dart';
-import 'package:farm/features/home/home/bloc/home_event.dart';
-import 'package:farm/features/home/home/bloc/home_state.dart';
+import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_bloc.dart';
+import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_state.dart';
+import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_event.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/widgets/buttons/button.dart';
@@ -10,21 +10,22 @@ import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CattleSearchBottomSheet extends StatefulWidget {
-  const CattleSearchBottomSheet({
+class DraftingCattleBottomSheet extends StatefulWidget {
+  const DraftingCattleBottomSheet({
     super.key,
     required this.bloc,
     required this.onDismiss,
   });
 
-  final HomeBloc bloc;
+  final HomeNavBarBloc bloc;
   final VoidCallback onDismiss;
 
   @override
-  State<CattleSearchBottomSheet> createState() => _SearchBottomSheetState();
+  State<DraftingCattleBottomSheet> createState() =>
+      _DraftingCattleBottomSheetState();
 }
 
-class _SearchBottomSheetState extends State<CattleSearchBottomSheet> {
+class _DraftingCattleBottomSheetState extends State<DraftingCattleBottomSheet> {
   final TextEditingController _controller = TextEditingController();
 
   @override
@@ -51,7 +52,7 @@ class _SearchBottomSheetState extends State<CattleSearchBottomSheet> {
               ),
             ),
             const SizedBox(height: 24),
-            Text("Cari Sapi", style: TextStyles.heading5()),
+            Text("Drafting Sapi", style: TextStyles.heading5()),
             Text("Cari sapi dengan input ear tag", style: TextStyles.body2()),
             _errorWidget(),
 
@@ -59,7 +60,7 @@ class _SearchBottomSheetState extends State<CattleSearchBottomSheet> {
             const SizedBox(height: 12),
             BlocProvider.value(
               value: widget.bloc,
-              child: BlocBuilder<HomeBloc, HomeState>(
+              child: BlocBuilder<HomeNavBarBloc, HomeNavBarState>(
                 buildWhen: (p, c) =>
                     p.loading != c.loading || p.earTag != c.earTag,
                 builder: (context, state) {
@@ -83,7 +84,7 @@ class _SearchBottomSheetState extends State<CattleSearchBottomSheet> {
                         );
                         return;
                       }
-                      widget.bloc.add(const CheckCattleEarTag(destination: 1));
+                      widget.bloc.add(const CheckCattleEarTag(destination: 2));
                     },
                   );
                 },
@@ -105,7 +106,7 @@ class _SearchBottomSheetState extends State<CattleSearchBottomSheet> {
   Widget _textInput() {
     return BlocProvider.value(
       value: widget.bloc,
-      child: BlocBuilder<HomeBloc, HomeState>(
+      child: BlocBuilder<HomeNavBarBloc, HomeNavBarState>(
         builder: (context, state) {
           return TextInputField(
             controller: _controller,
@@ -125,7 +126,7 @@ class _SearchBottomSheetState extends State<CattleSearchBottomSheet> {
   Widget _errorWidget() {
     return BlocProvider.value(
       value: widget.bloc,
-      child: BlocBuilder<HomeBloc, HomeState>(
+      child: BlocBuilder<HomeNavBarBloc, HomeNavBarState>(
         buildWhen: (p, c) => p.errorMessage != c.errorMessage,
         builder: (context, state) {
           return Column(

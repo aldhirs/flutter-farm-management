@@ -15,6 +15,7 @@ import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/utils/view_utils.dart';
 import 'package:farm/views/view.dart';
+import 'package:farm/widgets/popup/popup.dart';
 import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,40 @@ class _DraftingFormPageState
                 message: state.errorMessage,
                 type: ToastType.error,
               );
+            }
+          },
+        ),
+        BlocListener<DraftingFormBloc, DraftingFormState>(
+          listenWhen: (previous, current) => previous.cattle != current.cattle,
+          listener: (context, state) {
+            if (state.cattle.id.isNotEmpty &&
+                (!state.cattle.isAvailableToDrafting())) {
+              navigator.showAppDialog(
+                useRootNavigator: true,
+                barrierDismissible: false,
+                Popup(
+                  title: 'Tidak dapat dilanjutkan',
+                  illustration: ClipRRect(
+                    borderRadius: BorderRadius.circular(20), // adjust radius
+                    child: Assets.images.ilCowDenied.image(
+                      height: Dimens.d240,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  description: [
+                    const TextSpan(
+                      text:
+                          'Data sapi ini sudah melalui proses drafting sebelumnya.',
+                    ),
+                  ],
+                  positiveButtonText: "Kembali",
+                  onPositiveButtonPressed: () async {
+                    await navigator.pop();
+                    await navigator.pop();
+                  },
+                ),
+              );
+              return;
             }
           },
         ),

@@ -1,6 +1,7 @@
 import 'package:farm/base/base.dart';
 import 'package:farm/config/app_config.dart';
 import 'package:farm/domain/entities/auth/user_data.dart';
+import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

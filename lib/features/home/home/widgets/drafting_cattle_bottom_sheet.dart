@@ -10,8 +10,8 @@ import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CattleSearchBottomSheet extends StatefulWidget {
-  const CattleSearchBottomSheet({
+class DraftingCattleBottomSheet extends StatefulWidget {
+  const DraftingCattleBottomSheet({
     super.key,
     required this.bloc,
     required this.onDismiss,
@@ -21,10 +21,11 @@ class CattleSearchBottomSheet extends StatefulWidget {
   final VoidCallback onDismiss;
 
   @override
-  State<CattleSearchBottomSheet> createState() => _SearchBottomSheetState();
+  State<DraftingCattleBottomSheet> createState() =>
+      _DraftingCattleBottomSheetState();
 }
 
-class _SearchBottomSheetState extends State<CattleSearchBottomSheet> {
+class _DraftingCattleBottomSheetState extends State<DraftingCattleBottomSheet> {
   final TextEditingController _controller = TextEditingController();
 
   @override
@@ -51,7 +52,7 @@ class _SearchBottomSheetState extends State<CattleSearchBottomSheet> {
               ),
             ),
             const SizedBox(height: 24),
-            Text("Cari Sapi", style: TextStyles.heading5()),
+            Text("Drafting Sapi", style: TextStyles.heading5()),
             Text("Cari sapi dengan input ear tag", style: TextStyles.body2()),
             _errorWidget(),
 
@@ -83,7 +84,7 @@ class _SearchBottomSheetState extends State<CattleSearchBottomSheet> {
                         );
                         return;
                       }
-                      widget.bloc.add(const CheckCattleEarTag(destination: 1));
+                      widget.bloc.add(const CheckCattleEarTag(destination: 2));
                     },
                   );
                 },

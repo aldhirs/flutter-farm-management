@@ -88,7 +88,14 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
       emit(state.copyWith(selectedSupplier: event.value));
     }, transformer: log());
     on<ReceptionChanged>((event, emit) {
-      emit(state.copyWith(selectedReception: event.value));
+      emit(
+        state.copyWith(
+          selectedReception: event.value,
+          selectedBreed: null,
+          selectedSupplier: null,
+          selectedStation: null,
+        ),
+      );
       add(const GetBreeds());
       add(const GetSuppliers());
       add(const GetStations());
@@ -117,11 +124,7 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
     Initiated event,
     Emitter<CattleCreateState> emit,
   ) async {
-    // add(const GetBarns());
-    // add(const GetBreeds());
-    add(const GetLevels());
     add(const GetReceptions());
-    add(const GetSuppliers());
 
     // user data
     final user = switch (runCatching(
@@ -139,11 +142,10 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
   ) async {
     emit(state.copyWith(errorMessage: ''));
     if (state.selectedBreed == null ||
-        state.selectedGender == null ||
-        state.selectedLevel == null ||
+        state.selectedStation == null ||
         state.selectedReception == null ||
         state.selectedSupplier == null ||
-        state.earTag?.isEmpty == true) {
+        state.earTag == null) {
       emit(
         state.copyWith(
           errorMessage: 'Harap mengisi formulir terlebih dahulu.',
@@ -260,7 +262,7 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
         }
         final response = await _suppliersUseCase.execute(
           SupplierRequest(
-            client_slug: (appBloc.state.userData?.clientSlug).orEmpty(),
+            id_reception: (state.selectedReception?.id).orEmpty(),
           ),
         );
         switch (response.result) {
@@ -403,13 +405,11 @@ class CattleCreateBloc extends BaseBloc<CattleCreateEvent, CattleCreateState> {
           project_id: (appBloc.state.selectedProject?.id).orEmpty(),
           // barn_id: (state.selectedBarn?.id).orEmpty(),
           // pen_id: (state.selectedPen?.id).orEmpty(),
-          breed_id: (state.selectedBreed?.id.toString()).orEmpty(),
-          level_id: state.selectedLevel?.id ?? 0,
-          supplier_id: (state.selectedSupplier?.id).toString(),
-          station_id: (state.selectedStation?.id).toString(),
+          breed_id: (state.selectedBreed?.name).orEmpty(),
+          supplier_id: (state.selectedSupplier?.name).toString(),
+          station_id: (state.selectedStation?.name).toString(),
           reception_id: (state.selectedReception?.id).orEmpty(),
           ear_tag: (state.earTag).orEmpty(),
-          gender: (state.selectedGender).orEmpty(),
         );
         final response = await _cattleCreateUseCase.execute(payload);
         switch (response.result) {

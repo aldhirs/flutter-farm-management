@@ -1,7 +1,8 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/app/bloc/app_event.dart';
 import 'package:farm/base/base_page_state.dart';
+import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_state.dart';
+import 'package:farm/features/home/home_navbar/drafting_cattle_bottom_sheet.dart';
 import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_bloc.dart';
 import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_event.dart';
 import 'package:farm/features/scan/scan_page.dart';
@@ -10,7 +11,7 @@ import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/widgets/popup/popup.dart';
 import 'package:flutter/material.dart';
-import 'package:vibration/vibration.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
 class HomeNavBarPage extends StatefulWidget {
@@ -22,7 +23,6 @@ class HomeNavBarPage extends StatefulWidget {
 
 class _HomeNavBarPageState
     extends BasePageState<HomeNavBarPage, HomeNavBarBloc> {
-  final AudioPlayer _player = AudioPlayer();
   @override
   void initState() {
     super.initState();
@@ -30,9 +30,22 @@ class _HomeNavBarPageState
   }
 
   @override
-  void dispose() {
-    _player.dispose();
-    super.dispose();
+  Widget buildPageListeners({required Widget child}) {
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<HomeNavBarBloc, HomeNavBarState>(
+          listenWhen: (previous, current) => previous.cattle != current.cattle,
+          listener: (context, state) async {
+            if (state.cattle != null) {
+              navigator.popAndPush(
+                AppRouteInfo.draftingForm(cattle: state.cattle),
+              );
+            }
+          },
+        ),
+      ],
+      child: child,
+    );
   }
 
   @override
@@ -126,37 +139,75 @@ class _HomeNavBarPageState
     );
   }
 
+  void _onShowFeedlotAlert() {
+    navigator.showAppDialog(
+      useRootNavigator: true,
+      barrierDismissible: false,
+      Popup(
+        title: 'Feedlot belum diisi',
+        illustration: ClipRRect(
+          borderRadius: BorderRadius.circular(20), // adjust radius
+          child: Assets.images.ilCowFeedlot.image(
+            height: Dimens.d140,
+            fit: BoxFit.cover,
+          ),
+        ),
+        description: [
+          const TextSpan(
+            text:
+                "Silakan untuk memilih feedlot terlebih dahulu untuk melanjutkan aktivitas.",
+          ),
+        ],
+        positiveButtonText: "Pilih Feedlot",
+        onPositiveButtonPressed: () async {
+          navigator.pop();
+          appBloc.add(const ShowProjects());
+        },
+      ),
+    );
+  }
+
   void _onDraftingClicked() async {
     if (appBloc.state.selectedProject == null) {
-      navigator.showAppDialog(
-        useRootNavigator: true,
-        barrierDismissible: false,
-        Popup(
-          title: 'Feedlot belum diisi',
-          illustration: ClipRRect(
-            borderRadius: BorderRadius.circular(20), // adjust radius
-            child: Assets.images.ilCowFeedlot.image(
-              height: Dimens.d140,
-              fit: BoxFit.cover,
-            ),
-          ),
-          description: [
-            const TextSpan(
-              text:
-                  "Silakan untuk memilih feedlot terlebih dahulu untuk melanjutkan aktivitas.",
-            ),
-          ],
-          positiveButtonText: "Pilih Feedlot",
-          onPositiveButtonPressed: () async {
-            navigator.pop();
-            appBloc.add(const ShowProjects());
-          },
-        ),
-      );
-    } else {
-      await navigator.push(
-        const AppRouteInfo.scan(route: DEST_DRAFTING_DETAIL),
-      );
+      _onShowFeedlotAlert();
+      return;
     }
+    navigator.showAppDialog(
+      useRootNavigator: true,
+      barrierDismissible: false,
+      Popup(
+        closeVisibility: true,
+        title: 'Drafting Sapi',
+        illustration: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Assets.images.ilCowScanning.image(
+            height: Dimens.d160,
+            fit: BoxFit.cover,
+          ),
+        ),
+        description: const [
+          TextSpan(
+            text:
+                'Silakan pilih metode dalam drafting sapi menggunakan alat pemindai atau manual berdasarakan ear tag.',
+          ),
+        ],
+        positiveButtonText: "Cari dengan Alat",
+        negativeButtonText: "Cari Manual",
+        onNegativeButtonPressed: _draftingCattleManualBottomSheet,
+        onPositiveButtonPressed: () async {
+          await navigator.popAndPush(
+            const AppRouteInfo.scan(route: DEST_DRAFTING_DETAIL),
+          );
+        },
+      ),
+    );
+  }
+
+  void _draftingCattleManualBottomSheet() async {
+    await navigator.pop();
+    await navigator.showBottomSheet(
+      isScrollControlled: true,
+      DraftingCattleBottomSheet(bloc: bloc, onDismiss: () => navigator.pop()),
+    );
   }
 }

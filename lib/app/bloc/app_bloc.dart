@@ -3,6 +3,7 @@ import 'package:farm/app/bloc/app_event.dart';
 import 'package:farm/app/bloc/app_state.dart';
 import 'package:farm/base/base.dart';
 import 'package:farm/domain/entities/auth/user_data.dart';
+import 'package:farm/domain/entities/cattle/cattle_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
 import 'package:farm/domain/repositories/source/source.dart';

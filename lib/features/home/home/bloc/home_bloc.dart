@@ -34,7 +34,13 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
         if (!_isProjectChosen(emit)) {
           return;
         }
-        emit(state.copyWith(loading: true, cattle: null));
+        emit(
+          state.copyWith(
+            loading: true,
+            cattle: null,
+            cattleDestination: event.destination,
+          ),
+        );
         final req = CattleRequest(
           id_project: appBloc.state.selectedProject?.id ?? '',
           eartag: state.earTag,

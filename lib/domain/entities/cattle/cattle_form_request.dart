@@ -16,10 +16,8 @@ abstract class CattleFormRequest extends BaseInput with _$CattleFormRequest {
     @JsonKey(name: 'station_id') @Default('') String station_id,
     @JsonKey(name: 'breed_id') @Default('') String breed_id,
     @JsonKey(name: 'ear_tag') @Default('') String ear_tag,
-    @JsonKey(name: 'level_id') @Default(0) int level_id,
     @JsonKey(name: 'reception_id') @Default('') String reception_id,
     @JsonKey(name: 'status') @Default('') String status,
-    @JsonKey(name: 'gender') @Default('') String gender,
   }) = _CattleFormRequest;
   const CattleFormRequest._();
 

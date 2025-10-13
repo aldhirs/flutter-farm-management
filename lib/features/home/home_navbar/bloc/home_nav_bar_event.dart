@@ -12,3 +12,26 @@ abstract class Initiated extends HomeNavBarEvent with _$Initiated {
   const factory Initiated() = _Initiated;
   const Initiated._();
 }
+
+@freezed
+abstract class CheckCattleEarTag extends HomeNavBarEvent
+    with _$CheckCattleEarTag {
+  const factory CheckCattleEarTag({required int destination}) =
+      _CheckCattleEarTag;
+
+  const CheckCattleEarTag._();
+}
+
+@freezed
+abstract class EarTagChanged extends HomeNavBarEvent with _$EarTagChanged {
+  const factory EarTagChanged({required String value}) = _EarTagChanged;
+
+  const EarTagChanged._();
+}
+
+@freezed
+abstract class ClearData extends HomeNavBarEvent with _$ClearData {
+  const factory ClearData() = _ClearData;
+
+  const ClearData._();
+}

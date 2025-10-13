@@ -40,6 +40,10 @@ abstract class Cattle extends BaseOutput with _$Cattle {
     return status == AVAILABLE;
   }
 
+  bool isAvailableToDrafting() {
+    return ear_tag.isEmpty || pen?.id.isEmpty == true;
+  }
+
   bool isStatusSick() {
     return status == SICK;
   }

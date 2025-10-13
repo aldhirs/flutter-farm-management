@@ -26,6 +26,9 @@ class _FormInputWidgetState extends State<FormInputWidget> {
   final TextEditingController _rfidController = TextEditingController();
   final TextEditingController _earTagController = TextEditingController();
   final TextEditingController _penController = TextEditingController();
+  final TextEditingController _stationController = TextEditingController();
+  final TextEditingController _supplierController = TextEditingController();
+  final TextEditingController _breedController = TextEditingController();
   late final ValueNotifier<List<DropdownCheckboxModel>> _receptionItems;
   late final ValueNotifier<List<DropdownCheckboxModel>> _barnItems;
 
@@ -44,6 +47,9 @@ class _FormInputWidgetState extends State<FormInputWidget> {
     _earTagController.dispose();
     _penController.dispose();
     _receptionItems.dispose();
+    _stationController.dispose();
+    _supplierController.dispose();
+    _breedController.dispose();
     super.dispose();
   }
 
@@ -83,9 +89,11 @@ class _FormInputWidgetState extends State<FormInputWidget> {
     return BlocProvider.value(
       value: widget.bloc,
       child: BlocBuilder<CattleCreateBloc, CattleCreateState>(
-        buildWhen: (p, c) => p.breeds != c.breeds,
+        buildWhen: (p, c) =>
+            p.breeds != c.breeds || p.selectedBreed != c.selectedBreed,
         builder: (context, state) {
           return DropdownViewField(
+            controller: _breedController,
             title: 'Breed',
             items: ValueNotifier<List<DropdownCheckboxModel>>(
               state.breeds
@@ -192,6 +200,9 @@ class _FormInputWidgetState extends State<FormInputWidget> {
                 (item) => item.reception.id.toString() == value.first,
               );
               widget.bloc.add(ReceptionChanged(value: selected.reception));
+              _breedController.text = '';
+              _supplierController.text = '';
+              _stationController.text = '';
             },
           );
         },
@@ -203,9 +214,12 @@ class _FormInputWidgetState extends State<FormInputWidget> {
     return BlocProvider.value(
       value: widget.bloc,
       child: BlocBuilder<CattleCreateBloc, CattleCreateState>(
-        buildWhen: (p, c) => p.suppliers != c.suppliers,
+        buildWhen: (p, c) =>
+            p.suppliers != c.suppliers ||
+            p.selectedSupplier != c.selectedSupplier,
         builder: (context, state) {
           return DropdownViewField(
+            controller: _supplierController,
             title: 'IMP',
             items: ValueNotifier<List<DropdownCheckboxModel>>(
               state.suppliers
@@ -236,9 +250,11 @@ class _FormInputWidgetState extends State<FormInputWidget> {
     return BlocProvider.value(
       value: widget.bloc,
       child: BlocBuilder<CattleCreateBloc, CattleCreateState>(
-        buildWhen: (p, c) => p.stations != c.stations,
+        buildWhen: (p, c) =>
+            p.stations != c.stations || p.selectedStation != c.selectedStation,
         builder: (context, state) {
           return DropdownViewField(
+            controller: _stationController,
             title: 'POO',
             items: ValueNotifier<List<DropdownCheckboxModel>>(
               state.stations

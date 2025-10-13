@@ -9,6 +9,7 @@ import 'package:farm/features/home/home/bloc/home_bloc.dart';
 import 'package:farm/features/home/home/bloc/home_event.dart';
 import 'package:farm/features/home/home/bloc/home_state.dart';
 import 'package:farm/features/home/home/widgets/cattle_search_bottom_sheet.dart';
+import 'package:farm/features/home/home/widgets/drafting_cattle_bottom_sheet.dart';
 import 'package:farm/features/home/home/widgets/quick_action_card.dart';
 import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
@@ -72,9 +73,13 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
         BlocListener<HomeBloc, HomeState>(
           listenWhen: (previous, current) => previous.cattle != current.cattle,
           listener: (context, state) async {
-            if (state.cattle != null) {
+            if (state.cattle != null && state.cattleDestination == 1) {
               navigator.popAndPush(
                 AppRouteInfo.cattleSearch(cattle: state.cattle),
+              );
+            } else if (state.cattle != null && state.cattleDestination == 2) {
+              navigator.popAndPush(
+                AppRouteInfo.draftingForm(cattle: state.cattle),
               );
             }
           },
@@ -213,9 +218,7 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
                     QuickActionCard(
                       icon: LucideIcons.alignEndVertical,
                       label: "Drafting",
-                      onTap: () => _onMenuClicked(
-                        const AppRouteInfo.scan(route: DEST_DRAFTING_DETAIL),
-                      ),
+                      onTap: _onDraftingCattleClicked,
                     ),
                     QuickActionCard(
                       icon: LucideIcons.plus,
@@ -510,6 +513,50 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
     await navigator.showBottomSheet(
       isScrollControlled: true,
       CattleSearchBottomSheet(bloc: bloc, onDismiss: () => navigator.pop()),
+    );
+  }
+
+  void _onDraftingCattleClicked() async {
+    if (appBloc.state.selectedProject == null) {
+      _onShowFeedlotAlert();
+      return;
+    }
+    navigator.showAppDialog(
+      useRootNavigator: true,
+      barrierDismissible: false,
+      Popup(
+        closeVisibility: true,
+        title: 'Drafting Sapi',
+        illustration: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Assets.images.ilCowScanning.image(
+            height: Dimens.d160,
+            fit: BoxFit.cover,
+          ),
+        ),
+        description: const [
+          TextSpan(
+            text:
+                'Silakan pilih metode dalam drafting sapi menggunakan alat pemindai atau manual berdasarakan ear tag.',
+          ),
+        ],
+        positiveButtonText: "Cari dengan Alat",
+        negativeButtonText: "Cari Manual",
+        onNegativeButtonPressed: _draftingCattleManualBottomSheet,
+        onPositiveButtonPressed: () async {
+          await navigator.popAndPush(
+            const AppRouteInfo.scan(route: DEST_DRAFTING_DETAIL),
+          );
+        },
+      ),
+    );
+  }
+
+  void _draftingCattleManualBottomSheet() async {
+    await navigator.pop();
+    await navigator.showBottomSheet(
+      isScrollControlled: true,
+      DraftingCattleBottomSheet(bloc: bloc, onDismiss: () => navigator.pop()),
     );
   }
 }
