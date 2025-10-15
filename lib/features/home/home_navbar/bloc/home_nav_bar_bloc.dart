@@ -3,6 +3,7 @@ import 'package:dartx/dartx.dart';
 import 'package:farm/base/base.dart';
 import 'package:farm/domain/entities/cattle/cattle_request.dart';
 import 'package:farm/domain/usecases/cattle_by_ear_tag_use_case.dart';
+import 'package:farm/domain/usecases/cattle_by_rfid_use_case.dart';
 import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_event.dart';
 import 'package:farm/features/home/home_navbar/bloc/home_nav_bar_state.dart';
 import 'package:farm/utils/domain_state.dart';
@@ -12,9 +13,12 @@ import 'package:injectable/injectable.dart';
 @Injectable()
 class HomeNavBarBloc extends BaseBloc<HomeNavBarEvent, HomeNavBarState> {
   final CattleByEarTagUseCase _cattleByEarTagUseCase;
-  HomeNavBarBloc(this._cattleByEarTagUseCase) : super(const HomeNavBarState()) {
+  final CattleByRFIDUseCase _cattleByRFIDUseCase;
+  HomeNavBarBloc(this._cattleByEarTagUseCase, this._cattleByRFIDUseCase)
+    : super(const HomeNavBarState()) {
     on<Initiated>(_initialized, transformer: log());
     on<CheckCattleEarTag>(_getCattleEarTagApi, transformer: log());
+    on<CheckCattleRFID>(_getCattleRFIDApi, transformer: log());
     on<EarTagChanged>((event, emit) {
       emit(state.copyWith(earTag: event.value, errorMessage: ''));
     }, transformer: log());
@@ -50,6 +54,48 @@ class HomeNavBarBloc extends BaseBloc<HomeNavBarEvent, HomeNavBarState> {
           eartag: state.earTag,
         );
         final response = await _cattleByEarTagUseCase.execute(req);
+        switch (response.result) {
+          case DataSuccess(:final data):
+            emit(state.copyWith(cattle: data, errorMessage: ''));
+            break;
+          case DataError(:final errorMessage):
+            emit(state.copyWith(errorMessage: errorMessage.orEmpty()));
+          case null:
+            return;
+        }
+      },
+      doOnEventCompleted: () async {
+        emit(state.copyWith(loading: false));
+      },
+      handleError: false,
+      doOnError: (e) async {
+        emit(state.copyWith(errorMessage: exceptionMessageMapper.map(e)));
+      },
+    );
+  }
+
+  Future<void> _getCattleRFIDApi(
+    CheckCattleRFID event,
+    Emitter<HomeNavBarState> emit,
+  ) {
+    return runBlocCatching(
+      handleLoading: true,
+      action: () async {
+        if (!_isProjectChosen(emit)) {
+          return;
+        }
+        emit(
+          state.copyWith(
+            loading: true,
+            cattle: null,
+            cattleDestination: event.destination,
+          ),
+        );
+        final req = CattleRequest(
+          // id_project: appBloc.state.selectedProject?.id ?? '',
+          rfid: state.earTag,
+        );
+        final response = await _cattleByRFIDUseCase.execute(req);
         switch (response.result) {
           case DataSuccess(:final data):
             emit(state.copyWith(cattle: data, errorMessage: ''));

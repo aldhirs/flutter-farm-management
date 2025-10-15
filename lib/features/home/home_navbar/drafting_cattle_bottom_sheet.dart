@@ -75,6 +75,19 @@ class _DraftingCattleBottomSheetState extends State<DraftingCattleBottomSheet> {
                       Icons.search_outlined,
                       color: Colors.white,
                     ),
+                    // bypass-debug
+                    onLongPressed: () {
+                      if (state.earTag.isEmpty) {
+                        ToastHelper().showToast(
+                          context: context,
+                          message: "Input RFID terlebih dahulu",
+                          type: ToastType.warning,
+                        );
+                        return;
+                      }
+                      widget.bloc.add(const CheckCattleRFID(destination: 2));
+                    },
+                    // bypass-debug
                     onPressed: () {
                       if (state.earTag.isEmpty) {
                         ToastHelper().showToast(

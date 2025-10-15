@@ -61,6 +61,7 @@ class _DraftingFormPageState
           listenWhen: (previous, current) => previous.cattle != current.cattle,
           listener: (context, state) {
             if (state.cattle.id.isNotEmpty &&
+                !state.isIdentitySuccess &&
                 (!state.cattle.isAvailableToDrafting())) {
               navigator.showAppDialog(
                 useRootNavigator: true,

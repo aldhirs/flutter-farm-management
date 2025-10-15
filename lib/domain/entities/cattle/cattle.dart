@@ -13,6 +13,8 @@ part 'cattle.g.dart';
 abstract class Cattle extends BaseOutput with _$Cattle {
   const factory Cattle({
     @JsonKey(name: 'id') @Default('') String id,
+    @JsonKey(name: 'id_project') @Default('') String id_project,
+    @JsonKey(name: 'project_name') @Default('') String project_name,
     @JsonKey(name: 'id_breed') @Default('') String id_breed,
     @JsonKey(name: 'id_supplier') @Default('') String id_supplier,
     @JsonKey(name: 'id_station') @Default('') String id_station,

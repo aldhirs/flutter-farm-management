@@ -23,6 +23,13 @@ abstract class CheckCattleEarTag extends HomeNavBarEvent
 }
 
 @freezed
+abstract class CheckCattleRFID extends HomeNavBarEvent with _$CheckCattleRFID {
+  const factory CheckCattleRFID({required int destination}) = _CheckCattleRFID;
+
+  const CheckCattleRFID._();
+}
+
+@freezed
 abstract class EarTagChanged extends HomeNavBarEvent with _$EarTagChanged {
   const factory EarTagChanged({required String value}) = _EarTagChanged;
 

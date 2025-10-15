@@ -155,13 +155,17 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     Initiated event,
     Emitter<DraftingFormState> emit,
   ) async {
+    var idProject = "";
+    if (event.cattle != null) {
+      if (event.cattle?.id_project != "") {
+        idProject = (appBloc.state.selectedProject?.id ?? '0');
+      }
+    }
     // jika rfid ada, endpoint dari scan page
     if (event.rfid?.isNotEmpty == true) {
-      await _cattleApi(event.rfid.orEmpty(), emit);
-    }
-
-    if (event.cattle != null) {
-      await _cattleApi((event.cattle?.rfid_tag).orEmpty(), emit);
+      await _cattleApi(event.rfid.orEmpty(), idProject, emit);
+    } else if (event.cattle != null) {
+      await _cattleApi((event.cattle?.rfid_tag).orEmpty(), idProject, emit);
     }
 
     // user data
@@ -222,7 +226,11 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
     super.close();
   }
 
-  Future<void> _cattleApi(String rfid, Emitter<DraftingFormState> emit) {
+  Future<void> _cattleApi(
+    String rfid,
+    String id_project,
+    Emitter<DraftingFormState> emit,
+  ) {
     return runBlocCatching(
       action: () async {
         if (!_isProjectChosen(emit)) {
@@ -230,10 +238,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
         }
         emit(state.copyWith(loading: true));
         final response = await _cattleUseCase.execute(
-          CattleRequest(
-            rfid: rfid,
-            id_project: appBloc.state.selectedProject?.id ?? '0',
-          ),
+          CattleRequest(rfid: rfid, id_project: id_project),
         );
         switch (response.result) {
           case DataSuccess(:final data):
@@ -411,6 +416,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
         emit(state.copyWith(loading: true, isIdentitySuccess: false));
         final cattle = state.cattle;
         final payload = CattleFormRequest(
+          project_id: appBloc.state.selectedProject?.id ?? '0',
           id: cattle.id,
           barn_id: state.selectedBarn?.id ?? '',
           pen_id: state.selectedPen?.id ?? '',
