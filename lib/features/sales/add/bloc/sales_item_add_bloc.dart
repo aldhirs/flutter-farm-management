@@ -194,6 +194,7 @@ class SalesItemAddBloc extends BaseBloc<SalesItemAddEvent, SalesItemAddState> {
           PenRequest(
             barnId: event.barnId,
             projectId: appBloc.state.selectedProject!.id,
+            barnCategory: "Drafting",
           ),
         );
         switch (response.result) {

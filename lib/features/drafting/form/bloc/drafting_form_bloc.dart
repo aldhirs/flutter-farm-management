@@ -302,6 +302,7 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
           PenRequest(
             barnId: event.barnId,
             projectId: appBloc.state.selectedProject!.id,
+            barnCategory: "Drafting,Isolasi",
           ),
         );
         switch (response.result) {
@@ -583,21 +584,18 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
           return;
         }
         emit(state.copyWith(loading: true, isTreatmentSuccess: false));
-        final payloads = <TreatmentFormRequest>[];
-        for (var item in state.selectedTreatmentType) {
-          payloads.add(
-            TreatmentFormRequest(
-              client_slug: appBloc.state.userData?.clientSlug ?? '',
-              id_project: appBloc.state.selectedProject?.id ?? '0',
-              id_cattle: state.cattle.id,
-              id_treatment_type: item.id,
-              treatment_date: DateTimeUtils.parseToString(state.treatmentDate),
-              notes: state.treatmentNote.orEmpty(),
-              administered_by: (state.userData.id).toInt(),
-            ),
-          );
-        }
-        final payload = TreatmentBulkFormRequest(treatments: payloads);
+        final treatmentTypeIDs = state.selectedTreatmentType
+            .map((item) => item.id)
+            .toList();
+        final payload = TreatmentBulkFormRequest(
+          client_slug: appBloc.state.userData?.clientSlug ?? '',
+          id_project: appBloc.state.selectedProject?.id ?? '0',
+          id_cattle: state.cattle.id,
+          id_treatment_type: treatmentTypeIDs,
+          treatment_date: DateTimeUtils.parseToString(state.treatmentDate),
+          notes: state.treatmentNote.orEmpty(),
+          administered_by: (state.userData.id).toInt(),
+        );
         final response = await _treatmentCreateBulkUseCase.execute(payload);
 
         switch (response.result) {

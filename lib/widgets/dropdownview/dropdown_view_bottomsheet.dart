@@ -167,7 +167,7 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
     });
   }
 
-  void _onResetSelection() {
+  void _onResetSelection() async {
     final resetList = widget.items.value
         .map((item) => item.copyWith(selected: false))
         .toList();
@@ -176,6 +176,8 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
       selectedItems = resetList;
       originalItems = resetList;
     });
+    widget.onChoose.call(resetList);
+    await widget.navigator.pop();
   }
 
   @override
@@ -259,7 +261,7 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
               TextButton(
                 onPressed: _onResetSelection,
                 child: Text(
-                  'Reset',
+                  'Batalkan',
                   style: TextStyles.label2().copyWith(
                     color: AppColors.current.mint700,
                   ),
@@ -403,7 +405,9 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
         return Column(
           children: [
             SizedBox(
-              height: value.length > 12 ? ViewUtils.screenHeight() * 0.7 : null,
+              height: value.length > 12
+                  ? ViewUtils.screenHeight() * 0.65
+                  : null,
               child: ListView.separated(
                 shrinkWrap: true,
                 physics: const AlwaysScrollableScrollPhysics(),

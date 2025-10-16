@@ -93,8 +93,8 @@ class _MedicalFormBottomSheetState extends State<MedicalFormBottomSheet> {
                       _dropdownStatus(),
                       _textInputNote(),
                       _textInputInfection(),
-                      _fileUploader(),
 
+                      // _fileUploader(),
                       const SizedBox(height: 24),
                     ],
                   ),
