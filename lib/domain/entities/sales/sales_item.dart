@@ -20,7 +20,7 @@ abstract class SalesItem extends BaseOutput with _$SalesItem {
     @Default(0) int actual_weight,
     @Default('') String cattle_status,
     @Default('') String status,
-    @Default(0) int created_by,
+    @Default('') String created_by,
   }) = _SalesItem;
 
   const SalesItem._();

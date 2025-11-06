@@ -26,6 +26,7 @@ class MutationListBloc extends BaseBloc<MutationListEvent, MutationListState> {
     Initiated event,
     Emitter<MutationListState> emit,
   ) async {
+    emit(state.copyWith(isIn: event.isIn));
     await _mutationApi(emit, true, 1, false);
   }
 
