@@ -5,15 +5,16 @@ import 'package:farm/constants/date_constant.dart';
 import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:farm/domain/entities/medical/medical.dart';
 import 'package:farm/domain/entities/treatment/treatment.dart';
-import 'package:farm/extensions/int.dart';
 import 'package:farm/extensions/string.dart';
 import 'package:farm/features/cattle/search/bloc/cattle_search_bloc.dart';
 import 'package:farm/features/cattle/search/bloc/cattle_search_event.dart';
 import 'package:farm/features/cattle/search/bloc/cattle_search_state.dart';
+import 'package:farm/navigation/app_route_info.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/string_utils.dart';
 import 'package:farm/views/common_scaffold.dart';
 import 'package:farm/views/view.dart';
+import 'package:farm/widgets/buttons/button_text.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -116,6 +117,12 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
                       elevation: 0,
                       foregroundColor: Colors.black54,
                       backgroundColor: Colors.white,
+                      actions: [
+                        IconButton(
+                          icon: const Icon(LucideIcons.refreshCw, size: 18),
+                          onPressed: () => bloc.add(const OnRefresh()),
+                        ),
+                      ],
                       flexibleSpace: FlexibleSpaceBar(
                         background: Container(
                           decoration: BoxDecoration(
@@ -267,7 +274,10 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                               ),
-                              child: _buildSectionTitle("Riwayat Perawatan"),
+                              child: _buildSectionTitle(
+                                "Riwayat Perawatan",
+                                state.treatments.isNotEmpty,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             Padding(
@@ -284,7 +294,7 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                               ),
-                              child: _buildSectionTitle("Catatan Medis"),
+                              child: _buildSectionTitle("Catatan Medis", false),
                             ),
                             const SizedBox(height: 8),
                             Padding(
@@ -371,16 +381,31 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
   }
 
   /// SECTION TITLE
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, bool showSeeAllButton) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.bold,
-          color: Colors.black87,
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          showSeeAllButton
+              ? ButtonText(
+                  text: "Lihat Semua",
+                  onPressed: () {
+                    navigator.push(
+                      AppRouteInfo.cattleTreatments(cattle: bloc.state.cattle!),
+                    );
+                  },
+                )
+              : const SizedBox.shrink(),
+        ],
       ),
     );
   }
@@ -550,6 +575,9 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
   }
 
   Widget _emptyWidget() {
+    if (bloc.state.loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return EmptyState(
       title: 'Ups!',
       description: 'Data Sapi Tidak Ditemukan.',

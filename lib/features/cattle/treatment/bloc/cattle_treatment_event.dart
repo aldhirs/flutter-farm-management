@@ -1,7 +1,8 @@
 import 'package:farm/base/base.dart';
+import 'package:farm/domain/entities/cattle/cattle.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'sales_event.freezed.dart';
+part 'cattle_treatment_event.freezed.dart';
 
 abstract class CattleTreatmentEvent extends BaseBlocEvent {
   const CattleTreatmentEvent();
@@ -9,7 +10,7 @@ abstract class CattleTreatmentEvent extends BaseBlocEvent {
 
 @freezed
 abstract class Initiated extends CattleTreatmentEvent with _$Initiated {
-  const factory Initiated() = _Initiated;
+  const factory Initiated({required Cattle cattle}) = _Initiated;
   const Initiated._();
 }
 

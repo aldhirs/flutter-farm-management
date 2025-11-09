@@ -1,25 +1,27 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/base/base_page_state.dart';
-import 'package:farm/features/sales/list/bloc/sales_bloc.dart';
-import 'package:farm/features/sales/list/bloc/sales_event.dart';
-import 'package:farm/features/sales/list/bloc/sales_state.dart';
-import 'package:farm/features/sales/list/widgets/filter_bottom_sheet.dart';
-import 'package:farm/features/sales/list/widgets/item_widget.dart';
-import 'package:farm/navigation/app_route_info.dart';
+import 'package:farm/domain/entities/cattle/cattle.dart';
+import 'package:farm/features/cattle/treatment/bloc/cattle_treatment_bloc.dart';
+import 'package:farm/features/cattle/treatment/bloc/cattle_treatment_event.dart';
+import 'package:farm/features/cattle/treatment/bloc/cattle_treatment_state.dart';
+import 'package:farm/features/cattle/treatment/widgets/item_widget.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/views/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
-class SalesPage extends StatefulWidget {
-  const SalesPage({super.key});
+class CattleTreatmentPage extends StatefulWidget {
+  const CattleTreatmentPage({super.key, required this.cattle});
+
+  final Cattle cattle;
 
   @override
-  State<StatefulWidget> createState() => _SalesPageState();
+  State<StatefulWidget> createState() => _CattleTreatmentPageState();
 }
 
-class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
+class _CattleTreatmentPageState
+    extends BasePageState<CattleTreatmentPage, CattleTreatmentBloc>
     with SingleTickerProviderStateMixin {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
@@ -27,7 +29,7 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
   @override
   void initState() {
     super.initState();
-    bloc.add(const Initiated());
+    bloc.add(Initiated(cattle: widget.cattle));
 
     // Listen scroll untuk load more
     _scrollController.addListener(() {
@@ -35,7 +37,7 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
           _scrollController.position.maxScrollExtent - 200) {
         // kurang dari 200px dari bawah, load more
         if (!bloc.state.isLoadMore && bloc.state.hasMore) {
-          bloc.add(const LoadMoreSales());
+          bloc.add(const LoadMoreCattleTreatment());
         }
       }
     });
@@ -49,17 +51,14 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
 
   @override
   Widget buildPage(BuildContext context) {
-    return BlocBuilder<SalesBloc, SalesState>(
+    return BlocBuilder<CattleTreatmentBloc, CattleTreatmentState>(
       builder: (context, state) {
         return CommonScaffold(
           backgroundColor: AppColors.current.neutral400,
           appBar: CommonAppBar(
-            titleText: 'Daftar Penjualan',
+            titleText: 'Daftar Perawatan Sapi',
             forceMaterialTransparency: false,
           ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: _filterButton(),
           body: _listWidget(),
         );
       },
@@ -69,9 +68,9 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
   Widget _listWidget() {
     return BlocProvider.value(
       value: bloc,
-      child: BlocBuilder<SalesBloc, SalesState>(
+      child: BlocBuilder<CattleTreatmentBloc, CattleTreatmentState>(
         buildWhen: (p, c) =>
-            p.sales != c.sales ||
+            p.items != c.items ||
             p.errorMessage != c.errorMessage ||
             p.isLoadMore != c.isLoadMore,
         builder: (context, state) {
@@ -79,7 +78,7 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
             return _errorWidget();
           }
 
-          if (state.sales.isEmpty) {
+          if (state.items.isEmpty) {
             return _emptyWidget();
           }
 
@@ -89,27 +88,23 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
             backgroundColor: AppColors.current.mint700,
             strokeWidth: 2.0,
             onRefresh: () async {
-              bloc.add(const LoadSales());
+              bloc.add(const LoadCattleTreatment());
             },
             // Pull from top to show refresh indicator.
             child: ListView.builder(
               controller: _scrollController,
-              itemCount: state.sales.length + (state.isLoadMore ? 1 : 0),
+              itemCount: state.items.length + (state.isLoadMore ? 1 : 0),
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                if (index >= state.sales.length) {
+                if (index >= state.items.length) {
                   // tampilkan indikator loading di bawah
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
                     child: Center(child: CircularProgressIndicator()),
                   );
                 }
-                final item = state.sales[index];
-                return ItemWidget(
-                  sale: item,
-                  onTap: () =>
-                      navigator.push(AppRouteInfo.salesItem(item: item)),
-                );
+                final item = state.items[index];
+                return ItemWidget(item: item, onTap: () => {});
               },
             ),
           );
@@ -133,25 +128,6 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
     );
   }
 
-  Widget _filterButton() {
-    return FloatingActionButton.extended(
-      backgroundColor: AppColors.current.eucalyptus700,
-      onPressed: () => navigator.showBottomSheet(
-        FilterBottomSheet(
-          bloc: bloc,
-          onDismiss: () {
-            navigator.pop();
-          },
-        ),
-      ),
-      label: Text(
-        'Filter',
-        style: TextStyles.button2().copyWith(color: Colors.white),
-      ),
-      icon: const Icon(Icons.filter_list_alt, color: Colors.white),
-    );
-  }
-
   Widget _errorWidget() {
     return EmptyState(
       title: 'Ups!',
@@ -168,7 +144,7 @@ class _SalesPageState extends BasePageState<SalesPage, SalesBloc>
       isButtonFullWidth: true,
       leftIconButton: const Icon(Icons.refresh, color: Colors.white),
       onPressed: () async {
-        bloc.add(const LoadSales());
+        bloc.add(const LoadCattleTreatment());
       },
     );
   }

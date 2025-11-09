@@ -67,6 +67,9 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
         rfid: rfid,
         cattle: cattle,
       ),
+      CattleTreatmentPage(:final cattle) => CattleTreatmentRoute(
+        cattle: cattle,
+      ),
       _ => throw UnimplementedError('Unknown route: $appRouteInfo'),
     };
   }

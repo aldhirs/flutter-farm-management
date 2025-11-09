@@ -26,6 +26,7 @@ class CattleSearchBloc extends BaseBloc<CattleSearchEvent, CattleSearchState> {
     on<CheckCattle>(_getCattleApi, transformer: log());
     on<GetTreatments>(_getTreatmentsApi, transformer: log());
     on<GetMedicals>(_getMedicalsApi, transformer: log());
+    on<OnRefresh>(_onRefresh, transformer: log());
     on<EarTagChanged>((event, emit) {
       emit(state.copyWith(earTag: event.value, errorMessage: ''));
     }, transformer: log());
@@ -35,19 +36,21 @@ class CattleSearchBloc extends BaseBloc<CattleSearchEvent, CattleSearchState> {
     Initiated event,
     Emitter<CattleSearchState> emit,
   ) async {
-    emit(
-      state.copyWith(
-        earTag: "ear-0001",
-        cattle: event.cattle,
-        rfid: event.rfid.orEmpty(),
-      ),
-    );
+    emit(state.copyWith(cattle: event.cattle, rfid: event.rfid.orEmpty()));
     if (event.rfid != null) {
       add(const CheckCattle());
     } else {
       add(GetTreatments(id_cattle: (event.cattle?.id).orEmpty()));
       add(GetMedicals(id_cattle: (event.cattle?.id).orEmpty()));
     }
+  }
+
+  Future<void> _onRefresh(
+    OnRefresh event,
+    Emitter<CattleSearchState> emit,
+  ) async {
+    emit(state.copyWith(rfid: state.cattle?.rfid_tag ?? '', errorMessage: ''));
+    add(const CheckCattle());
   }
 
   Future<void> _getCattleApi(

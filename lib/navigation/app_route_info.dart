@@ -24,6 +24,8 @@ abstract class AppRouteInfo with _$AppRouteInfo {
     BluetoothConnection? connection,
     String? rfid,
   }) = CattleCreate;
+  const factory AppRouteInfo.cattleTreatments({required Cattle cattle}) =
+      CattleTreatmentPage;
   const factory AppRouteInfo.sales() = SalesPage;
   const factory AppRouteInfo.salesItem({required Sales item}) = SalesItemPage;
   const factory AppRouteInfo.salesItemPreview({

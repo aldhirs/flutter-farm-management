@@ -26,6 +26,13 @@ abstract class CheckCattle extends CattleSearchEvent with _$CheckCattle {
 }
 
 @freezed
+abstract class OnRefresh extends CattleSearchEvent with _$OnRefresh {
+  const factory OnRefresh() = _OnRefresh;
+
+  const OnRefresh._();
+}
+
+@freezed
 abstract class EarTagChanged extends CattleSearchEvent with _$EarTagChanged {
   const factory EarTagChanged({required String value}) = _EarTagChanged;
 
