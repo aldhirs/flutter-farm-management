@@ -19,11 +19,40 @@ val agrisatwaCompileSdk: Int =
 val agrisatwaTargetSdk: Int =
     (project.findProperty("agrisatwa.targetSdk") as String?)?.toInt() ?: 36
 
+/*
+Keterangan keystore, dari key.properties bila ada, dari gradle.properties bila
+tidak.
+
+key.properties didahulukan karena itu tempat yang lazim dipakai tiap mesin
+menyimpan keterangan keystore-nya sendiri tanpa ikut ter-commit. Tetapi berkas
+itu tidak ada di repo ini, sementara nilainya sudah tertulis di
+gradle.properties — dan karena hanya key.properties yang dibaca, signingConfig
+release tidak pernah terbentuk. Akibatnya `flutter build apk --release`
+menghasilkan APK bertanda tangan kunci debug: tidak bisa diunggah ke Play
+Console, dan tidak bisa memperbarui pemasangan yang sudah ada. Buildnya
+berhasil tanpa keluhan apa pun, jadi tidak ada satu pun tanda bahwa hasilnya
+tidak bisa dipakai.
+*/
 val keystorePropertiesFile = rootProject.file("key.properties")
 val keystoreProperties = Properties().apply {
     if (keystorePropertiesFile.exists()) {
         FileInputStream(keystorePropertiesFile).use { load(it) }
     }
+}
+
+fun keystoreValue(name: String): String? =
+    keystoreProperties.getProperty(name) ?: project.findProperty(name) as String?
+
+/*
+Letak keystore dicari, tidak sekadar dipercaya apa adanya.
+
+Yang tertulis di gradle.properties adalah "/app/agrisatwa-release.jks" — garis
+miring di depan membuatnya dibaca sebagai jalur mutlak dari akar disk, padahal
+berkasnya ada di android/app. Dicoba apa adanya dulu, untuk mesin yang memang
+menyimpannya di luar repo, lalu relatif terhadap folder android.
+*/
+val keystoreFile: java.io.File? = keystoreValue("storeFile")?.let { path ->
+    listOf(file(path), rootProject.file(path.trimStart('/'))).firstOrNull { it.exists() }
 }
 
 android {
@@ -52,14 +81,14 @@ android {
     }
 
     signingConfigs {
-        // Only defined when key.properties is present, so the build still works
-        // on machines without the keystore (falls back to the debug key below).
-        if (keystorePropertiesFile.exists()) {
+        // Hanya dibentuk bila keystore-nya benar-benar ditemukan, supaya mesin
+        // tanpa keystore tetap bisa membangun — jatuh ke kunci debug di bawah.
+        if (keystoreFile != null) {
             create("release") {
-                keyAlias = keystoreProperties.getProperty("keyAlias")
-                keyPassword = keystoreProperties.getProperty("keyPassword")
-                storeFile = keystoreProperties.getProperty("storeFile")?.let { file(it) }
-                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreValue("keyAlias")
+                keyPassword = keystoreValue("keyPassword")
+                storeFile = keystoreFile
+                storePassword = keystoreValue("storePassword")
             }
         }
     }
