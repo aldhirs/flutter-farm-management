@@ -1,4 +1,4 @@
-import 'package:farm/app/bloc/app_event.dart';
+import 'package:dartx/dartx.dart';
 import 'package:farm/base/base.dart';
 import 'package:farm/domain/entities/auth/user_data.dart';
 import 'package:farm/domain/usecases/get_user_data_use_case.dart';
@@ -36,14 +36,37 @@ class AccountBloc extends BaseBloc<AccountEvent, AccountState> {
     emit(
       state.copyWith(
         userData: user,
+        feedlotName: (appBloc.state.selectedProject?.name).orEmpty(),
         menuItems: [
           AccountMenuItem(
+            name: 'Ubah Kata Sandi',
+            description: 'Ganti kata sandi yang dipakai untuk masuk',
+            icon: const Icon(Icons.lock_outline),
+
+            /// Kabar berhasil diberikan di sini, bukan di halaman formulir.
+            ///
+            /// Halaman itu menutup dirinya sendiri begitu server menerima, jadi
+            /// pesan apa pun yang ia tampilkan akan ikut hilang pada detik yang
+            /// sama. Layar yang masih berdirilah yang bisa mengabarkannya.
+            action: () async {
+              final changed = await navigator.push<bool>(
+                const AppRouteInfo.changePassword(),
+              );
+              if (changed == true) {
+                navigator.showSuccessSnackBar('Kata sandi berhasil diubah.');
+              }
+            },
+            section: 0,
+          ),
+          AccountMenuItem(
             name: 'Keluar',
+            description: 'Akhiri sesi di perangkat ini',
             icon: const Icon(Icons.logout),
             action: () {
               add(const LogoutPressed());
             },
             section: 1,
+            isDestructive: true,
           ),
         ],
       ),

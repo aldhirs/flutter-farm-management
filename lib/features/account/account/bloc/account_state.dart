@@ -10,6 +10,12 @@ abstract class AccountState extends BaseBlocState with _$AccountState {
   const factory AccountState({
     @Default(UserData()) UserData userData,
     @Default([]) List<AccountMenuItem> menuItems,
+
+    /// Feedlot yang sedang dipilih, disalin dari `AppBloc` saat layar dibuka.
+    ///
+    /// Ditampilkan di sini karena halaman akun adalah tempat orang memastikan
+    /// "saya masuk sebagai siapa, di kebun mana" sebelum mulai bekerja.
+    @Default('') String feedlotName,
     @Default(false) bool logoutBtnLoading,
     @Default('') String packageName,
     @Default(false) bool isShowPopupLogout,
