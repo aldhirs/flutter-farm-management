@@ -6,7 +6,7 @@ final lightTheme = ThemeData(
   brightness: Brightness.light,
   splashColor: Colors.transparent,
   appBarTheme: const AppBarTheme(
-    backgroundColor: Color(0xFF047475),
+    backgroundColor: Color(0xFF3A1D8F),
     foregroundColor: Colors.white,
   ),
   textSelectionTheme: TextSelectionThemeData(

@@ -34,9 +34,9 @@ enum TagCategoryType {
   plain(backgroundColor: Color(0xFFF2F2F2), textColor: Color(0xFF979797)),
   crismon(backgroundColor: Color(0xFFFFE4D7), textColor: Color(0xFFFF3838)),
   gamboge(backgroundColor: Color(0xFFFEF3CC), textColor: Color(0xFFCA7A05)),
-  eucalyptus(backgroundColor: Color(0xFFDCFCE3), textColor: Color(0xFF279780)),
-  mint(backgroundColor: Color(0xFFDCFCE3), textColor: Color(0xFF39B58F)),
-  mintSolid(backgroundColor: Color(0xFF39B58F), textColor: Colors.white),
+  eucalyptus(backgroundColor: Color(0xFFE7E0FF), textColor: Color(0xFF3A1D8F)),
+  mint(backgroundColor: Color(0xFFE7E0FF), textColor: Color(0xFF5B37D0)),
+  mintSolid(backgroundColor: Color(0xFF3A1D8F), textColor: Colors.white),
   deepLemon(backgroundColor: Color(0xFFFEF9D1), textColor: Color(0xFF795705)),
   royalNavy(backgroundColor: Color(0xFFEAF7FF), textColor: Color(0xFF006AD3));
 

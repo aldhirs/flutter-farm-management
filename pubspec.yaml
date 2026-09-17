@@ -149,18 +149,33 @@ flutter:
 
 flutter_launcher_icons:
   android: "launcher_icon"
-  # adaptive_icon_background: "#FFFFFF"
-  # adaptive_icon_foreground: "assets/images/android_app_icon.png"
   ios: true
   image_path: "assets/images/logo.png"
+
+  # Ikon lawas (Android 7 ke bawah, dan iOS): latar putih dipanggang ke dalam
+  # berkasnya. iOS memang menolak ikon bertransparansi.
   image_path_android: "assets/splash/android_launcher_icon.png"
   image_path_ios: "assets/splash/ios_launcher_icon.png"
+  remove_alpha_ios: true
+
+  # Ikon adaptive (Android 8 ke atas). Sistem memotong ikon ini dengan bentuk
+  # pilihan peluncur — bulat, kotak membulat, atau lainnya — jadi latar dan
+  # gambar depannya harus terpisah. Tanpa ini, Android menempelkan latarnya
+  # sendiri di belakang logo, dan warnanya bukan yang kita pilih.
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/splash/android_adaptive_foreground.png"
 
 
 flutter_native_splash:
   android: true
   ios: true
-  web: false
+  web: true
 
   color: "#ffffff"
-  image: assets/splash/logo.png 
+  image: assets/splash/logo.png
+
+  # Android 12+ draws the splash icon inside a circular mask, so it needs its
+  # own asset with the artwork kept inside the safe zone.
+  android_12:
+    color: "#ffffff"
+    image: assets/splash/android12logo.png 
