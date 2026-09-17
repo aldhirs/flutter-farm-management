@@ -2,16 +2,15 @@ import 'package:farm/constants/date_constant.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_bloc.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_event.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_state.dart';
+import 'package:farm/features/drafting/form/widgets/draft_form_layout.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/widgets/buttons/button.dart';
 import 'package:farm/widgets/datepicker/date_picker_input_widget.dart';
-import 'package:farm/widgets/datepicker/date_time_picker_input_widget.dart';
 import 'package:farm/widgets/dropdownview/dropdown_model.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_field.dart';
 import 'package:farm/widgets/inputs/text_input_field.dart';
-import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -72,57 +71,69 @@ class _TreatmentFormBottomSheetState extends State<TreatmentFormBottomSheet> {
             widget.bloc.navigator.pop();
           }
         },
-        child: Container(
-          padding: const EdgeInsets.all(Dimens.d16),
-          alignment: Alignment.topLeft,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            Dimens.d20,
+            Dimens.d4,
+            Dimens.d20,
+            Dimens.d24,
+          ),
           child: Column(
-            spacing: 2,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text("Input Treatment Sapi", style: TextStyles.heading5()),
-              const SizedBox(height: 8),
-              _errorWidget(),
-              const SizedBox(height: 4),
-              const TickerView(
-                type: TickerViewType.info,
-                message:
-                    'Isi data treatment sapi pada formulir di bawah, lalu tekan “Lanjut” untuk menyimpan. Menekan “Tutup” akan membatalkan penyimpanan.',
+              _header(),
+              const SizedBox(height: Dimens.d4),
+              DraftFieldColumn(
+                children: [_dropdownType(), _textInputDate(), _textInputNote()],
               ),
-              const SizedBox(height: 16),
-              _dropdownType(),
-              _textInputDate(),
-              const SizedBox(height: 18),
-              _textInputNote(),
-
-              const SizedBox(height: 24),
-              BlocProvider.value(
-                value: widget.bloc,
-                child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
-                  buildWhen: (p, c) => p.loading != c.loading,
-                  builder: (context, state) {
-                    return Button(
-                      fulLWidth: true,
-                      type: state.loading
-                          ? ButtonType.disabled
-                          : ButtonType.primary,
-                      loading: state.loading,
-                      text: 'Lanjut',
-                      onPressed: () {
-                        widget.bloc.add(const OnSubmitTreatment());
-                      },
-                    );
-                  },
-                ),
+              const SizedBox(height: Dimens.d24),
+              DraftSheetActions(
+                submit: _submitButton(),
+                onDismiss: widget.onDismiss,
               ),
-              Button(
-                fulLWidth: true,
-                type: ButtonType.ghost,
-                text: 'Tutup',
-                onPressed: widget.onDismiss,
-              ),
-              const SizedBox(height: 24),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _header() {
+    return BlocProvider.value(
+      value: widget.bloc,
+      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
+        buildWhen: (p, c) => p.treatmentErrorMessage != c.treatmentErrorMessage,
+        builder: (context, state) {
+          return DraftSheetHeader(
+            title: 'Treatment Sapi',
+            subtitle: 'Catat perlakuan yang diberikan hari ini.',
+            errorMessage: state.treatmentErrorMessage,
+            hint:
+                'Isi seluruh bidang lalu tekan "Lanjut" untuk menyimpan. '
+                'Menekan "Tutup" membatalkan isian.',
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _submitButton() {
+    return BlocProvider.value(
+      value: widget.bloc,
+      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
+        buildWhen: (p, c) => p.loading != c.loading,
+        builder: (context, state) {
+          return Button(
+            fulLWidth: true,
+            type: state.loading ? ButtonType.disabled : ButtonType.primary,
+            loading: state.loading,
+            text: 'Lanjut',
+            onPressed: () {
+              widget.bloc.add(const OnSubmitTreatment());
+            },
+          );
+        },
       ),
     );
   }
@@ -196,24 +207,6 @@ class _TreatmentFormBottomSheetState extends State<TreatmentFormBottomSheet> {
                   .toList();
               widget.bloc.add(TreatmentTypeChanged(values: selected));
             },
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _errorWidget() {
-    return BlocProvider.value(
-      value: widget.bloc,
-      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
-        buildWhen: (p, c) => p.treatmentErrorMessage != c.treatmentErrorMessage,
-        builder: (context, state) {
-          return Visibility(
-            visible: state.treatmentErrorMessage.isNotEmpty,
-            child: TickerView(
-              type: TickerViewType.danger,
-              message: state.treatmentErrorMessage,
-            ),
           );
         },
       ),

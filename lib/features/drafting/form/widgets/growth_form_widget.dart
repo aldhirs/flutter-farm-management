@@ -1,11 +1,16 @@
 import 'package:farm/features/drafting/form/bloc/drafting_form_bloc.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_state.dart';
 import 'package:farm/features/drafting/form/widgets/growth_form_bottom_sheet.dart';
+import 'package:farm/features/drafting/form/widgets/draft_step_card.dart';
 import 'package:farm/navigation/app_navigator.dart';
-import 'package:farm/resources/resource.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// Langkah "Timbang" pada daftar drafting.
+///
+/// Tampilannya dipinjam dari [DraftStepCard] bersama tiga langkah lainnya;
+/// yang khas di sini hanyalah bendera keadaan yang diawasi dan lembar isian
+/// yang dibukanya.
 class GrowthFormWidget extends StatelessWidget {
   const GrowthFormWidget({
     super.key,
@@ -24,8 +29,11 @@ class GrowthFormWidget extends StatelessWidget {
         buildWhen: (p, c) =>
             p.isGrowthSuccess != c.isGrowthSuccess || p.loading != c.loading,
         builder: (context, state) {
-          return InkWell(
-            borderRadius: BorderRadius.circular(16),
+          return DraftStepCard(
+            icon: Icons.scale_outlined,
+            title: 'Timbang',
+            subtitle: 'Bobot sapi saat masuk kandang',
+            isDone: state.isGrowthSuccess,
             onTap: () {
               navigator.showBottomSheet(
                 GrowthFormBottomSheet(
@@ -37,34 +45,6 @@ class GrowthFormWidget extends StatelessWidget {
                 enableDrag: false,
               );
             },
-            child: Card(
-              elevation: 0.3,
-              color: state.isGrowthSuccess
-                  ? AppColors.current.mint200
-                  : AppColors.current.neutral200,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsetsGeometry.symmetric(
-                  vertical: 24,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.scale_outlined),
-                    const SizedBox(width: 8),
-                    Expanded(child: Text("Timbang", style: TextStyles.body1())),
-                    Icon(
-                      state.isGrowthSuccess
-                          ? Icons.check_circle_outlined
-                          : Icons.circle_outlined,
-                      color: AppColors.current.neutral800,
-                    ),
-                  ],
-                ),
-              ),
-            ),
           );
         },
       ),

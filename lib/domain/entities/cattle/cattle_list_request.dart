@@ -9,6 +9,14 @@ abstract class CattleListRequest extends BaseInput with _$CattleListRequest {
   const factory CattleListRequest({
     @Default('') String id_pen,
     @Default('') String status,
+    @Default('') String id_project,
+
+    /// Kirim 'no' untuk hanya menampilkan ternak yang belum didrafting.
+    ///
+    /// Nilai yang sama menyaring hitungan kartu "Draf Sapi" di beranda, jadi
+    /// angka pada kartu dan jumlah baris di daftar ini berasal dari satu
+    /// aturan yang sama di server.
+    @Default('') String drafted,
     @Default(1) int page,
     @Default(20) int limit,
   }) = _CattleListRequest;

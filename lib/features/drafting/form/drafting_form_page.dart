@@ -5,7 +5,8 @@ import 'package:farm/extensions/string.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_bloc.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_event.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_state.dart';
-import 'package:farm/features/drafting/form/model/list_item.dart';
+import 'package:farm/features/drafting/form/widgets/cattle_identity_sheet.dart';
+import 'package:farm/features/drafting/form/widgets/draft_form_layout.dart';
 import 'package:farm/features/drafting/form/widgets/identity_form_widget.dart';
 import 'package:farm/features/drafting/form/widgets/growth_form_widget.dart';
 import 'package:farm/features/drafting/form/widgets/medical_form_widget.dart';
@@ -16,6 +17,7 @@ import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/utils/view_utils.dart';
 import 'package:farm/views/view.dart';
 import 'package:farm/widgets/popup/popup.dart';
+import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
@@ -129,24 +131,38 @@ class _DraftingFormPageState
           return SingleChildScrollView(
             physics: const ScrollPhysics(),
             child: Padding(
-              padding: const EdgeInsetsGeometry.all(16),
+              /// Ruang bawah disisakan untuk tombol "Selesai" yang mengambang.
+              ///
+              /// Tanpanya, kartu langkah terakhir berhenti tepat di bawah
+              /// tombol dan tidak pernah bisa digeser keluar dari bawahnya.
+              padding: const EdgeInsets.fromLTRB(
+                Dimens.d16,
+                Dimens.d16,
+                Dimens.d16,
+                Dimens.d96,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _animalIdentityWidget(state),
-                  const SizedBox(height: 24),
-                  Text('Perbarui Data', style: TextStyles.body1()),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: Dimens.d20),
+                  _progressWidget(),
+                  const SizedBox(height: Dimens.d12),
                   const TickerView(
                     type: TickerViewType.warning,
                     message:
                         "Data hanya akan tersimpan bila formulir dilanjutkan. Menutup formulir akan membatalkan data yang telah diisi.",
                   ),
-                  const SizedBox(height: 8),
-                  IdentityFormWidget(bloc: bloc, navigator: navigator),
-                  GrowthFormWidget(bloc: bloc, navigator: navigator),
-                  TreatmentFormWidget(bloc: bloc, navigator: navigator),
-                  MedicalFormWidget(bloc: bloc, navigator: navigator),
+                  const SizedBox(height: Dimens.d16),
+                  DraftFieldColumn(
+                    gap: Dimens.d12,
+                    children: [
+                      IdentityFormWidget(bloc: bloc, navigator: navigator),
+                      GrowthFormWidget(bloc: bloc, navigator: navigator),
+                      TreatmentFormWidget(bloc: bloc, navigator: navigator),
+                      MedicalFormWidget(bloc: bloc, navigator: navigator),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -189,64 +205,219 @@ class _DraftingFormPageState
     );
   }
 
-  Widget _itemWidget(ListItem item) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              item.name,
-              style: TextStyles.body2().copyWith(fontWeight: FontWeight.w400),
-            ),
-          ),
-          Expanded(
-            flex: 4,
-            child: Text(
-              item.description.defaultValue('-'),
-              textAlign: TextAlign.end,
-              style: TextStyles.body2(),
-            ),
-          ),
-        ],
+  /// Kemajuan pengisian: berapa dari empat langkah yang sudah beres.
+  ///
+  /// Keempat kartu di bawahnya sudah menandai keadaannya masing-masing, tapi
+  /// satu per satu. Baris ini menjawab pertanyaan yang berbeda dan lebih sering
+  /// ditanyakan di lapangan — apakah sapi ini masih menyisakan pekerjaan —
+  /// tanpa perlu menghitung sendiri empat ikon centang.
+  Widget _progressWidget() {
+    return BlocProvider.value(
+      value: bloc,
+      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
+        buildWhen: (p, c) =>
+            p.isIdentitySuccess != c.isIdentitySuccess ||
+            p.isGrowthSuccess != c.isGrowthSuccess ||
+            p.isTreatmentSuccess != c.isTreatmentSuccess ||
+            p.isMedicalSuccess != c.isMedicalSuccess,
+        builder: (context, state) {
+          final done = [
+            state.isIdentitySuccess,
+            state.isGrowthSuccess,
+            state.isTreatmentSuccess,
+            state.isMedicalSuccess,
+          ].where((value) => value).length;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Perbarui Data',
+                      style: TextStyles.body2().copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.current.mint800,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '$done dari 4 langkah',
+                    style: TextStyles.label3().copyWith(
+                      color: AppColors.current.neutral600,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: Dimens.d8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(Dimens.d8),
+                child: LinearProgressIndicator(
+                  value: done / 4,
+                  minHeight: Dimens.d6,
+                  backgroundColor: AppColors.current.mint200,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppColors.current.mint700,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
+  /// Kartu sapi di kepala halaman; keterangan lengkapnya ada di lembar bawah.
   Widget _animalIdentityWidget(DraftingFormState state) {
-    return Card(
+    final colors = AppColors.current;
+    final earTag = state.cattle.ear_tag;
+    final rfid = state.cattle.rfid_tag;
+
+    /// Yang dibesarkan adalah nomor yang sapinya memang punya.
+    ///
+    /// Sapi yang sedang didrafting justru sering belum ber-ear tag — memberinya
+    /// ear tag adalah salah satu langkah di halaman ini — sehingga menjadikan
+    /// ear tag sebagai judul membuat kartunya berkepala tanda hubung. RFID
+    /// selalu ada, karena itulah yang dipindai untuk sampai ke sini.
+    final hasEarTag = earTag.isNotEmpty;
+    final title = hasEarTag ? earTag : rfid.defaultValue('-');
+    final titleLabel = hasEarTag ? 'Ear Tag' : 'RFID';
+
+    return Material(
       color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: ExpansionTile(
-        shape: const RoundedRectangleBorder(side: BorderSide.none),
-        title: Text("Identitas Sapi", style: TextStyles.body1()),
-        subtitle: Text(
-          state.cattle.ear_tag.defaultValue("-"),
-          style: TextStyles.label2(),
-        ),
-        children: [
-          ListView.separated(
-            separatorBuilder: (context, index) => const Divider(),
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: state.listItems.length,
-            itemBuilder: (context, index) {
-              final item = state.listItems[index];
-              return _itemWidget(item);
-            },
+      borderRadius: BorderRadius.circular(Dimens.d20),
+      child: InkWell(
+        onTap: () => _onShowIdentity(state),
+        borderRadius: BorderRadius.circular(Dimens.d20),
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Dimens.d20),
+            border: Border.all(color: colors.neutral300),
           ),
-        ],
+          child: Padding(
+            padding: const EdgeInsets.all(Dimens.d16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: Dimens.d44,
+                      height: Dimens.d44,
+                      decoration: BoxDecoration(
+                        color: colors.mint200,
+                        borderRadius: BorderRadius.circular(Dimens.d14),
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.pets,
+                        size: Dimens.d20,
+                        color: colors.mint700,
+                      ),
+                    ),
+                    const SizedBox(width: Dimens.d14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            titleLabel,
+                            style: TextStyles.label3().copyWith(
+                              color: colors.neutral600,
+                            ),
+                          ),
+                          const SizedBox(height: Dimens.d2),
+                          Text(
+                            title,
+                            style: TextStyles.heading6().copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: colors.mint800,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (state.cattle.statusLabel().isNotEmpty)
+                      TagCategory(
+                        text: state.cattle.statusLabel(),
+                        type: TagCategoryType.mint,
+                      ),
+                  ],
+                ),
+                const SizedBox(height: Dimens.d12),
+                Divider(height: 1, thickness: 1, color: colors.neutral300),
+                const SizedBox(height: Dimens.d12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Icon(
+                            hasEarTag
+                                ? Icons.qr_code_2_outlined
+                                : Icons.sell_outlined,
+                            size: Dimens.d14,
+                            color: colors.neutral600,
+                          ),
+                          const SizedBox(width: Dimens.d6),
+                          Expanded(
+                            child: Text(
+                              hasEarTag
+                                  ? rfid.defaultValue('-')
+                                  : 'Ear tag belum ditentukan',
+                              style: TextStyles.label2().copyWith(
+                                color: colors.neutral600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: Dimens.d8),
+                    Text(
+                      'Lihat detail',
+                      style: TextStyles.label2().copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: colors.mint700,
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right,
+                      size: Dimens.d18,
+                      color: colors.mint700,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
+    );
+  }
+
+  void _onShowIdentity(DraftingFormState state) {
+    navigator.showBottomSheet(
+      CattleIdentitySheet(
+        earTag: state.cattle.ear_tag,
+        rfid: state.cattle.rfid_tag,
+        status: state.cattle.statusLabel(),
+        items: state.listItems,
+      ),
+      isScrollControlled: true,
     );
   }
 
   Widget _finishButton() {
     final isNotFound = bloc.state.errorMessage.contains('record not found');
     return FloatingActionButton.extended(
-      backgroundColor: AppColors.current.eucalyptus700,
+      backgroundColor: AppColors.current.mint700,
       onPressed: () {
         final state = bloc.state;
         if (state.isIdentitySuccess ||

@@ -699,25 +699,37 @@ class DraftingFormBloc extends BaseBloc<DraftingFormEvent, DraftingFormState> {
   }
 
   List<ListItem> _getCattleItems(Cattle data) {
+    /// Dikelompokkan, dan ear tag hanya sekali.
+    ///
+    /// Daftar sebelumnya memuat 'Ear Tag' dua kali — sekali di antara identitas
+    /// dan sekali lagi setelah pen — jadi lembar keterangan menampilkan nomor
+    /// yang sama dua baris terpisah, yang terbaca seolah sapinya punya dua.
     final items = [
-      ListItem(name: 'ID', description: data.id),
-      ListItem(name: 'RFID', description: data.rfid_tag),
-      ListItem(name: 'Ear Tag', description: data.ear_tag),
-      ListItem(name: 'Kandang', description: data.pen?.name_barn ?? '-'),
-      ListItem(name: 'Pen', description: data.pen?.name ?? '-'),
-      ListItem(name: 'Ear Tag', description: data.ear_tag),
+      ListItem(group: 'Identitas', name: 'Ear Tag', description: data.ear_tag),
       ListItem(
+        group: 'Identitas',
         name: 'Bobot',
         description: '${data.actual_weight.toString()} Kg',
       ),
+      ListItem(group: 'Identitas', name: 'ID Sapi', description: data.id),
       ListItem(
+        group: 'Lokasi',
+        name: 'Kandang',
+        description: data.pen?.name_barn ?? '-',
+      ),
+      ListItem(
+        group: 'Lokasi',
+        name: 'Pen',
+        description: data.pen?.name ?? '-',
+      ),
+      ListItem(
+        group: 'Asal',
         name: 'Shipment',
         description: (data.reception?.title).defaultValue('-'),
       ),
-      ListItem(name: 'Breed', description: data.id_breed),
-      ListItem(name: 'IMP', description: data.id_supplier),
-      ListItem(name: 'POO', description: data.id_station),
-      ListItem(name: 'Status', description: data.statusLabel()),
+      ListItem(group: 'Asal', name: 'Breed', description: data.id_breed),
+      ListItem(group: 'Asal', name: 'IMP', description: data.id_supplier),
+      ListItem(group: 'Asal', name: 'POO', description: data.id_station),
     ];
     return items;
   }

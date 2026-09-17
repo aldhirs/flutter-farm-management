@@ -1,10 +1,10 @@
 import 'package:dartx/dartx.dart';
 import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/entities/pen/pen.dart';
-import 'package:farm/extensions/int.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_bloc.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_event.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_state.dart';
+import 'package:farm/features/drafting/form/widgets/draft_form_layout.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/utils/ui_utils.dart';
@@ -13,7 +13,6 @@ import 'package:farm/widgets/dropdownview/dropdown_model.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_field.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_pen_field.dart';
 import 'package:farm/widgets/inputs/text_input_field.dart';
-import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -72,58 +71,76 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
             widget.bloc.navigator.pop();
           }
         },
-        child: Container(
-          padding: const EdgeInsets.all(Dimens.d16),
-          alignment: Alignment.topLeft,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            Dimens.d20,
+            Dimens.d4,
+            Dimens.d20,
+            Dimens.d24,
+          ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text("Input Identitas Sapi", style: TextStyles.heading5()),
-              const SizedBox(height: 8),
-              _errorWidget(),
-              const SizedBox(height: 4),
-              const TickerView(
-                type: TickerViewType.info,
-                message:
-                    'Isi semua data sapi pada formulir di bawah, lalu tekan “Lanjut” untuk menyimpan. Menekan “Tutup” akan membatalkan penyimpanan.',
-              ),
-              const SizedBox(height: 16),
+              _header(),
 
-              _textInputEarTag(),
-              const SizedBox(height: 16),
-              _dropdownBarn(),
-              _dropdownPen(),
-
-              // _dropdownLevel(),
-              const SizedBox(height: 24),
-              BlocProvider.value(
-                value: widget.bloc,
-                child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
-                  buildWhen: (p, c) => p.loading != c.loading,
-                  builder: (context, state) {
-                    return Button(
-                      fulLWidth: true,
-                      type: state.loading
-                          ? ButtonType.disabled
-                          : ButtonType.primary,
-                      loading: state.loading,
-                      text: 'Lanjut',
-                      onPressed: () {
-                        widget.bloc.add(const OnSubmitIdentity());
-                      },
-                    );
-                  },
-                ),
+              /// Ketiga bidang diberi jarak oleh satu pihak saja.
+              ///
+              /// Sebelumnya jaraknya campuran: 16 dipasang tangan antara ear
+              /// tag dan kandang, sementara kandang dan pen hanya berjarak
+              /// bawaan dropdown — yang besarnya bahkan berubah menurut tinggi
+              /// bilah gestur ponselnya.
+              const SizedBox(height: Dimens.d4),
+              DraftFieldColumn(
+                children: [_textInputEarTag(), _dropdownBarn(), _dropdownPen()],
               ),
-              Button(
-                fulLWidth: true,
-                type: ButtonType.ghost,
-                text: 'Tutup',
-                onPressed: widget.onDismiss,
+              const SizedBox(height: Dimens.d24),
+              DraftSheetActions(
+                submit: _submitButton(),
+                onDismiss: widget.onDismiss,
               ),
-              const SizedBox(height: 24),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _header() {
+    return BlocProvider.value(
+      value: widget.bloc,
+      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
+        buildWhen: (p, c) => p.identityErrorMessage != c.identityErrorMessage,
+        builder: (context, state) {
+          return DraftSheetHeader(
+            title: 'Identitas Sapi',
+            subtitle: 'Beri nomor telinga dan tentukan tempat sapi ditaruh.',
+            errorMessage: state.identityErrorMessage,
+            hint:
+                'Isi seluruh bidang lalu tekan "Lanjut" untuk menyimpan. '
+                'Menekan "Tutup" membatalkan isian.',
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _submitButton() {
+    return BlocProvider.value(
+      value: widget.bloc,
+      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
+        buildWhen: (p, c) => p.loading != c.loading,
+        builder: (context, state) {
+          return Button(
+            fulLWidth: true,
+            type: state.loading ? ButtonType.disabled : ButtonType.primary,
+            loading: state.loading,
+            text: 'Lanjut',
+            onPressed: () {
+              widget.bloc.add(const OnSubmitIdentity());
+            },
+          );
+        },
       ),
     );
   }
@@ -253,24 +270,6 @@ class _IdentityFormBottomSheetState extends State<IdentityFormBottomSheet> {
                   .first;
               widget.bloc.add(LevelChanged(value: selected));
             },
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _errorWidget() {
-    return BlocProvider.value(
-      value: widget.bloc,
-      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
-        buildWhen: (p, c) => p.identityErrorMessage != c.identityErrorMessage,
-        builder: (context, state) {
-          return Visibility(
-            visible: state.identityErrorMessage.isNotEmpty,
-            child: TickerView(
-              type: TickerViewType.danger,
-              message: state.identityErrorMessage,
-            ),
           );
         },
       ),

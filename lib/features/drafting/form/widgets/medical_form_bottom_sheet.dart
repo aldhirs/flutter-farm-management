@@ -5,6 +5,7 @@ import 'package:farm/extensions/bool.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_bloc.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_event.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_state.dart';
+import 'package:farm/features/drafting/form/widgets/draft_form_layout.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/enum/dropdown_type_enum.dart';
 import 'package:farm/utils/ui_utils.dart';
@@ -13,7 +14,6 @@ import 'package:farm/widgets/checkbox/checkbox_button.dart';
 import 'package:farm/widgets/dropdownview/dropdown_model.dart';
 import 'package:farm/widgets/dropdownview/dropdown_view_field.dart';
 import 'package:farm/widgets/inputs/text_input_field.dart';
-import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -24,12 +24,12 @@ class MedicalFormBottomSheet extends StatefulWidget {
     super.key,
     required this.bloc,
     required this.onDismiss,
-    required this.scrollController,
+    this.scrollController,
   });
 
   final DraftingFormBloc bloc;
   final VoidCallback onDismiss;
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   @override
   State<MedicalFormBottomSheet> createState() => _MedicalFormBottomSheetState();
@@ -67,87 +67,119 @@ class _MedicalFormBottomSheetState extends State<MedicalFormBottomSheet> {
             widget.bloc.navigator.pop();
           }
         },
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                controller: widget.scrollController,
-                child: Container(
-                  padding: const EdgeInsets.all(Dimens.d16),
-                  child: Column(
-                    spacing: 2,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 24),
-                      Text("Input Medis Sapi", style: TextStyles.heading5()),
-                      const SizedBox(height: 8),
-                      _errorWidget(),
-                      const SizedBox(height: 4),
-                      const TickerView(
-                        type: TickerViewType.info,
-                        message:
-                            'Isi data medis sapi pada formulir di bawah, lalu tekan “Lanjut” untuk menyimpan. Menekan “Tutup” akan membatalkan penyimpanan.',
-                      ),
-                      const SizedBox(height: 16),
-                      _dropdownType(),
-                      _dropdownStatus(),
-                      _textInputNote(),
-                      _textInputInfection(),
 
-                      // _fileUploader(),
-                      const SizedBox(height: 24),
-                    ],
+        /// Lembar ini punya tinggi, dan tombolnya menempel di bawah tinggi itu.
+        ///
+        /// Isinya paling panjang di antara empat lembar drafting, jadi badannya
+        /// digulung sementara tombol "Lanjut" tetap terlihat. Susunan itu hanya
+        /// mungkin bila tingginya diketahui: `Flexible` di dalam kolom yang
+        /// tingginya tak terbatas tidak punya sisa ruang untuk dibagi, dan
+        /// Flutter menolak melukisnya. Dibatasi 85% layar — cukup untuk terbaca
+        /// sebagai lembar yang menumpang, bukan halaman penuh.
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.85,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: SingleChildScrollView(
+                  controller: widget.scrollController,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      Dimens.d20,
+                      Dimens.d4,
+                      Dimens.d20,
+                      Dimens.d24,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _header(),
+                        const SizedBox(height: Dimens.d4),
+                        DraftFieldColumn(
+                          children: [
+                            _dropdownType(),
+                            _dropdownStatus(),
+                            _textInputNote(),
+                            _textInputInfection(),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    offset: Offset(0, -4), // arah ke atas
-                    blurRadius: 8, // lembutnya bayangan
-                    spreadRadius: 0,
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.only(left: 16, right: 16),
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  BlocProvider.value(
-                    value: widget.bloc,
-                    child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
-                      buildWhen: (p, c) => p.loading != c.loading,
-                      builder: (context, state) {
-                        return Button(
-                          fulLWidth: true,
-                          type: state.loading
-                              ? ButtonType.disabled
-                              : ButtonType.primary,
-                          loading: state.loading,
-                          text: 'Lanjut',
-                          onPressed: () {
-                            widget.bloc.add(const OnSubmitMedical());
-                          },
-                        );
-                      },
+              Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      offset: Offset(0, -4), // arah ke atas
+                      blurRadius: 8, // lembutnya bayangan
+                      spreadRadius: 0,
                     ),
-                  ),
-                  Button(
-                    fulLWidth: true,
-                    type: ButtonType.ghost,
-                    text: 'Tutup',
-                    onPressed: widget.onDismiss,
-                  ),
-                  const SizedBox(height: 16),
-                ],
+                  ],
+                ),
+                padding: const EdgeInsets.only(
+                  left: Dimens.d20,
+                  right: Dimens.d20,
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: Dimens.d16),
+                    DraftSheetActions(
+                      submit: _submitButton(),
+                      onDismiss: widget.onDismiss,
+                    ),
+                    const SizedBox(height: Dimens.d16),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _submitButton() {
+    return BlocProvider.value(
+      value: widget.bloc,
+      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
+        buildWhen: (p, c) => p.loading != c.loading,
+        builder: (context, state) {
+          return Button(
+            fulLWidth: true,
+            type: state.loading ? ButtonType.disabled : ButtonType.primary,
+            loading: state.loading,
+            text: 'Lanjut',
+            onPressed: () {
+              widget.bloc.add(const OnSubmitMedical());
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _header() {
+    return BlocProvider.value(
+      value: widget.bloc,
+      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
+        buildWhen: (p, c) => p.medicalErrorMessage != c.medicalErrorMessage,
+        builder: (context, state) {
+          return DraftSheetHeader(
+            title: 'Medis Sapi',
+            subtitle: 'Catat hasil pemeriksaan dan status kesehatannya.',
+            errorMessage: state.medicalErrorMessage,
+            hint:
+                'Isi seluruh bidang lalu tekan "Lanjut" untuk menyimpan. '
+                'Menekan "Tutup" membatalkan isian.',
+          );
+        },
       ),
     );
   }
@@ -393,23 +425,5 @@ class _MedicalFormBottomSheetState extends State<MedicalFormBottomSheet> {
         type: ToastType.warning,
       );
     }
-  }
-
-  Widget _errorWidget() {
-    return BlocProvider.value(
-      value: widget.bloc,
-      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
-        buildWhen: (p, c) => p.medicalErrorMessage != c.medicalErrorMessage,
-        builder: (context, state) {
-          return Visibility(
-            visible: state.medicalErrorMessage.isNotEmpty,
-            child: TickerView(
-              type: TickerViewType.danger,
-              message: state.medicalErrorMessage,
-            ),
-          );
-        },
-      ),
-    );
   }
 }
