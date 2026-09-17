@@ -24,7 +24,7 @@ class DashboardPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      const Color(0xFF25AFCB),
+                      AppColors.current.mint700,
                       AppColors.current.mint500,
                     ],
                     begin: Alignment.topLeft,
@@ -81,7 +81,7 @@ class DashboardPage extends StatelessWidget {
                         _buildInfoChip("Bobot", "420 Kg", Colors.blue),
                         _buildInfoChip("Drafting", "12-09-2025", Colors.orange),
                         _buildInfoChip("Kandang", "A", Colors.purple),
-                        _buildInfoChip("Pen", "7", Colors.teal),
+                        _buildInfoChip("Pen", "7", AppColors.current.mint700),
                         _buildInfoChip("Kelamin", "Jantan", Colors.indigo),
                         _buildInfoChip("Grade", "A+", Colors.red),
                       ],
@@ -302,277 +302,276 @@ class DashboardPage extends StatelessWidget {
   }
 }
 
+// @override
+// Widget build(BuildContext context) {
+//   return Scaffold(
+//     backgroundColor: const Color(0xFFF5F7FA),
+//     appBar: AppBar(
+//       elevation: 0,
+//       backgroundColor: Colors.white,
+//       centerTitle: true,
+//       title: const Text(
+//         "Profil Sapi",
+//         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+//       ),
+//       iconTheme: const IconThemeData(color: Colors.black87),
+//     ),
+//     body: SingleChildScrollView(
+//       padding: const EdgeInsets.all(16),
+//       child: Column(
+//         children: [
+//           /// --- Info Utama Sapi ---
+//           Container(
+//             padding: const EdgeInsets.all(16),
+//             decoration: BoxDecoration(
+//               color: Colors.white,
+//               borderRadius: BorderRadius.circular(20),
+//               boxShadow: [
+//                 BoxShadow(
+//                   color: Colors.black12.withOpacity(0.05),
+//                   blurRadius: 8,
+//                   offset: const Offset(0, 4),
+//                 ),
+//               ],
+//             ),
+//             child: Column(
+//               children: [
+//                 CircleAvatar(
+//                   radius: 40,
+//                   backgroundColor: Colors.blue.shade100,
+//                   child: const Icon(Icons.pets, size: 40, color: Colors.blue),
+//                 ),
+//                 const SizedBox(height: 12),
+//                 const Text(
+//                   "Ear Tag: 12345",
+//                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//                 ),
+//                 const Divider(height: 24),
+//                 _buildInfoRow("RFID", "RFID-908765"),
+//                 _buildInfoRow("Status", "Sehat"),
+//                 _buildInfoRow("Bobot Akhir", "420 Kg"),
+//                 _buildInfoRow("Tanggal Drafting", "12-09-2025"),
+//                 _buildInfoRow("Kandang", "Kandang A"),
+//                 _buildInfoRow("Pen", "Pen 7"),
+//                 _buildInfoRow("Jenis Kelamin", "Jantan"),
+//                 _buildInfoRow("Grade Sapi", "A+"),
+//               ],
+//             ),
+//           ),
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     backgroundColor: const Color(0xFFF5F7FA),
-  //     appBar: AppBar(
-  //       elevation: 0,
-  //       backgroundColor: Colors.white,
-  //       centerTitle: true,
-  //       title: const Text(
-  //         "Profil Sapi",
-  //         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-  //       ),
-  //       iconTheme: const IconThemeData(color: Colors.black87),
-  //     ),
-  //     body: SingleChildScrollView(
-  //       padding: const EdgeInsets.all(16),
-  //       child: Column(
-  //         children: [
-  //           /// --- Info Utama Sapi ---
-  //           Container(
-  //             padding: const EdgeInsets.all(16),
-  //             decoration: BoxDecoration(
-  //               color: Colors.white,
-  //               borderRadius: BorderRadius.circular(20),
-  //               boxShadow: [
-  //                 BoxShadow(
-  //                   color: Colors.black12.withOpacity(0.05),
-  //                   blurRadius: 8,
-  //                   offset: const Offset(0, 4),
-  //                 ),
-  //               ],
-  //             ),
-  //             child: Column(
-  //               children: [
-  //                 CircleAvatar(
-  //                   radius: 40,
-  //                   backgroundColor: Colors.blue.shade100,
-  //                   child: const Icon(Icons.pets, size: 40, color: Colors.blue),
-  //                 ),
-  //                 const SizedBox(height: 12),
-  //                 const Text(
-  //                   "Ear Tag: 12345",
-  //                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-  //                 ),
-  //                 const Divider(height: 24),
-  //                 _buildInfoRow("RFID", "RFID-908765"),
-  //                 _buildInfoRow("Status", "Sehat"),
-  //                 _buildInfoRow("Bobot Akhir", "420 Kg"),
-  //                 _buildInfoRow("Tanggal Drafting", "12-09-2025"),
-  //                 _buildInfoRow("Kandang", "Kandang A"),
-  //                 _buildInfoRow("Pen", "Pen 7"),
-  //                 _buildInfoRow("Jenis Kelamin", "Jantan"),
-  //                 _buildInfoRow("Grade Sapi", "A+"),
-  //               ],
-  //             ),
-  //           ),
+//           /// HEADER PROFILE CARD
+//           Container(
+//             width: double.infinity,
+//             padding: const EdgeInsets.all(20),
+//             decoration: BoxDecoration(
+//               gradient: const LinearGradient(
+//                 colors: [Color(0xFF0066FF), Color(0xFF33CCFF)],
+//                 begin: Alignment.topLeft,
+//                 end: Alignment.bottomRight,
+//               ),
+//               borderRadius: BorderRadius.circular(20),
+//               boxShadow: [
+//                 BoxShadow(
+//                   color: Colors.blue.withOpacity(0.2),
+//                   blurRadius: 10,
+//                   offset: const Offset(0, 6),
+//                 ),
+//               ],
+//             ),
+//             child: Column(
+//               children: [
+//                 const CircleAvatar(
+//                   radius: 40,
+//                   backgroundColor: Colors.white,
+//                   child: Icon(Icons.pets, size: 40, color: Colors.blue),
+//                 ),
+//                 const SizedBox(height: 12),
+//                 const Text(
+//                   "Ear Tag: 12345",
+//                   style: TextStyle(
+//                     fontSize: 18,
+//                     fontWeight: FontWeight.bold,
+//                     color: Colors.white,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 8),
+//                 const Text(
+//                   "RFID: RFID-908765",
+//                   style: TextStyle(fontSize: 14, color: Colors.white70),
+//                 ),
+//                 const SizedBox(height: 16),
+//                 Wrap(
+//                   alignment: WrapAlignment.center,
+//                   spacing: 16,
+//                   runSpacing: 12,
+//                   children: [
+//                     _buildChip("Status: Sehat"),
+//                     _buildChip("Bobot: 420 Kg"),
+//                     _buildChip("Drafting: 12-09-2025"),
+//                     _buildChip("Kandang: A"),
+//                     _buildChip("Pen: 7"),
+//                     _buildChip("Kelamin: Jantan"),
+//                     _buildChip("Grade: A+"),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
 
-  //           /// HEADER PROFILE CARD
-  //           Container(
-  //             width: double.infinity,
-  //             padding: const EdgeInsets.all(20),
-  //             decoration: BoxDecoration(
-  //               gradient: const LinearGradient(
-  //                 colors: [Color(0xFF0066FF), Color(0xFF33CCFF)],
-  //                 begin: Alignment.topLeft,
-  //                 end: Alignment.bottomRight,
-  //               ),
-  //               borderRadius: BorderRadius.circular(20),
-  //               boxShadow: [
-  //                 BoxShadow(
-  //                   color: Colors.blue.withOpacity(0.2),
-  //                   blurRadius: 10,
-  //                   offset: const Offset(0, 6),
-  //                 ),
-  //               ],
-  //             ),
-  //             child: Column(
-  //               children: [
-  //                 const CircleAvatar(
-  //                   radius: 40,
-  //                   backgroundColor: Colors.white,
-  //                   child: Icon(Icons.pets, size: 40, color: Colors.blue),
-  //                 ),
-  //                 const SizedBox(height: 12),
-  //                 const Text(
-  //                   "Ear Tag: 12345",
-  //                   style: TextStyle(
-  //                     fontSize: 18,
-  //                     fontWeight: FontWeight.bold,
-  //                     color: Colors.white,
-  //                   ),
-  //                 ),
-  //                 const SizedBox(height: 8),
-  //                 const Text(
-  //                   "RFID: RFID-908765",
-  //                   style: TextStyle(fontSize: 14, color: Colors.white70),
-  //                 ),
-  //                 const SizedBox(height: 16),
-  //                 Wrap(
-  //                   alignment: WrapAlignment.center,
-  //                   spacing: 16,
-  //                   runSpacing: 12,
-  //                   children: [
-  //                     _buildChip("Status: Sehat"),
-  //                     _buildChip("Bobot: 420 Kg"),
-  //                     _buildChip("Drafting: 12-09-2025"),
-  //                     _buildChip("Kandang: A"),
-  //                     _buildChip("Pen: 7"),
-  //                     _buildChip("Kelamin: Jantan"),
-  //                     _buildChip("Grade: A+"),
-  //                   ],
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
+//           const SizedBox(height: 24),
 
-  //           const SizedBox(height: 24),
+//           /// TREATMENT LIST
+//           _buildSectionTitle("Riwayat Perawatan"),
+//           _buildListCard([
+//             {
+//               "keterangan": "Vitamin",
+//               "jenis": "Suplemen",
+//               "tanggal": "01-09-2025",
+//             },
+//             {
+//               "keterangan": "Vaksinasi",
+//               "jenis": "Imunisasi",
+//               "tanggal": "05-09-2025",
+//             },
+//           ]),
 
-  //           /// TREATMENT LIST
-  //           _buildSectionTitle("Riwayat Perawatan"),
-  //           _buildListCard([
-  //             {
-  //               "keterangan": "Vitamin",
-  //               "jenis": "Suplemen",
-  //               "tanggal": "01-09-2025",
-  //             },
-  //             {
-  //               "keterangan": "Vaksinasi",
-  //               "jenis": "Imunisasi",
-  //               "tanggal": "05-09-2025",
-  //             },
-  //           ]),
+//           const SizedBox(height: 24),
 
-  //           const SizedBox(height: 24),
+//           /// MEDICAL LIST
+//           _buildSectionTitle("Catatan Medis"),
+//           _buildListCard([
+//             {
+//               "keterangan": "Demam ringan",
+//               "jenis": "Infeksi",
+//               "tanggal": "20-08-2025",
+//             },
+//             {
+//               "keterangan": "Luka kecil",
+//               "jenis": "Cedera",
+//               "tanggal": "28-08-2025",
+//             },
+//           ]),
+//         ],
+//       ),
+//     ),
+//   );
+// }
 
-  //           /// MEDICAL LIST
-  //           _buildSectionTitle("Catatan Medis"),
-  //           _buildListCard([
-  //             {
-  //               "keterangan": "Demam ringan",
-  //               "jenis": "Infeksi",
-  //               "tanggal": "20-08-2025",
-  //             },
-  //             {
-  //               "keterangan": "Luka kecil",
-  //               "jenis": "Cedera",
-  //               "tanggal": "28-08-2025",
-  //             },
-  //           ]),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+// /// --- CHIP STYLE INFO
+// Widget _buildChip(String text) {
+//   return Container(
+//     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+//     decoration: BoxDecoration(
+//       color: Colors.white.withOpacity(0.2),
+//       borderRadius: BorderRadius.circular(12),
+//     ),
+//     child: Text(
+//       text,
+//       style: const TextStyle(color: Colors.white, fontSize: 13),
+//     ),
+//   );
+// }
 
-  // /// --- CHIP STYLE INFO
-  // Widget _buildChip(String text) {
-  //   return Container(
-  //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-  //     decoration: BoxDecoration(
-  //       color: Colors.white.withOpacity(0.2),
-  //       borderRadius: BorderRadius.circular(12),
-  //     ),
-  //     child: Text(
-  //       text,
-  //       style: const TextStyle(color: Colors.white, fontSize: 13),
-  //     ),
-  //   );
-  // }
+// /// --- SECTION TITLE
+// Widget _buildSectionTitle(String title) {
+//   return Align(
+//     alignment: Alignment.centerLeft,
+//     child: Text(
+//       title,
+//       style: const TextStyle(
+//         fontSize: 16,
+//         fontWeight: FontWeight.bold,
+//         color: Colors.black87,
+//       ),
+//     ),
+//   );
+// }
 
-  // /// --- SECTION TITLE
-  // Widget _buildSectionTitle(String title) {
-  //   return Align(
-  //     alignment: Alignment.centerLeft,
-  //     child: Text(
-  //       title,
-  //       style: const TextStyle(
-  //         fontSize: 16,
-  //         fontWeight: FontWeight.bold,
-  //         color: Colors.black87,
-  //       ),
-  //     ),
-  //   );
-  // }
+// /// --- LIST CARD
+// Widget _buildListCard(List<Map<String, String>> items) {
+//   return Column(
+//     children: items.map((item) {
+//       return Container(
+//         margin: const EdgeInsets.only(top: 12),
+//         padding: const EdgeInsets.all(16),
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(16),
+//           boxShadow: [
+//             BoxShadow(
+//               color: Colors.black12.withOpacity(0.05),
+//               blurRadius: 8,
+//               offset: const Offset(0, 4),
+//             ),
+//           ],
+//         ),
+//         child: Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Container(
+//               padding: const EdgeInsets.all(12),
+//               decoration: BoxDecoration(
+//                 color: Colors.blue.shade50,
+//                 borderRadius: BorderRadius.circular(12),
+//               ),
+//               child: const Icon(
+//                 Icons.medical_services,
+//                 color: Colors.blue,
+//                 size: 28,
+//               ),
+//             ),
+//             const SizedBox(width: 16),
+//             Expanded(
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     item["keterangan"]!,
+//                     style: const TextStyle(
+//                       fontSize: 15,
+//                       fontWeight: FontWeight.bold,
+//                     ),
+//                   ),
+//                   const SizedBox(height: 4),
+//                   Text(
+//                     item["jenis"]!,
+//                     style: const TextStyle(
+//                       fontSize: 13,
+//                       color: Colors.black54,
+//                     ),
+//                   ),
+//                   const SizedBox(height: 4),
+//                   Text(
+//                     item["tanggal"]!,
+//                     style: const TextStyle(fontSize: 12, color: Colors.grey),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       );
+//     }).toList(),
+//   );
+// }
 
-  // /// --- LIST CARD
-  // Widget _buildListCard(List<Map<String, String>> items) {
-  //   return Column(
-  //     children: items.map((item) {
-  //       return Container(
-  //         margin: const EdgeInsets.only(top: 12),
-  //         padding: const EdgeInsets.all(16),
-  //         decoration: BoxDecoration(
-  //           color: Colors.white,
-  //           borderRadius: BorderRadius.circular(16),
-  //           boxShadow: [
-  //             BoxShadow(
-  //               color: Colors.black12.withOpacity(0.05),
-  //               blurRadius: 8,
-  //               offset: const Offset(0, 4),
-  //             ),
-  //           ],
-  //         ),
-  //         child: Row(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             Container(
-  //               padding: const EdgeInsets.all(12),
-  //               decoration: BoxDecoration(
-  //                 color: Colors.blue.shade50,
-  //                 borderRadius: BorderRadius.circular(12),
-  //               ),
-  //               child: const Icon(
-  //                 Icons.medical_services,
-  //                 color: Colors.blue,
-  //                 size: 28,
-  //               ),
-  //             ),
-  //             const SizedBox(width: 16),
-  //             Expanded(
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   Text(
-  //                     item["keterangan"]!,
-  //                     style: const TextStyle(
-  //                       fontSize: 15,
-  //                       fontWeight: FontWeight.bold,
-  //                     ),
-  //                   ),
-  //                   const SizedBox(height: 4),
-  //                   Text(
-  //                     item["jenis"]!,
-  //                     style: const TextStyle(
-  //                       fontSize: 13,
-  //                       color: Colors.black54,
-  //                     ),
-  //                   ),
-  //                   const SizedBox(height: 4),
-  //                   Text(
-  //                     item["tanggal"]!,
-  //                     style: const TextStyle(fontSize: 12, color: Colors.grey),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     }).toList(),
-  //   );
-  // }
-
-  // /// --- Row Info Sapi ---
-  // Widget _buildInfoRow(String title, String value) {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 6),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: [
-  //         Text(
-  //           title,
-  //           style: const TextStyle(color: Colors.black54, fontSize: 14),
-  //         ),
-  //         Text(
-  //           value,
-  //           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+// /// --- Row Info Sapi ---
+// Widget _buildInfoRow(String title, String value) {
+//   return Padding(
+//     padding: const EdgeInsets.symmetric(vertical: 6),
+//     child: Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         Text(
+//           title,
+//           style: const TextStyle(color: Colors.black54, fontSize: 14),
+//         ),
+//         Text(
+//           value,
+//           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+//         ),
+//       ],
+//     ),
+//   );
+// }
 // }

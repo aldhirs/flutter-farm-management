@@ -15,7 +15,9 @@ abstract class AppRouteInfo with _$AppRouteInfo {
   const factory AppRouteInfo.login({String? messageChangePassword}) = Login;
   const factory AppRouteInfo.home() = Home;
   const factory AppRouteInfo.account() = Account;
+  const factory AppRouteInfo.changePassword() = ChangePassword;
   const factory AppRouteInfo.draftingScan() = DraftingScan;
+  const factory AppRouteInfo.draftingList() = DraftingList;
   const factory AppRouteInfo.draftingDetail({BluetoothConnection? connection}) =
       DraftingDetail;
   const factory AppRouteInfo.draftingForm({String? rfid, Cattle? cattle}) =

@@ -40,7 +40,7 @@ class _MutationNavBarPageState
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      const Color(0xFF25AFCB),
+                      AppColors.current.mint700,
                       AppColors.current.mint500,
                     ],
                     begin: Alignment.topLeft,

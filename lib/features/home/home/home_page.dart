@@ -1,4 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'dart:async';
+
 import 'package:farm/app/bloc/app_bloc.dart';
 import 'package:farm/app/bloc/app_event.dart';
 import 'package:farm/app/bloc/app_state.dart';
@@ -9,7 +11,6 @@ import 'package:farm/features/home/home/bloc/home_bloc.dart';
 import 'package:farm/features/home/home/bloc/home_event.dart';
 import 'package:farm/features/home/home/bloc/home_state.dart';
 import 'package:farm/features/home/home/widgets/cattle_search_bottom_sheet.dart';
-import 'package:farm/features/home/home/widgets/drafting_cattle_bottom_sheet.dart';
 import 'package:farm/features/home/home/widgets/quick_action_card.dart';
 import 'package:farm/features/scan/scan_page.dart';
 import 'package:farm/navigation/app_route_info.dart';
@@ -37,10 +38,6 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
   late final AnimationController _controller;
   late final Animation<double> _fadeStats;
   late final Animation<Offset> _slideStats;
-  late final Animation<double> _fadeShortcutTitle;
-  late final Animation<Offset> _slideShortcutTitle;
-  late final Animation<double> _fadeQuickActions;
-  late final Animation<Offset> _slideQuickActions;
   String? selectedValue = "Option 1";
 
   @override
@@ -48,6 +45,9 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
     super.initState();
     _initAnimation();
     appBloc.add(const GetProjects(showProject: false));
+    // Feedlot bisa sudah tersimpan dari sesi sebelumnya, jadi angka Discover
+    // dimuat di sini juga — bukan hanya saat pengguna berganti feedlot.
+    bloc.add(const Initiated());
   }
 
   @override
@@ -97,149 +97,65 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
       ],
       child: CommonScaffold(
         backgroundColor: AppColors.current.neutral400,
-        body: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 48),
-              _fadeSlide(
-                fade: _fadeStats,
-                slide: _slideStats,
-                child: Text(
-                  'Selamat Datang, ${appBloc.state.userData?.full_name}',
-                  style: TextStyles.heading5(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(height: 24),
-              _fadeSlide(
-                fade: _fadeStats,
-                slide: _slideStats,
-                child: _summaryWidget(),
-              ),
-              const SizedBox(height: 16),
-              _fadeSlide(
-                fade: _fadeShortcutTitle,
-                slide: _slideShortcutTitle,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Discover", style: TextStyles.body2()),
-                    Text(
-                      "Terakhir diperbarui: ${DateTime.now().toString().formatDateString(format: DateConstant.UTC, newFormat: DateConstant.DATETIME_FULL_MONTH)}",
-                      style: TextStyles.label3(),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
+        body: RefreshIndicator(
+          onRefresh: _onRefresh,
+          color: AppColors.current.mint700,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 40),
 
-              _fadeSlide(
-                fade: _fadeStats,
-                slide: _slideStats,
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 1.45,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.zero,
-                  children: [
-                    _buildSummaryCard(
-                      "Draf Sapi",
-                      "120",
-                      LucideIcons.pawPrint,
-                      const [Colors.white, Color(0xFFFFE0F7)],
-                    ),
-                    _buildSummaryCard(
-                      "Draf Penjualan",
-                      "3",
-                      LucideIcons.shoppingCart,
-                      const [Colors.white, Color(0xFFFAD0C4)],
-                    ),
-                    _buildSummaryCard(
-                      "Mutasi Masuk",
-                      "2",
-                      LucideIcons.arrowDown,
-                      const [Colors.white, Color(0xFFFFC3A0)],
-                    ),
-                    _buildSummaryCard(
-                      "Mutasi Keluar",
-                      "1",
-                      LucideIcons.arrowUp,
-                      const [Colors.white, Color(0xFFA6C1EE)],
-                    ),
-                  ],
+                /// Satu gerakan masuk, bukan lima.
+                ///
+                /// Sebelumnya tiap bagian punya fade-and-slide sendiri, yang
+                /// membuat beranda bergoyang berurutan setiap kali dibuka —
+                /// mahal dilihat, dan menunda papan angka yang justru jadi
+                /// alasan orang membuka layar ini.
+                _fadeSlide(
+                  fade: _fadeStats,
+                  slide: _slideStats,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _greeting(),
+                      const SizedBox(height: 14),
+                      _feedlotPlate(),
+                      const SizedBox(height: 28),
+                      _sectionTitle('Menunggu dikerjakan'),
+                      _discoverLastUpdated(),
+                      const SizedBox(height: 12),
+                      _tallyBoard(),
+                      const SizedBox(height: 28),
+                      _sectionTitle('Kerjakan'),
+                      const SizedBox(height: 12),
+                      _menuGrid(),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-
-              _fadeSlide(
-                fade: _fadeShortcutTitle,
-                slide: _slideShortcutTitle,
-                child: Text("Menu", style: TextStyles.body2()),
-              ),
-
-              const SizedBox(height: 10),
-              // 🔹 Step 3 — Quick actions
-              _fadeSlide(
-                fade: _fadeQuickActions,
-                slide: _slideQuickActions,
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  shrinkWrap: true,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  padding: EdgeInsets.zero,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    QuickActionCard(
-                      icon: LucideIcons.shuffle,
-                      label: "Mutasi",
-                      onTap: () =>
-                          _onMenuClicked(const AppRouteInfo.mutationNavBar()),
-                    ),
-                    QuickActionCard(
-                      icon: LucideIcons.dollarSign,
-                      label: "Penjualan",
-                      onTap: () => _onMenuClicked(const AppRouteInfo.sales()),
-                    ),
-                    QuickActionCard(
-                      icon: LucideIcons.layers,
-                      label: "Pen Drafting",
-                      onTap: () =>
-                          _onMenuClicked(const AppRouteInfo.penDrafting()),
-                    ),
-                    QuickActionCard(
-                      icon: LucideIcons.alignEndVertical,
-                      label: "Drafting",
-                      onTap: _onDraftingCattleClicked,
-                    ),
-                    QuickActionCard(
-                      icon: LucideIcons.plus,
-                      label: "Tambah Sapi",
-                      onTap: () =>
-                          _onMenuClicked(const AppRouteInfo.cattleCreate()),
-                    ),
-                    QuickActionCard(
-                      icon: LucideIcons.search,
-                      label: "Cari Sapi",
-                      onTap: _onSearchCattleClicked,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 62),
-            ],
+                const SizedBox(height: 62),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  /// Menyegarkan apa yang benar-benar terlihat di beranda.
+  ///
+  /// Dua permintaan, bukan satu: daftar feedlot (dipakai kartu di atas dan
+  /// pemilih feedlot) dan angka Discover. Yang ditunggu hanya angkanya, karena
+  /// itulah yang berubah di depan mata pengguna — menunggu keduanya hanya
+  /// membuat indikator berputar lebih lama tanpa menampilkan apa pun yang baru.
+  Future<void> _onRefresh() async {
+    appBloc.add(const GetProjects(showProject: false));
+
+    final completer = Completer<void>();
+    bloc.add(Refreshed(completer: completer));
+    await completer.future;
   }
 
   void _onShowFeedlotAlert() {
@@ -320,37 +236,16 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
       duration: const Duration(milliseconds: 1200),
     );
 
-    // Staggered intervals for step-by-step appearance
+    // Satu kurva saja: seluruh isi beranda masuk bersamaan.
     final statsCurve = CurvedAnimation(
       parent: _controller,
       curve: const Interval(0.00, 0.45, curve: Curves.easeOut),
     );
-    final titleCurve = CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.20, 0.70, curve: Curves.easeOut),
-    );
-    final quickActionsCurve = CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.45, 1.00, curve: Curves.easeOut),
-    );
-
     _fadeStats = Tween(begin: 0.0, end: 1.0).animate(statsCurve);
     _slideStats = Tween(
       begin: const Offset(0, 0.06),
       end: Offset.zero,
     ).animate(statsCurve);
-
-    _fadeShortcutTitle = Tween(begin: 0.0, end: 1.0).animate(titleCurve);
-    _slideShortcutTitle = Tween(
-      begin: const Offset(0, 0.06),
-      end: Offset.zero,
-    ).animate(titleCurve);
-
-    _fadeQuickActions = Tween(begin: 0.0, end: 1.0).animate(quickActionsCurve);
-    _slideQuickActions = Tween(
-      begin: const Offset(0, 0.06),
-      end: Offset.zero,
-    ).animate(quickActionsCurve);
 
     // Kick off the animation on first build
     _controller.forward();
@@ -367,108 +262,335 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
     );
   }
 
-  Widget _summaryWidget() {
-    return BlocProvider.value(
-      value: appBloc,
-      child: BlocBuilder<AppBloc, AppState>(
-        buildWhen: (p, c) => p.selectedProject != c.selectedProject,
-        builder: (context, state) {
-          return InkWell(
-            onTap: () {
-              appBloc.add(const GetProjects(showProject: true));
-            },
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [const Color(0xFF25ADCB), AppColors.current.mint500],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      LucideIcons.warehouse,
-                      size: 32,
-                      color: AppColors.current.mint700,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        (appBloc.state.selectedProject?.name).defaultValue(
-                          'Belum diset',
-                        ),
-                        style: TextStyles.heading4().copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        "Tekan untuk mengubah feedlot",
-                        style: TextStyles.label2().copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+  Widget _greeting() {
+    return Text(
+      'Halo, ${(appBloc.state.userData?.full_name).defaultValue('')}',
+      style: TextStyles.body2().copyWith(color: AppColors.current.neutral800),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _sectionTitle(String text) {
+    return Text(
+      text,
+      style: TextStyles.body2().copyWith(
+        fontWeight: FontWeight.w600,
+        color: AppColors.current.mint800,
       ),
     );
   }
 
-  Widget _buildSummaryCard(
-    String title,
-    String value,
-    IconData icon,
-    List<Color> colors,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: colors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 28, color: AppColors.current.mint700),
-          const Spacer(),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF333333),
+  /// Papan nama feedlot.
+  ///
+  /// Satu-satunya tempat yang boleh ramai di layar ini. Feedlot adalah syarat
+  /// bagi semua hal lain — tanpa memilihnya, tidak ada angka dan tidak ada menu
+  /// yang bisa dibuka — jadi ia dibuat sebesar itu justru supaya pertanyaan
+  /// "saya sedang di kandang mana" terjawab dari jarak sebelum layar dibaca.
+  ///
+  /// Gradien lama diganti bidang pekat satu warna: gradien biru-ke-ungu tidak
+  /// mengabarkan apa pun, dan di bawah matahari perbedaan dua warna terang itu
+  /// hilang sama sekali.
+  Widget _feedlotPlate() {
+    return BlocBuilder<AppBloc, AppState>(
+      buildWhen: (p, c) => p.selectedProject != c.selectedProject,
+      builder: (context, state) {
+        final project = state.selectedProject;
+        final bool chosen = project != null;
+
+        return Material(
+          color: chosen
+              ? AppColors.current.mint700
+              : AppColors.current.mint800.withValues(alpha: 0.55),
+          borderRadius: BorderRadius.circular(Dimens.d20),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(Dimens.d20),
+            onTap: () => appBloc.add(const GetProjects(showProject: true)),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 18, 16, 18),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Feedlot',
+                          style: TextStyles.label3().copyWith(
+                            color: Colors.white.withValues(alpha: 0.7),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          chosen ? project.name : 'Belum dipilih',
+                          style: TextStyles.heading3().copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            height: 1.1,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          chosen
+                              ? 'Ketuk untuk berpindah feedlot'
+                              : 'Ketuk untuk memilih feedlot',
+                          style: TextStyles.label3().copyWith(
+                            color: Colors.white.withValues(alpha: 0.7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.14),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      LucideIcons.chevronsUpDown,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          Text(
-            title,
-            style: TextStyles.body3().copyWith(color: Colors.black54),
+        );
+      },
+    );
+  }
+
+  /// Papan hitung: empat angka dalam satu bidang, dipisah garis rambut.
+  ///
+  /// Empat kartu terpisah dengan bayangan masing-masing membuat keempatnya
+  /// terbaca sebagai empat benda; padahal ini satu papan tally — empat kolom
+  /// dari satu hitungan yang sama, untuk satu feedlot, pada satu waktu.
+  Widget _tallyBoard() {
+    return BlocBuilder<AppBloc, AppState>(
+      buildWhen: (p, c) => p.selectedProject != c.selectedProject,
+      builder: (context, appState) {
+        return BlocBuilder<HomeBloc, HomeState>(
+          buildWhen: (p, c) =>
+              p.discoverSummary != c.discoverSummary ||
+              p.discoverLoading != c.discoverLoading,
+          builder: (context, state) {
+            final summary = state.discoverSummary;
+            final bool hasFeedlot = appState.selectedProject != null;
+            final bool ready = hasFeedlot && summary != null;
+
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(Dimens.d20),
+                border: Border.all(color: AppColors.current.neutral300),
+              ),
+
+              /// IntrinsicHeight memberi baris ini tinggi yang terbatas.
+              ///
+              /// Garis pemisah antar kolom perlu setinggi kolom tertinggi, dan
+              /// itulah yang dilakukan CrossAxisAlignment.stretch — tetapi
+              /// stretch hanya bisa bekerja bila tinggi barisnya diketahui.
+              /// Di dalam daftar yang bisa digulir tingginya tidak terbatas,
+              /// sehingga stretch meminta tinggi tak hingga dan seluruh beranda
+              /// gagal ditata. IntrinsicHeight mengukur kolom terlebih dulu,
+              /// lalu memberi baris tinggi setara kolom tertinggi.
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _tallyCell(
+                      'Draf sapi',
+                      ready ? summary.draftCattle : null,
+
+                      /// Satu-satunya kolom yang bisa ditekan.
+                      ///
+                      /// Tiga kolom lain sudah punya menunya sendiri di bawah;
+                      /// sapi yang menunggu didrafting tidak punya, dan angka
+                      /// inilah satu-satunya jalan menuju daftarnya.
+                      onTap: hasFeedlot
+                          ? () => navigator.push(
+                              const AppRouteInfo.draftingList(),
+                            )
+                          : null,
+                    ),
+                    _tallyDivider(),
+                    _tallyCell('Draf jual', ready ? summary.draftSales : null),
+                    _tallyDivider(),
+                    _tallyCell(
+                      'Mutasi masuk',
+                      ready ? summary.mutationIn : null,
+                    ),
+                    _tallyDivider(),
+                    _tallyCell(
+                      'Mutasi keluar',
+                      ready ? summary.mutationOut : null,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _tallyDivider() {
+    return Container(
+      width: 1,
+      margin: const EdgeInsets.symmetric(vertical: 14),
+      color: AppColors.current.neutral300,
+    );
+  }
+
+  /// Satu kolom papan hitung.
+  ///
+  /// Nol ditulis redup, bukan sepekat angka lain. Keduanya sama-sama jawaban,
+  /// tetapi hanya satu yang berarti ada pekerjaan; menyamakan tebalnya membuat
+  /// mata harus membaca keempat kolom untuk tahu mana yang menuntut sesuatu.
+  ///
+  /// Tanda hubung berarti belum ada jawaban sama sekali — feedlot belum dipilih
+  /// atau angkanya gagal dimuat — dan itu keadaan yang berbeda dari nol.
+  Widget _tallyCell(String label, int? value, {VoidCallback? onTap}) {
+    final bool empty = value == null;
+    final bool zero = value == 0;
+
+    final Color numberColor = empty
+        ? AppColors.current.neutral600
+        : zero
+        ? AppColors.current.neutral600
+        : AppColors.current.mint700;
+
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(Dimens.d16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 6),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                empty ? '-' : '$value',
+                style: TextStyles.heading2().copyWith(
+                  color: numberColor,
+                  fontWeight: zero || empty ? FontWeight.w500 : FontWeight.w700,
+                  height: 1.0,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyles.label3().copyWith(
+                  color: AppColors.current.neutral800,
+                  height: 1.25,
+                ),
+                maxLines: 2,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  /// Menu dua kolom, bukan tiga.
+  ///
+  /// Sasaran sentuh jadi hampir dua kali lebih lebar. Layar ini dipakai di luar
+  /// kandang, satu tangan, sering sambil memegang pemindai — dan tiga kolom
+  /// kartu kecil adalah ukuran yang dirancang untuk jari yang santai.
+  Widget _menuGrid() {
+    final items = <_HomeMenuEntry>[
+      _HomeMenuEntry(
+        icon: LucideIcons.alignEndVertical,
+        label: 'Drafting',
+
+        /// Menuju daftar sapi yang menunggu didrafting, bukan langsung ke
+        /// dialog pemilihan metode.
+        ///
+        /// Memindai tetap tersedia lewat tombol pemindai di bilah bawah, dan
+        /// di sanalah tempatnya: memindai adalah cara MEMBUKA satu ekor, bukan
+        /// gerbang menuju pekerjaan drafting. Menu ini membawa ke pekerjaannya
+        /// — daftar yang menunggu — sehingga petugas bisa melihat berapa
+        /// banyak yang tersisa sebelum memutuskan mulai dari mana.
+        onTap: () => _onMenuClicked(const AppRouteInfo.draftingList()),
+        primary: true,
+      ),
+      _HomeMenuEntry(
+        icon: LucideIcons.search,
+        label: 'Cari Sapi',
+        onTap: _onSearchCattleClicked,
+      ),
+      _HomeMenuEntry(
+        icon: LucideIcons.layers,
+        label: 'Pen Drafting',
+        onTap: () => _onMenuClicked(const AppRouteInfo.penDrafting()),
+      ),
+      _HomeMenuEntry(
+        icon: LucideIcons.plus,
+        label: 'Tambah Sapi',
+        onTap: () => _onMenuClicked(const AppRouteInfo.cattleCreate()),
+      ),
+      _HomeMenuEntry(
+        icon: LucideIcons.shuffle,
+        label: 'Mutasi',
+        onTap: () => _onMenuClicked(const AppRouteInfo.mutationNavBar()),
+      ),
+      _HomeMenuEntry(
+        icon: LucideIcons.dollarSign,
+        label: 'Penjualan',
+        onTap: () => _onMenuClicked(const AppRouteInfo.sales()),
+      ),
+    ];
+
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      crossAxisSpacing: 12,
+      mainAxisSpacing: 12,
+      childAspectRatio: 2.4,
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
+      children: items
+          .map(
+            (item) => QuickActionCard(
+              icon: item.icon,
+              label: item.label,
+              onTap: item.onTap,
+              primary: item.primary,
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  /// Baris "Terakhir diperbarui" di bawah judul Discover.
+  ///
+  /// Waktunya berasal dari server, dan hanya muncul bila ada angka yang
+  /// menyertainya. Sebelumnya baris ini mencetak jam telepon apa adanya,
+  /// sehingga selalu menampilkan "baru saja" — termasuk ketika feedlot belum
+  /// dipilih dan tidak ada satu pun angka di layar, dan termasuk ketika
+  /// pemuatan gagal dan angka yang terlihat sudah basi.
+  Widget _discoverLastUpdated() {
+    return BlocBuilder<HomeBloc, HomeState>(
+      buildWhen: (p, c) => p.discoverSummary != c.discoverSummary,
+      builder: (context, state) {
+        final lastUpdated = state.discoverSummary?.lastUpdated;
+        if (lastUpdated == null || lastUpdated.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Text(
+          "Terakhir diperbarui: ${lastUpdated.formatDateString(format: DateConstant.UTC, newFormat: DateConstant.DATETIME_FULL_MONTH)}",
+          style: TextStyles.label3(),
+        );
+      },
     );
   }
 
@@ -515,48 +637,24 @@ class _HomePageState extends BasePageState<HomePage, HomeBloc>
       CattleSearchBottomSheet(bloc: bloc, onDismiss: () => navigator.pop()),
     );
   }
+}
 
-  void _onDraftingCattleClicked() async {
-    if (appBloc.state.selectedProject == null) {
-      _onShowFeedlotAlert();
-      return;
-    }
-    navigator.showAppDialog(
-      useRootNavigator: true,
-      barrierDismissible: false,
-      Popup(
-        closeVisibility: true,
-        title: 'Drafting Sapi',
-        illustration: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Assets.images.ilCowScanning.image(
-            height: Dimens.d160,
-            fit: BoxFit.cover,
-          ),
-        ),
-        description: const [
-          TextSpan(
-            text:
-                'Silakan pilih metode dalam drafting sapi menggunakan alat pemindai atau manual berdasarakan ear tag.',
-          ),
-        ],
-        positiveButtonText: "Cari dengan Alat",
-        negativeButtonText: "Cari Manual",
-        onNegativeButtonPressed: _draftingCattleManualBottomSheet,
-        onPositiveButtonPressed: () async {
-          await navigator.popAndPush(
-            const AppRouteInfo.scan(route: DEST_DRAFTING_DETAIL),
-          );
-        },
-      ),
-    );
-  }
+/// Satu entri menu beranda.
+class _HomeMenuEntry {
+  const _HomeMenuEntry({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.primary = false,
+  });
 
-  void _draftingCattleManualBottomSheet() async {
-    await navigator.pop();
-    await navigator.showBottomSheet(
-      isScrollControlled: true,
-      DraftingCattleBottomSheet(bloc: bloc, onDismiss: () => navigator.pop()),
-    );
-  }
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  /// Pekerjaan utama petugas di layar ini.
+  ///
+  /// Hanya satu yang boleh ditandai. Aksen dipakai sekali supaya ia berarti
+  /// "mulai dari sini"; dipakai di enam kartu sekaligus ia tidak berarti apa-apa.
+  final bool primary;
 }

@@ -16,6 +16,7 @@ import 'package:farm/views/common_scaffold.dart';
 import 'package:farm/views/view.dart';
 import 'package:farm/widgets/buttons/button_text.dart';
 import 'package:farm/widgets/toast/toast.dart';
+import 'package:farm/widgets/tag/tag_category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -112,11 +113,18 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
                   slivers: [
                     /// HEADER dengan gradient
                     SliverAppBar(
-                      expandedHeight: 200,
+                      expandedHeight: 210,
                       pinned: true,
                       elevation: 0,
-                      foregroundColor: Colors.black54,
-                      backgroundColor: Colors.white,
+
+                      /// Bilah dan latarnya sewarna.
+                      ///
+                      /// Sebelumnya bilahnya putih dengan ikon hitam sementara
+                      /// latarnya ungu, jadi selama menyusut ikon segar-ulang
+                      /// berjalan sebagai bentuk gelap di atas ungu tua —
+                      /// nyaris tidak terlihat justru di tengah gerakan.
+                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.current.mint800,
                       actions: [
                         IconButton(
                           icon: const Icon(LucideIcons.refreshCw, size: 18),
@@ -124,51 +132,76 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
                         ),
                       ],
                       flexibleSpace: FlexibleSpaceBar(
+                        /// Identitas ternak, rata kiri.
+                        ///
+                        /// Ear tag adalah nomor yang dibaca orang dari badan
+                        /// sapinya, jadi ia yang dibesarkan. Lingkaran putih
+                        /// 84px berisi ikon sapi sebelumnya menempati bagian
+                        /// terbesar kepala halaman tanpa mengabarkan apa pun —
+                        /// yang membuka layar ini sudah tahu sedang melihat
+                        /// seekor sapi.
                         background: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                const Color(0xFF25AFCB),
-                                AppColors.current.mint500,
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+                          color: AppColors.current.mint800,
+                          child: SafeArea(
+                            bottom: false,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.14,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            Dimens.d12,
+                                          ),
+                                        ),
+                                        child: SizedBox(
+                                          width: Dimens.d20,
+                                          height: Dimens.d20,
+                                          child: Assets.icons.icCow.image(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: Dimens.d10),
+                                      TagCategory(
+                                        text: cattle.statusLabel(),
+                                        type: TagCategoryType.plain,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: Dimens.d14),
+                                  Text(
+                                    (cattle.ear_tag).defaultValue('-'),
+                                    style: TextStyles.heading2().copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.1,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: Dimens.d4),
+                                  Text(
+                                    "RFID ${cattle.rfid_tag.defaultValue('-')}",
+                                    style: TextStyles.label2().copyWith(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.72,
+                                      ),
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
                             ),
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(40),
-                              bottomRight: Radius.circular(40),
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              CircleAvatar(
-                                radius: 42,
-                                backgroundColor: Colors.white,
-                                child: Padding(
-                                  padding: const EdgeInsetsGeometry.all(16),
-                                  child: Assets.icons.icCow.image(),
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                (cattle.ear_tag).defaultValue('-'),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                "RFID: ${cattle.rfid_tag.defaultValue('-')}",
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                            ],
                           ),
                         ),
                       ),
@@ -177,17 +210,28 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
                     /// BODY CONTENT
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 16, bottom: 16),
+                        padding: const EdgeInsets.only(
+                          top: Dimens.d16,
+                          bottom: Dimens.d24,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             /// INFO CARD HORIZONTAL
+                            /// Selokan kiri-kanan diatur oleh padding daftar,
+                            /// bukan oleh SizedBox penyangga.
+                            ///
+                            /// Penyangganya dulu 16 di kiri tetapi 8 di kanan,
+                            /// sehingga kartu terakhir berhenti lebih dekat ke
+                            /// tepi layar daripada kartu pertama memulainya.
                             SizedBox(
-                              height: 80,
+                              height: 84,
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: Dimens.d16,
+                                ),
                                 children: [
-                                  const SizedBox(width: 16),
                                   _buildInfoChip(
                                     "Status",
                                     cattle.statusLabel(),
@@ -203,69 +247,59 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
                                     (cattle.reception?.title).defaultValue('-'),
                                     Colors.indigo,
                                   ),
-                                  const SizedBox(width: 8),
                                 ],
                               ),
                             ),
-                            // ====== Detail Sapi (Vertical Card) ======
-                            Container(
-                              margin: const EdgeInsets.all(16),
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.1),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 3),
-                                  ),
-                                ],
+                            const SizedBox(height: Dimens.d16),
+
+                            /// Dua belas baris dipecah menjadi tiga kelompok.
+                            ///
+                            /// Sebelumnya semuanya satu daftar seragam: ear
+                            /// tag bersebelahan dengan POO, dan kandang dengan
+                            /// breed. Orang yang membuka layar ini datang
+                            /// dengan satu pertanyaan — di mana sapinya, atau
+                            /// dari mana asalnya — dan daftar tanpa kelompok
+                            /// memaksanya membaca dua belas baris untuk
+                            /// menemukan satu.
+                            _detailGroup("Lokasi", [
+                              _buildDetailRow(
+                                "Feedlot",
+                                (appBloc.state.selectedProject?.name).orEmpty(),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildDetailRow(
-                                    "Feedlot",
-                                    (appBloc.state.selectedProject?.name)
-                                        .orEmpty(),
-                                  ),
-                                  _buildDetailRow("Ear Tag", cattle.ear_tag),
-                                  _buildDetailRow("RFID", cattle.rfid_tag),
-                                  _buildDetailRow(
-                                    "Status",
-                                    cattle.statusLabel(),
-                                  ),
-                                  _buildDetailRow(
-                                    "Bobot Akhir",
-                                    "${cattle.actual_weight} kg",
-                                  ),
-                                  _buildDetailRow(
-                                    "Tanggal dibuat",
-                                    cattle.created_at.formatDateString(
-                                      format: DateConstant.UTC,
-                                      newFormat:
-                                          DateConstant.DATETIME_FULL_MONTH,
-                                    ),
-                                  ),
-                                  _buildDetailRow(
-                                    "Kandang",
-                                    (cattle.pen?.name_barn).orEmpty(),
-                                  ),
-                                  _buildDetailRow(
-                                    "Pen",
-                                    (cattle.pen?.name).orEmpty(),
-                                  ),
-                                  _buildDetailRow(
-                                    "Shipment",
-                                    (cattle.reception?.title).defaultValue('-'),
-                                  ),
-                                  _buildDetailRow("Breed", cattle.id_breed),
-                                  _buildDetailRow("POO", cattle.id_station),
-                                  _buildDetailRow("IMP", cattle.id_supplier),
-                                ],
+                              _buildDetailRow(
+                                "Kandang",
+                                (cattle.pen?.name_barn).orEmpty(),
                               ),
-                            ),
+                              _buildDetailRow(
+                                "Pen",
+                                (cattle.pen?.name).orEmpty(),
+                              ),
+                            ]),
+                            _detailGroup("Identitas", [
+                              _buildDetailRow("Ear Tag", cattle.ear_tag),
+                              _buildDetailRow("RFID", cattle.rfid_tag),
+                              _buildDetailRow("Status", cattle.statusLabel()),
+                              _buildDetailRow(
+                                "Bobot Akhir",
+                                "${cattle.actual_weight} kg",
+                              ),
+                            ]),
+                            _detailGroup("Asal", [
+                              _buildDetailRow(
+                                "Shipment",
+                                (cattle.reception?.title).defaultValue('-'),
+                              ),
+                              _buildDetailRow("Breed", cattle.id_breed),
+                              _buildDetailRow("POO", cattle.id_station),
+                              _buildDetailRow("IMP", cattle.id_supplier),
+                              _buildDetailRow(
+                                "Tanggal dibuat",
+                                cattle.created_at.formatDateString(
+                                  format: DateConstant.UTC,
+                                  newFormat: DateConstant.DATETIME_FULL_MONTH,
+                                ),
+                              ),
+                            ]),
 
                             const SizedBox(height: 16),
 
@@ -314,6 +348,35 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
     );
   }
 
+  /// Satu kelompok keterangan, dengan judulnya sendiri.
+  Widget _detailGroup(String title, List<Widget> rows) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(Dimens.d16, 0, Dimens.d16, Dimens.d12),
+      padding: const EdgeInsets.symmetric(vertical: Dimens.d8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(Dimens.d20),
+        border: Border.all(color: AppColors.current.neutral300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+            child: Text(
+              title,
+              style: TextStyles.label2().copyWith(
+                fontWeight: FontWeight.w700,
+                color: AppColors.current.mint700,
+              ),
+            ),
+          ),
+          ...rows,
+        ],
+      ),
+    );
+  }
+
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -325,7 +388,9 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
             flex: 2,
             child: Text(
               label,
-              style: TextStyles.body2().copyWith(fontWeight: FontWeight.w400),
+              style: TextStyles.label2().copyWith(
+                color: AppColors.current.neutral600,
+              ),
             ),
           ),
           Expanded(
@@ -333,7 +398,10 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
             child: Text(
               value.defaultValue('-'),
               textAlign: TextAlign.end,
-              style: TextStyles.body2(),
+              style: TextStyles.label2().copyWith(
+                fontWeight: FontWeight.w600,
+                color: AppColors.current.mint800,
+              ),
             ),
           ),
         ],
@@ -342,38 +410,41 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
   }
 
   /// CHIP CARD HORIZONTAL
+  /// Kartu ringkas di baris atas.
+  ///
+  /// Nilainya memakai satu warna, bukan satu warna per kartu. Biru untuk bobot
+  /// dan indigo untuk shipment tidak pernah berarti apa-apa; warna yang
+  /// berbeda-beda tanpa aturan mengajari orang bahwa warna di layar ini boleh
+  /// diabaikan — lalu warna status, yang benar-benar berarti, ikut diabaikan.
   Widget _buildInfoChip(String label, String value, Color color) {
     return Container(
-      width: 140,
-      margin: const EdgeInsets.only(right: 12, bottom: 4, top: 2),
+      width: 150,
+      margin: const EdgeInsets.only(right: Dimens.d12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12.withValues(alpha: 0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(Dimens.d16),
+        border: Border.all(color: AppColors.current.neutral300),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             label,
-            style: const TextStyle(color: Colors.black54, fontSize: 13),
+            style: TextStyles.label3().copyWith(
+              color: AppColors.current.neutral600,
+            ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: Dimens.d4),
           Text(
             value,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              overflow: TextOverflow.ellipsis,
+            style: TextStyles.body2().copyWith(
+              color: AppColors.current.mint800,
+              fontWeight: FontWeight.w700,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -389,10 +460,9 @@ class _SalesPageState extends BasePageState<CattleSearchPage, CattleSearchBloc>
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+            style: TextStyles.body2().copyWith(
+              fontWeight: FontWeight.w700,
+              color: AppColors.current.mint800,
             ),
           ),
           showSeeAllButton

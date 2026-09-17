@@ -194,10 +194,10 @@ class _MoveBottomSheetState extends State<MoveBottomSheet> {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.account_circle_rounded,
                 size: 18,
-                color: Colors.teal,
+                color: AppColors.current.mint700,
               ),
               const SizedBox(width: 6),
               Expanded(child: Text(name, style: TextStyles.label1())),

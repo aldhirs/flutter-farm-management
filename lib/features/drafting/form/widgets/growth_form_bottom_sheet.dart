@@ -1,12 +1,11 @@
-import 'package:dartx/dartx.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_bloc.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_event.dart';
 import 'package:farm/features/drafting/form/bloc/drafting_form_state.dart';
+import 'package:farm/features/drafting/form/widgets/draft_form_layout.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/widgets/buttons/button.dart';
 import 'package:farm/widgets/inputs/text_input_field.dart';
-import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:farm/widgets/toast/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,54 +56,67 @@ class _GrowthFormBottomSheetState extends State<GrowthFormBottomSheet> {
             widget.bloc.navigator.pop();
           }
         },
-        child: Container(
-          padding: const EdgeInsets.all(Dimens.d16),
-          alignment: Alignment.topLeft,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            Dimens.d20,
+            Dimens.d4,
+            Dimens.d20,
+            Dimens.d24,
+          ),
           child: Column(
-            spacing: 2,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text("Timbang Bobot Sapi", style: TextStyles.heading5()),
-              const SizedBox(height: 8),
-              _errorWidget(),
-              const SizedBox(height: 4),
-              const TickerView(
-                type: TickerViewType.info,
-                message:
-                    'Isi bobot sapi pada formulir di bawah, lalu tekan “Lanjut” untuk menyimpan. Menekan “Tutup” akan membatalkan penyimpanan.',
-              ),
-              const SizedBox(height: 16),
+              _header(),
+              const SizedBox(height: Dimens.d4),
               _textInputGrowth(),
-
-              const SizedBox(height: 24),
-              BlocProvider.value(
-                value: widget.bloc,
-                child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
-                  buildWhen: (p, c) => p.loading != c.loading,
-                  builder: (context, state) {
-                    return Button(
-                      fulLWidth: true,
-                      type: state.loading
-                          ? ButtonType.disabled
-                          : ButtonType.primary,
-                      loading: state.loading,
-                      text: 'Lanjut',
-                      onPressed: () {
-                        widget.bloc.add(const OnSubmitGrowth());
-                      },
-                    );
-                  },
-                ),
+              const SizedBox(height: Dimens.d24),
+              DraftSheetActions(
+                submit: _submitButton(),
+                onDismiss: widget.onDismiss,
               ),
-              Button(
-                fulLWidth: true,
-                type: ButtonType.ghost,
-                text: 'Tutup',
-                onPressed: widget.onDismiss,
-              ),
-              const SizedBox(height: 24),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _header() {
+    return BlocProvider.value(
+      value: widget.bloc,
+      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
+        buildWhen: (p, c) => p.growthErrorMessage != c.growthErrorMessage,
+        builder: (context, state) {
+          return DraftSheetHeader(
+            title: 'Timbang Bobot',
+            subtitle: 'Catat bobot sapi saat masuk kandang.',
+            errorMessage: state.growthErrorMessage,
+            hint:
+                'Isi bobot lalu tekan "Lanjut" untuk menyimpan. '
+                'Menekan "Tutup" membatalkan isian.',
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _submitButton() {
+    return BlocProvider.value(
+      value: widget.bloc,
+      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
+        buildWhen: (p, c) => p.loading != c.loading,
+        builder: (context, state) {
+          return Button(
+            fulLWidth: true,
+            type: state.loading ? ButtonType.disabled : ButtonType.primary,
+            loading: state.loading,
+            text: 'Lanjut',
+            onPressed: () {
+              widget.bloc.add(const OnSubmitGrowth());
+            },
+          );
+        },
       ),
     );
   }
@@ -132,24 +144,6 @@ class _GrowthFormBottomSheetState extends State<GrowthFormBottomSheet> {
             onChanged: (value) {
               widget.bloc.add(WeightChanged(value: value));
             },
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _errorWidget() {
-    return BlocProvider.value(
-      value: widget.bloc,
-      child: BlocBuilder<DraftingFormBloc, DraftingFormState>(
-        buildWhen: (p, c) => p.growthErrorMessage != c.growthErrorMessage,
-        builder: (context, state) {
-          return Visibility(
-            visible: state.growthErrorMessage.isNotEmpty,
-            child: TickerView(
-              type: TickerViewType.danger,
-              message: state.growthErrorMessage,
-            ),
           );
         },
       ),

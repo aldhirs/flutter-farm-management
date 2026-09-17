@@ -1,14 +1,11 @@
-import 'dart:math';
 import 'package:auto_route/auto_route.dart';
 import 'package:farm/app/bloc/app_event.dart';
 import 'package:farm/base/base_page_state.dart';
-import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/constants/env_constants.dart';
 import 'package:farm/features/welcome/bloc/welcome_bloc.dart';
 import 'package:farm/features/welcome/bloc/welcome_event.dart';
 import 'package:farm/features/welcome/bloc/welcome_state.dart';
 import 'package:farm/resources/resource.dart';
-import 'package:farm/utils/device_utils.dart';
 import 'package:farm/utils/ui_utils.dart';
 import 'package:farm/utils/view_utils.dart';
 import 'package:farm/views/view.dart';
@@ -28,15 +25,14 @@ class _WelcomePageState extends BasePageState<WelcomePage, WelcomeBloc>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
-  late Animation<double> _fadeLogo;
-  late Animation<Offset> _slideLogo;
-  late Animation<double> _flipLogo;
-
-  late Animation<double> _fadeTitle;
-  late Animation<Offset> _slideTitle;
-
-  late Animation<double> _fadeButtons;
-  late Animation<Offset> _slideButtons;
+  late Animation<double> _fadeMark;
+  late Animation<double> _scaleMark;
+  late Animation<double> _fadeName;
+  late Animation<Offset> _slideName;
+  late Animation<double> _fadeTagline;
+  late Animation<Offset> _slideTagline;
+  late Animation<double> _fadeButton;
+  late Animation<Offset> _slideButton;
 
   @override
   void initState() {
@@ -53,50 +49,20 @@ class _WelcomePageState extends BasePageState<WelcomePage, WelcomeBloc>
     super.dispose();
   }
 
-  Widget _luxuryLogo() {
-    return FadeTransition(
-      opacity: _fadeLogo,
-      child: SlideTransition(
-        position: _slideLogo,
-        child: AnimatedBuilder(
-          animation: _flipLogo,
-          builder: (context, child) {
-            return Transform(
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.001) // perspective
-                ..rotateX(_flipLogo.value),
-              alignment: Alignment.center,
-              child: child,
-            );
-          },
-          child: Assets.images.logo.image(
-            height: Dimens.d180,
-            width: AppDimen.current.screenWidth,
-          ),
-        ),
+  /// Tanda gambar di atas ubin putih.
+  ///
+  /// Logonya ungu pekat dengan latar tembus pandang, jadi di atas bidang ungu
+  /// ia nyaris hilang. Ubin putih mengembalikan kontrasnya sekaligus membuat
+  /// tanda ini terbaca sebagai lencana aplikasi — bentuk yang sama dengan ikon
+  /// yang baru saja ditekan orang di layar utama ponselnya.
+  Widget _mark() {
+    return Container(
+      padding: const EdgeInsets.all(Dimens.d16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(Dimens.d28),
       ),
-    );
-  }
-
-  Widget _luxuryTitle() {
-    return FadeTransition(
-      opacity: _fadeTitle,
-      child: SlideTransition(
-        position: _slideTitle,
-        child: Text(
-          'Selamat datang di ${EnvConstants.appName}',
-          style: TextStyles.heading4().copyWith(
-            color: AppColors.current.mint800,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _luxuryButtons() {
-    return FadeTransition(
-      opacity: _fadeButtons,
-      child: SlideTransition(position: _slideButtons, child: _buttons()),
+      child: Assets.images.logo.image(height: Dimens.d88, width: Dimens.d88),
     );
   }
 
@@ -105,45 +71,78 @@ class _WelcomePageState extends BasePageState<WelcomePage, WelcomeBloc>
     return BlocBuilder<WelcomeBloc, WelcomeState>(
       builder: (context, state) {
         return CommonScaffold(
-          body: Container(
-            width: double.infinity,
-            height: ViewUtils.screenHeight(),
-            padding: const EdgeInsets.all(Dimens.d16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(20),
-                  spreadRadius: 2,
-                  blurRadius: 3,
-                  offset: const Offset(0, 0), // changes position of shadow
-                ),
-              ],
-              borderRadius: BorderRadius.circular(Dimens.d12),
-            ),
-            child: Center(
+          backgroundColor: AppColors.current.mint800,
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: Dimens.d24,
+                vertical: Dimens.d24,
+              ),
+
+              /// Satu gerakan masuk untuk seluruh layar.
+              ///
+              /// Sebelumnya tanda gambar berputar di sumbu X selama 600ms
+              /// sebelum judul dan tombol menyusul. Yang ditunda oleh putaran
+              /// itu adalah satu-satunya tombol di layar — orang yang membuka
+              /// aplikasi untuk bekerja harus menunggu animasi selesai sebelum
+              /// bisa menekannya.
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Expanded(child: SizedBox(height: 80)),
-                  _luxuryLogo(),
-                  const SizedBox(height: Dimens.d24),
-                  _luxuryTitle(),
-                  const SizedBox(height: Dimens.d52),
-                  const Expanded(child: SizedBox()),
-                  ResponsiveWidget(
-                    mobile: SizedBox(
-                      width: double.infinity,
-                      child: _luxuryButtons(),
+                  const Spacer(flex: 2),
+                  FadeTransition(
+                    opacity: _fadeMark,
+                    child: ScaleTransition(scale: _scaleMark, child: _mark()),
+                  ),
+                  const SizedBox(height: Dimens.d32),
+                  FadeTransition(
+                    opacity: _fadeName,
+                    child: SlideTransition(
+                      position: _slideName,
+                      child: Text(
+                        EnvConstants.appName,
+                        style: TextStyles.heading1().copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          height: 1.05,
+                        ),
+                      ),
                     ),
-                    tabletPotrait: SizedBox(
-                      width: ViewUtils.screenWidth() * 0.6,
-                      child: _luxuryButtons(),
+                  ),
+                  const SizedBox(height: Dimens.d12),
+                  FadeTransition(
+                    opacity: _fadeTagline,
+                    child: SlideTransition(
+                      position: _slideTagline,
+                      child: Text(
+                        'Catat ternak, kandang, dan perpindahannya langsung '
+                        'dari lapangan.',
+                        style: TextStyles.body2().copyWith(
+                          color: Colors.white.withValues(alpha: 0.72),
+                          height: 1.5,
+                        ),
+                      ),
                     ),
-                    tabletLandscape: SizedBox(
-                      width: ViewUtils.screenWidth() * 0.3,
-                      child: _luxuryButtons(),
+                  ),
+                  const Spacer(flex: 3),
+                  FadeTransition(
+                    opacity: _fadeButton,
+                    child: SlideTransition(
+                      position: _slideButton,
+                      child: ResponsiveWidget(
+                        mobile: SizedBox(
+                          width: double.infinity,
+                          child: _buttons(),
+                        ),
+                        tabletPotrait: SizedBox(
+                          width: ViewUtils.screenWidth() * 0.6,
+                          child: _buttons(),
+                        ),
+                        tabletLandscape: SizedBox(
+                          width: ViewUtils.screenWidth() * 0.3,
+                          child: _buttons(),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -155,84 +154,68 @@ class _WelcomePageState extends BasePageState<WelcomePage, WelcomeBloc>
     );
   }
 
-  AssetImage _getImageBackground(BuildContext context) {
-    var assetImage = const AssetImage('assets/images/welcome/bg_mobile.png');
-    if (DeviceUtils.getDeviceTypeOf(context) == DeviceType.tabletPortrait) {
-      assetImage = const AssetImage(
-        'assets/images/welcome/bg_tablet_portrait.webp',
-      );
-    } else if (DeviceUtils.getDeviceTypeOf(context) ==
-        DeviceType.tabletLandscape) {
-      assetImage = const AssetImage(
-        'assets/images/welcome/bg_tablet_landscape.webp',
-      );
-    }
-    return assetImage;
-  }
-
   Widget _buttons() {
-    return Column(
-      children: [
-        Button(
-          size: ButtonSize.medium,
-          type: ButtonType.primary,
-          fulLWidth: true,
-          onPressed: () {
-            bloc.add(const LoginPressed());
-          },
-          text: 'Mulai',
-        ),
-        const SizedBox(height: Dimens.d16),
-      ],
+    return Button(
+      size: ButtonSize.medium,
+      type: ButtonType.primary,
+      fulLWidth: true,
+      onPressed: () {
+        bloc.add(const LoginPressed());
+      },
+      text: 'Mulai',
     );
   }
 
+  /// Satu urutan masuk, dibaca dari atas ke bawah.
+  ///
+  /// Bagian-bagiannya menyusul berurutan, bukan serentak, supaya mata
+  /// mengikuti satu arah: lencana, nama, kalimat, lalu tombol. Seluruhnya
+  /// selesai di bawah satu detik.
+  ///
+  /// Tombolnya tidak pernah menahan siapa pun. FadeTransition tetap menerima
+  /// sentuhan meski masih tembus pandang, dan bagiannya sudah selesai pada 80%
+  /// durasi — orang yang sudah hafal letak tombolnya bisa langsung menekan
+  /// tanpa menunggu animasi usai.
   void _initAnimation() {
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 900),
     );
 
-    // --- Luxurious staggered animations ---
-    _fadeLogo = CurvedAnimation(
+    Animation<double> fade(double begin, double end) => CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 0.4, curve: Curves.easeOut),
-    );
-    _slideLogo = Tween(begin: const Offset(0, -0.2), end: Offset.zero).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.4, curve: Curves.easeOutCubic),
-      ),
-    );
-    _flipLogo = Tween(begin: pi / 2, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.4, curve: Curves.easeOutBack),
-      ),
+      curve: Interval(begin, end, curve: Curves.easeOut),
     );
 
-    _fadeTitle = CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.3, 0.65, curve: Curves.easeOut),
-    );
-    _slideTitle = Tween(begin: const Offset(0, -0.1), end: Offset.zero).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.3, 0.65, curve: Curves.easeOut),
-      ),
-    );
-
-    _fadeButtons = CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.6, 1.0, curve: Curves.easeOut),
-    );
-    _slideButtons = Tween(begin: const Offset(0, 0.2), end: Offset.zero)
-        .animate(
+    Animation<Offset> rise(double begin, double end) =>
+        Tween(begin: const Offset(0, 0.18), end: Offset.zero).animate(
           CurvedAnimation(
             parent: _controller,
-            curve: const Interval(0.6, 1.0, curve: Curves.easeOutCubic),
+            curve: Interval(begin, end, curve: Curves.easeOutCubic),
           ),
         );
+
+    _fadeMark = fade(0.00, 0.40);
+
+    /// Lencana membesar sedikit, tidak berputar.
+    ///
+    /// Skala kecil terbaca sebagai benda yang mendekat; putaran terbaca sebagai
+    /// pertunjukan, dan pertunjukan itu yang dulu menahan tombol selama 600ms.
+    _scaleMark = Tween(begin: 0.88, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.00, 0.45, curve: Curves.easeOutBack),
+      ),
+    );
+
+    _fadeName = fade(0.18, 0.55);
+    _slideName = rise(0.18, 0.55);
+
+    _fadeTagline = fade(0.30, 0.68);
+    _slideTagline = rise(0.30, 0.68);
+
+    _fadeButton = fade(0.45, 0.80);
+    _slideButton = rise(0.45, 0.80);
 
     _controller.forward();
   }

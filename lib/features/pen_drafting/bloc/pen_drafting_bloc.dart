@@ -82,10 +82,16 @@ class PenDraftingBloc extends BaseBloc<PenDraftingEvent, PenDraftingState> {
         if (!_isProjectChosen(emit)) {
           return;
         }
+        final appliedKey = state.filterStatus;
         var category = barnCategoryMap.keys.join(",");
-        if (state.filterStatus.isNotEmpty) {
-          category = state.filterStatus;
+        if (appliedKey.isNotEmpty) {
+          category = appliedKey;
         }
+
+        /// Dicatat pada saat permintaan disusun, bukan saat dropdown disentuh.
+        /// Inilah satu-satunya titik yang tahu filter mana yang benar-benar
+        /// membentuk daftar berikutnya.
+        emit(state.copyWith(appliedFilterStatus: appliedKey));
         final req = PenRequest(
           limit: limit,
           projectId: appBloc.state.selectedProject?.id ?? '',

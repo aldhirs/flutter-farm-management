@@ -174,6 +174,16 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
     );
   }
 
+  /// Jumlah tombol aksi yang sedang tampil di kanan bilah.
+  ///
+  /// Harus sejalan dengan `Visibility` pada daftar actions di bawah; keduanya
+  /// membaca syarat yang sama supaya ruang yang disisihkan judul tidak pernah
+  /// berbeda dari yang sebenarnya dipakai.
+  int _visibleActionCount(SalesItemsState state) {
+    final bool canEdit = state.sales.isDraft() && state.salesItems.isNotEmpty;
+    return canEdit ? 2 : 1;
+  }
+
   SliverAppBar _buildAppBar(BuildContext context, SalesItemsState state) {
     final sales = state.sales;
     final customer = sales.customer_detail;
@@ -183,7 +193,12 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
       pinned: true,
       floating: false,
       forceElevated: true,
-      backgroundColor: AppColors.current.mint700,
+
+      /// Sewarna dengan latar yang mengembang.
+      ///
+      /// Latarnya mint800 sedangkan bilahnya mint700, jadi saat menyusut warna
+      /// berganti di tengah gerakan dan terlihat sebagai sambungan.
+      backgroundColor: AppColors.current.mint800,
       foregroundColor: Colors.white,
       flexibleSpace: LayoutBuilder(
         builder: (context, constraints) {
@@ -196,22 +211,42 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
               (maxHeight - currentHeight) / (maxHeight - minHeight);
           final double titleOpacity = collapsePercentage.clamp(0.0, 1.0);
 
+          /// Judul disisihkan dari tombol aksi di kanan.
+          ///
+          /// FlexibleSpaceBar menata judulnya selebar toolbar tanpa tahu ada
+          /// apa di sebelahnya, jadi begitu bilah menyusut judul berjalan
+          /// masuk ke bawah tombol edit. Ruang yang disisihkan mengikuti
+          /// jumlah tombol yang BENAR-BENAR tampil — tombol edit hanya muncul
+          /// pada penjualan draf, dan menyisihkan ruang untuk tombol yang
+          /// sedang tidak ada akan memotong judul lebih awal dari perlunya.
+          final double actionsWidth = _visibleActionCount(state) * 48.0;
+
           return FlexibleSpaceBar(
             collapseMode: CollapseMode.parallax,
+            titlePadding: EdgeInsetsDirectional.only(
+              start: 72,
+              end: actionsWidth + 8,
+              bottom: 16,
+            ),
             title: Opacity(
               opacity: titleOpacity,
               child: Text(
                 'Penjualan #${customer?.name.orEmpty()}',
                 style: TextStyles.heading5().copyWith(color: Colors.white),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             background: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [const Color(0xFF25AFCB), AppColors.current.mint500],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                /// Bidang pekat satu warna, bukan gradien.
+                ///
+                /// Gradien ungu-ke-ungu tidak mengabarkan apa pun, dan di
+                /// bawah matahari selisih dua warna terang itu hilang. Warna
+                /// yang sama dipakai papan feedlot di beranda dan kepala
+                /// halaman masuk, sehingga ketiganya terbaca sebagai satu
+                /// aplikasi.
+                color: AppColors.current.mint800,
               ),
               child: SafeArea(
                 bottom: false,
@@ -423,7 +458,7 @@ class _SalesPageState extends BasePageState<SalesItemsPage, SalesItemsBloc>
     if (!bloc.state.sales.isDraft()) return const SizedBox.shrink();
     return FloatingActionButton.extended(
       heroTag: 'addBtn',
-      backgroundColor: AppColors.current.eucalyptus700,
+      backgroundColor: AppColors.current.mint700,
       onPressed: () => _addNew(),
       label: Text(
         'Tambah Data',

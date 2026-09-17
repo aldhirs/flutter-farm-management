@@ -30,6 +30,9 @@ import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
+import 'package:farm/domain/entities/auth/change_password_request.dart';
+import 'package:farm/domain/entities/project/discover_summary.dart';
+import 'package:farm/domain/entities/project/discover_summary_request.dart';
 import 'package:farm/domain/entities/reception/reception.dart';
 import 'package:farm/domain/entities/reception/reception_assignee.dart';
 import 'package:farm/domain/entities/reception/reception_assignee_request.dart';
@@ -133,6 +136,17 @@ class ApiService {
     );
   }
 
+  Future<DataResponse<void>> changePassword(
+    ChangePasswordRequest request,
+  ) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.put,
+      path: '/v1/user/change-password',
+      body: request.toJson(),
+      decoder: (_) => null,
+    );
+  }
+
   Future<DataListResponse<Project>> projects(ProjectRequest request) async {
     return _authAppServerApiClient.request(
       method: RestMethod.get,
@@ -140,6 +154,17 @@ class ApiService {
       queryParameters: request.toJson(),
       successResponseMapperType: SuccessResponseMapperType.dataJsonArray,
       decoder: Project.fromJson,
+    );
+  }
+
+  Future<DataResponse<DiscoverSummary>> discoverSummary(
+    DiscoverSummaryRequest request,
+  ) async {
+    return _authAppServerApiClient.request(
+      method: RestMethod.get,
+      path: '/v1/discover-summary',
+      queryParameters: request.toJson(),
+      decoder: DiscoverSummary.fromJson,
     );
   }
 

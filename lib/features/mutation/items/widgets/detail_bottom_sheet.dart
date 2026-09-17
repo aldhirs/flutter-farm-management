@@ -59,7 +59,7 @@ class DetailBottomSheet extends StatelessWidget {
                 ? "Dari: ${item.from_project_name.orEmpty()}"
                 : "Ke: ${item.to_project_name.orEmpty()}",
             showBottomSheet
-                ? (isIn ? Colors.green : Colors.orange)
+                ? (isIn ? AppColors.current.mint700 : Colors.orange)
                 : Colors.white,
           ),
           const SizedBox(height: 12),
@@ -71,7 +71,9 @@ class DetailBottomSheet extends StatelessWidget {
                 Text(
                   item.notes,
                   style: TextStyles.label2().copyWith(
-                    color: Colors.grey.shade800,
+                    color: showBottomSheet
+                        ? AppColors.current.neutral800
+                        : Colors.white.withValues(alpha: 0.85),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -121,21 +123,28 @@ class DetailBottomSheet extends StatelessWidget {
   }
 
   // ==================== DETAIL ROW ====================
+  /// Warna teks mengikuti latar tempat widget ini dipasang.
+  ///
+  /// `showBottomSheet` bernilai false ketika widget ini dipakai sebagai kepala
+  /// berwarna di halaman rincian mutasi — dan justru di situ dulu ia memakai
+  /// hitam, sehingga tanggal dan nama pembuat duduk gelap di atas bidang ungu
+  /// dan praktis tidak terbaca. Keadaan yang sebaliknya, di dalam lembar bawah
+  /// berlatar putih, sudah benar sejak awal.
   Widget _buildDetail(IconData icon, String text) {
+    final Color tone = showBottomSheet
+        ? AppColors.current.neutral800
+        : Colors.white;
     return Row(
       children: [
         Icon(
           icon,
           size: 16,
-          color: showBottomSheet ? Colors.blueGrey : Colors.black54,
+          color: showBottomSheet
+              ? AppColors.current.mint700
+              : Colors.white.withValues(alpha: 0.8),
         ),
         const SizedBox(width: 6),
-        Text(
-          text,
-          style: TextStyles.label3().copyWith(
-            color: showBottomSheet ? Colors.grey.shade800 : Colors.black87,
-          ),
-        ),
+        Text(text, style: TextStyles.label3().copyWith(color: tone)),
       ],
     );
   }

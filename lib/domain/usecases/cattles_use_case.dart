@@ -25,6 +25,7 @@ class CattlesUseCase
       result: result,
       page: response.page,
       total_page: response.total_page,
+      total: response.total,
     );
   }
 }
@@ -37,5 +38,10 @@ abstract class CattlesOutput extends BaseOutput with _$CattlesOutput {
     DomainState<List<Cattle>>? result,
     int? page,
     int? total_page,
+
+    /// Jumlah seluruh baris yang cocok dengan saringan, bukan hanya yang
+    /// sedang dimuat. Dipakai layar untuk menyebut angka yang sama dengan
+    /// kartu yang membukanya.
+    int? total,
   }) = _CattlesOutput;
 }

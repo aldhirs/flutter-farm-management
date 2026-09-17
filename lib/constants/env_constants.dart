@@ -5,6 +5,15 @@ class EnvConstants {
   const EnvConstants._();
 
   static const appName = 'AGRISATWA';
+
+  /// Nomor versi yang ditampilkan di halaman akun.
+  ///
+  /// Harus sama dengan `version:` di pubspec.yaml. Ditaruh di sini, bukan
+  /// ditulis langsung di halamannya: yang sebelumnya tertulis di sana adalah
+  /// "v1.0.0" sementara aplikasinya sudah 1.0.10, dan angka yang salah di
+  /// layar ini menyesatkan justru ketika paling dibutuhkan — saat seseorang
+  /// melaporkan masalah dan ditanya versi berapa yang ia pakai.
+  static const appVersion = '1.0.10';
   static const flavorKey = 'FLAVOR';
   static const appBasicAuthNameKey = 'APP_BASIC_AUTH_NAME';
   static const appBasicAuthPasswordKey = 'APP_BASIC_AUTH_PASSWORD';

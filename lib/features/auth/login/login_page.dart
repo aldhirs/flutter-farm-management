@@ -15,7 +15,6 @@ import 'package:farm/widgets/popup/popup.dart';
 import 'package:farm/widgets/ticker/ticker_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:math';
 
 @RoutePage()
 class LoginPage extends StatefulWidget {
@@ -32,18 +31,10 @@ class _LoginPageState extends BasePageState<LoginPage, LoginBloc>
   late TextEditingController _controllerEmail;
   late AnimationController _controller;
 
-  late Animation<double> _fadeLogo;
-  late Animation<Offset> _slideLogo;
-  late Animation<double> _flipLogo;
-
-  late Animation<double> _fadeTitle;
-  late Animation<Offset> _slideTitle;
-
-  late Animation<double> _fadeFields;
-  late Animation<Offset> _slideFields;
-
-  late Animation<double> _fadeButton;
-  late Animation<Offset> _slideButton;
+  late Animation<double> _fadeHeader;
+  late Animation<Offset> _slideHeader;
+  late Animation<double> _fadeSheet;
+  late Animation<Offset> _slideSheet;
 
   @override
   void initState() {
@@ -56,64 +47,41 @@ class _LoginPageState extends BasePageState<LoginPage, LoginBloc>
       ),
     );
 
+    _initAnimation();
+  }
+
+  /// Dua bagian saja: kepala turun, lembar naik.
+  ///
+  /// Gerakannya menjelaskan susunan layar — bidang merek di atas, lembar kerja
+  /// yang naik menutupinya — bukan sekadar menghidupkan halaman. Durasinya
+  /// pendek karena layar ini dibuka untuk mengetik, dan kolom pertama sudah
+  /// bisa disentuh jauh sebelum gerakannya selesai.
+  void _initAnimation() {
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1600),
+      duration: const Duration(milliseconds: 700),
     );
 
-    // Logo anim (fade + slide from top + flip)
-    _fadeLogo = CurvedAnimation(
+    _fadeHeader = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 0.3, curve: Curves.easeOut),
+      curve: const Interval(0.00, 0.55, curve: Curves.easeOut),
     );
-    _slideLogo = Tween(begin: const Offset(0, -0.3), end: Offset.zero).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.3, curve: Curves.easeOutBack),
-      ),
-    );
-    _flipLogo = Tween(begin: pi / 2, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.3, curve: Curves.easeOutBack),
-      ),
-    );
-
-    // Title anim
-    _fadeTitle = CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.25, 0.55, curve: Curves.easeOut),
-    );
-    _slideTitle = Tween(begin: const Offset(0, -0.15), end: Offset.zero)
+    _slideHeader = Tween(begin: const Offset(0, -0.12), end: Offset.zero)
         .animate(
           CurvedAnimation(
             parent: _controller,
-            curve: const Interval(0.25, 0.55, curve: Curves.easeOut),
+            curve: const Interval(0.00, 0.55, curve: Curves.easeOutCubic),
           ),
         );
 
-    // Fields anim
-    _fadeFields = CurvedAnimation(
+    _fadeSheet = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.5, 0.8, curve: Curves.easeOut),
+      curve: const Interval(0.20, 0.85, curve: Curves.easeOut),
     );
-    _slideFields = Tween(begin: const Offset(0, 0.15), end: Offset.zero)
-        .animate(
-          CurvedAnimation(
-            parent: _controller,
-            curve: const Interval(0.5, 0.8, curve: Curves.easeOut),
-          ),
-        );
-
-    // Button anim
-    _fadeButton = CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.75, 1.0, curve: Curves.easeOut),
-    );
-    _slideButton = Tween(begin: const Offset(0, 0.2), end: Offset.zero).animate(
+    _slideSheet = Tween(begin: const Offset(0, 0.10), end: Offset.zero).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.75, 1.0, curve: Curves.easeOutCubic),
+        curve: const Interval(0.20, 0.85, curve: Curves.easeOutCubic),
       ),
     );
 
@@ -127,85 +95,86 @@ class _LoginPageState extends BasePageState<LoginPage, LoginBloc>
     super.dispose();
   }
 
-  // Wraps any widget with fade + slide
-  Widget _fadeSlide({
-    required Animation<double> fade,
-    required Animation<Offset> slide,
-    required Widget child,
-  }) {
-    return FadeTransition(
-      opacity: fade,
-      child: SlideTransition(position: slide, child: child),
-    );
-  }
-
-  Widget _animatedLogo() {
-    return FadeTransition(
-      opacity: _fadeLogo,
-      child: SlideTransition(
-        position: _slideLogo,
-        child: AnimatedBuilder(
-          animation: _flipLogo,
-          builder: (context, child) {
-            return Transform(
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.001)
-                ..rotateX(_flipLogo.value),
-              alignment: Alignment.center,
-              child: child,
-            );
-          },
-          child: _headerLogoWidget(),
-        ),
+  /// Tanda gambar di atas ubin putih, sama seperti layar sambutan.
+  ///
+  /// Logonya ungu pekat di atas latar tembus pandang, jadi ia butuh bidang
+  /// terang untuk bisa terlihat di atas kepala berwarna ungu.
+  Widget _mark() {
+    return Container(
+      padding: const EdgeInsets.all(Dimens.d12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(Dimens.d20),
       ),
+      child: Assets.images.logo.image(height: Dimens.d56, width: Dimens.d56),
     );
   }
 
-  Widget _animatedTitle() {
-    return _fadeSlide(
-      fade: _fadeTitle,
-      slide: _slideTitle,
-      child: _headerTitleWidget(),
-    );
-  }
-
-  Widget _animatedFields() {
-    return _fadeSlide(
-      fade: _fadeFields,
-      slide: _slideFields,
+  /// Kepala berwarna: tanda gambar dan sapaan.
+  ///
+  /// Warna merek muncul di layar pertama yang dilihat orang setiap pagi,
+  /// bukan hanya setelah ia masuk. Bidang gelap juga lebih terbaca di bawah
+  /// matahari daripada kartu putih yang memantul.
+  Widget _header() {
+    return Container(
+      width: double.infinity,
+      color: AppColors.current.mint800,
+      padding: const EdgeInsets.fromLTRB(
+        Dimens.d24,
+        Dimens.d32,
+        Dimens.d24,
+        Dimens.d32,
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _errorWidget(),
-          _textInputEmailWidget(),
-          const SizedBox(height: Dimens.d16),
-          _textInputPasswordWidget(),
-          const SizedBox(height: Dimens.d4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ButtonText(
-                text: "Lupa Kata Sandi?",
-                onPressed: () {
-                  showDialog(
-                    useRootNavigator: false,
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (context) => _popupInputForgotPassword(),
-                  );
-                },
-              ),
-            ],
+          _mark(),
+          const SizedBox(height: Dimens.d20),
+          Text(
+            'Masuk',
+            style: TextStyles.heading2().copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              height: 1.1,
+            ),
+          ),
+          const SizedBox(height: Dimens.d8),
+          Text(
+            'Gunakan akun yang diberikan perusahaan Anda.',
+            style: TextStyles.body3().copyWith(
+              color: Colors.white.withValues(alpha: 0.72),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _animatedButton() {
-    return _fadeSlide(
-      fade: _fadeButton,
-      slide: _slideButton,
-      child: _loginButtonWidget(),
+  Widget _fields() {
+    return Column(
+      children: [
+        _errorWidget(),
+        _textInputEmailWidget(),
+        const SizedBox(height: Dimens.d16),
+        _textInputPasswordWidget(),
+        const SizedBox(height: Dimens.d4),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ButtonText(
+              text: "Lupa Kata Sandi?",
+              onPressed: () {
+                showDialog(
+                  useRootNavigator: false,
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) => _popupInputForgotPassword(),
+                );
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -216,7 +185,7 @@ class _LoginPageState extends BasePageState<LoginPage, LoginBloc>
         return CommonScaffold(
           body: ResponsiveWidget(
             mobile: _viewPage(),
-            tabletPotrait: _viewPagePortrait(),
+            tabletPotrait: _viewTabletContent(),
             tabletLandscape: _viewTabletContent(),
           ),
         );
@@ -224,89 +193,60 @@ class _LoginPageState extends BasePageState<LoginPage, LoginBloc>
     );
   }
 
-  // ignore: unused_element
-  Widget _viewPagePortrait() {
-    return Column(
-      children: [
-        const SizedBox(height: Dimens.d48),
-        Center(child: Assets.images.logo.image(height: Dimens.d48)),
-        _viewTabletContent(),
-      ],
-    );
-  }
-
   Widget _viewTabletContent() {
-    return Container(
-      margin: const EdgeInsets.all(Dimens.d46),
-      padding: const EdgeInsets.only(
-        left: Dimens.d16,
-        right: Dimens.d16,
-        top: Dimens.d24,
-        bottom: Dimens.d24,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(20),
-            spreadRadius: 2,
-            blurRadius: 3,
-            offset: const Offset(0, 0), // changes position of shadow
-          ),
-        ],
-        borderRadius: BorderRadius.circular(Dimens.d12),
-      ),
-      child: _viewPage(),
+    return Center(
+      child: SizedBox(width: ViewUtils.screenWidth() * 0.6, child: _viewPage()),
     );
   }
 
+  /// Kepala berwarna, lalu lembar putih yang naik menutupinya.
+  ///
+  /// Pembagiannya bukan hiasan: bidang berwarna adalah merek, lembar putih
+  /// adalah tempat orang bekerja. Lembar itu juga memberi papan ketik sesuatu
+  /// untuk didorong — seluruh isinya bisa digulir, sehingga kolom kata sandi
+  /// tidak pernah tertutup papan ketik pada layar pendek.
   Widget _viewPage() {
     return SingleChildScrollView(
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Dimens.d16,
-          vertical: Dimens.d16,
-        ),
-        child: Center(
-          child: Column(
-            children: [
-              const SizedBox(height: Dimens.d36),
-              _animatedLogo(),
-              const SizedBox(height: Dimens.d24),
-              _animatedTitle(),
-              const SizedBox(height: Dimens.d24),
-              _animatedFields(),
-              const SizedBox(height: Dimens.d16),
-              _animatedButton(),
-              const SizedBox(height: Dimens.d48),
-            ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          FadeTransition(
+            opacity: _fadeHeader,
+            child: SlideTransition(position: _slideHeader, child: _header()),
           ),
-        ),
+          Transform.translate(
+            offset: const Offset(0, -Dimens.d24),
+            child: FadeTransition(
+              opacity: _fadeSheet,
+              child: SlideTransition(
+                position: _slideSheet,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.current.neutral100,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(Dimens.d28),
+                      topRight: Radius.circular(Dimens.d28),
+                    ),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(
+                    Dimens.d16,
+                    Dimens.d28,
+                    Dimens.d16,
+                    Dimens.d32,
+                  ),
+                  child: Column(
+                    children: [
+                      _fields(),
+                      const SizedBox(height: Dimens.d24),
+                      _loginButtonWidget(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
-    );
-  }
-
-  Widget _headerLogoWidget() {
-    return Assets.images.logo.image(
-      height: Dimens.d180,
-      width: AppDimen.current.screenWidth,
-    );
-  }
-
-  Widget _headerTitleWidget() {
-    return Column(
-      children: [
-        Text(
-          'Selamat datang kembali.',
-          style: TextStyles.heading4().copyWith(color: AppColors.current.black),
-        ),
-        const SizedBox(height: Dimens.d8),
-        Text(
-          'Silakan login disini.',
-          style: TextStyles.body2().copyWith(color: AppColors.current.black),
-        ),
-        const SizedBox(height: Dimens.d8),
-      ],
     );
   }
 
@@ -438,7 +378,13 @@ class _LoginPageState extends BasePageState<LoginPage, LoginBloc>
     bloc.add(
       InitForgotPassword(
         title: 'Lupa Kata Sandi',
-        subtitle: [TextSpan(text: 'Silakan masukkan alamat e-mail')],
+        subtitle: [
+          TextSpan(
+            text:
+                'Masukkan alamat e-mail akun Anda. Instruksi untuk membuat '
+                'kata sandi baru akan dikirim ke sana.',
+          ),
+        ],
         buttonTitle: 'Kirim Instruksi',
       ),
     );
@@ -451,10 +397,24 @@ class _LoginPageState extends BasePageState<LoginPage, LoginBloc>
               Popup(
                 textFieldVisibility: true,
                 closeVisibility: true,
-                textInputTitle: 'E-Mail',
-                textInputHint: 'Alamat E-Mail',
-                title: 'Kata Sandi',
-                positiveButtonText: 'Kirim',
+                textInputTitle: 'Alamat E-Mail',
+                textInputHint: 'nama@perusahaan.com',
+                title: 'Lupa Kata Sandi',
+
+                /// Keterangan diberikan langsung di sini.
+                ///
+                /// Sebelumnya kalimatnya dititipkan lewat event
+                /// `InitForgotPassword`, tetapi penanganan event itu hanya
+                /// memancarkan ulang state tanpa menyimpan apa pun — jadi
+                /// dialognya selalu terbuka tanpa satu kalimat penjelas.
+                description: [
+                  TextSpan(
+                    text:
+                        'Masukkan alamat e-mail akun Anda. Instruksi untuk '
+                        'membuat kata sandi baru akan dikirim ke sana.',
+                  ),
+                ],
+                positiveButtonText: 'Kirim Instruksi',
                 positiveButtonType: ButtonType.primary,
                 isLoading: false,
                 onPositiveButtonPressed: () {

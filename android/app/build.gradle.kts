@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
@@ -9,15 +12,52 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('key.properties')
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+// Versi Android sasaran dibaca dari gradle.properties, dengan nilai bawaan
+// Flutter sebagai cadangan bila propertinya tidak ada.
+val agrisatwaCompileSdk: Int =
+    (project.findProperty("agrisatwa.compileSdk") as String?)?.toInt() ?: 36
+val agrisatwaTargetSdk: Int =
+    (project.findProperty("agrisatwa.targetSdk") as String?)?.toInt() ?: 36
+
+/*
+Keterangan keystore, dari key.properties bila ada, dari gradle.properties bila
+tidak.
+
+key.properties didahulukan karena itu tempat yang lazim dipakai tiap mesin
+menyimpan keterangan keystore-nya sendiri tanpa ikut ter-commit. Tetapi berkas
+itu tidak ada di repo ini, sementara nilainya sudah tertulis di
+gradle.properties — dan karena hanya key.properties yang dibaca, signingConfig
+release tidak pernah terbentuk. Akibatnya `flutter build apk --release`
+menghasilkan APK bertanda tangan kunci debug: tidak bisa diunggah ke Play
+Console, dan tidak bisa memperbarui pemasangan yang sudah ada. Buildnya
+berhasil tanpa keluhan apa pun, jadi tidak ada satu pun tanda bahwa hasilnya
+tidak bisa dipakai.
+*/
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) {
+        FileInputStream(keystorePropertiesFile).use { load(it) }
+    }
+}
+
+fun keystoreValue(name: String): String? =
+    keystoreProperties.getProperty(name) ?: project.findProperty(name) as String?
+
+/*
+Letak keystore dicari, tidak sekadar dipercaya apa adanya.
+
+Yang tertulis di gradle.properties adalah "/app/agrisatwa-release.jks" — garis
+miring di depan membuatnya dibaca sebagai jalur mutlak dari akar disk, padahal
+berkasnya ada di android/app. Dicoba apa adanya dulu, untuk mesin yang memang
+menyimpannya di luar repo, lalu relatif terhadap folder android.
+*/
+val keystoreFile: java.io.File? = keystoreValue("storeFile")?.let { path ->
+    listOf(file(path), rootProject.file(path.trimStart('/'))).firstOrNull { it.exists() }
 }
 
 android {
     namespace = "com.agrisatwa.farm"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = agrisatwaCompileSdk
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -35,33 +75,34 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = agrisatwaTargetSdk
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
     signingConfigs {
-        release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+        // Hanya dibentuk bila keystore-nya benar-benar ditemukan, supaya mesin
+        // tanpa keystore tetap bisa membangun — jatuh ke kunci debug di bawah.
+        if (keystoreFile != null) {
+            create("release") {
+                keyAlias = keystoreValue("keyAlias")
+                keyPassword = keystoreValue("keyPassword")
+                storeFile = keystoreFile
+                storePassword = keystoreValue("storePassword")
+            }
         }
     }
 
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.release
-            getByName("release") {
-                isMinifyEnabled = true
-                isShrinkResources = true
-                proguardFiles(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
-                )
-            }
+        getByName("release") {
+            signingConfig = signingConfigs.findByName("release")
+                ?: signingConfigs.getByName("debug")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

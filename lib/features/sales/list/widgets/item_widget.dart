@@ -23,20 +23,18 @@ class ItemWidget extends StatelessWidget {
       splashColor: AppColors.current.mint400.withValues(alpha: 80),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: Dimens.d12, vertical: 6),
+
+        /// Bidang rata dengan tepi tipis, bukan gradien putih-ke-abu dengan
+        /// bayangan.
+        ///
+        /// Gradien itu tidak mengabarkan apa pun dan bayangannya membuat tiap
+        /// kartu tampak melayang di atas yang lain — padahal semuanya sederajat.
+        /// Tepi tipis memisahkan kartu dengan lebih tenang, dan menyamakannya
+        /// dengan kartu di beranda dan daftar feedlot.
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.white, Colors.grey.shade50],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(Dimens.d16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12.withValues(alpha: 0.2),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          border: Border.all(color: AppColors.current.neutral300),
         ),
         child: Padding(
           padding: const EdgeInsets.all(14),
@@ -49,7 +47,7 @@ class ItemWidget extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 20,
-                    backgroundColor: Colors.teal.shade100,
+                    backgroundColor: AppColors.current.mint200,
                     child: Text(
                       sale.customer_detail?.name.isNotEmpty == true
                           ? (sale.customer_detail?.name)
@@ -58,7 +56,7 @@ class ItemWidget extends StatelessWidget {
                           : '',
                       style: TextStyles.body1().copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.teal.shade800,
+                        color: AppColors.current.mint700,
                       ),
                     ),
                   ),
@@ -93,11 +91,27 @@ class ItemWidget extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              /// Info items
+              /// Nomor penjualan dinaikkan menjadi identitas kartu.
+              ///
+              /// Inilah yang disebut orang saat berbicara tentang satu
+              /// penjualan; sebelumnya ia jadi baris terakhir, di bawah tipe
+              /// pelanggan dan tanggal.
+              Text(
+                (sale.sales_number).defaultValue('-'),
+                style: TextStyles.body2().copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.current.mint800,
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              /// Ikon memakai satu warna, bukan satu warna per baris.
+              ///
+              /// Indigo, oranye, dan ungu pada tiga baris berturut-turut
+              /// menjanjikan bahwa warnanya berarti sesuatu. Tidak.
               _buildDetail(
                 Icons.category_outlined,
                 (sale.customer_detail?.type).orEmpty(),
-                color: Colors.indigo,
               ),
               _buildDetail(
                 Icons.calendar_today_outlined,
@@ -107,12 +121,6 @@ class ItemWidget extends StatelessWidget {
                       newFormat: DateConstant.DATETIME_FULL_MONTH,
                     )
                     .defaultValue('-'),
-                color: Colors.deepOrange,
-              ),
-              _buildChip(
-                Icons.key_outlined,
-                (sale.sales_number).defaultValue('-'),
-                color: Colors.green,
               ),
             ],
           ),
@@ -121,7 +129,8 @@ class ItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDetail(IconData icon, String text, {Color color = Colors.blue}) {
+  Widget _buildDetail(IconData icon, String text, {Color? color}) {
+    final iconColor = color ?? AppColors.current.mint700;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -129,10 +138,10 @@ class ItemWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: iconColor.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, size: 10, color: color),
+            child: Icon(icon, size: 10, color: iconColor),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -142,26 +151,6 @@ class ItemWidget extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChip(IconData icon, String text, {Color color = Colors.green}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 16, color: color),
-          ),
-          const SizedBox(width: 10),
-          TagCategory(text: text, type: TagCategoryType.plain),
         ],
       ),
     );
