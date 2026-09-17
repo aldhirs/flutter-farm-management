@@ -12,6 +12,13 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Versi Android sasaran dibaca dari gradle.properties, dengan nilai bawaan
+// Flutter sebagai cadangan bila propertinya tidak ada.
+val agrisatwaCompileSdk: Int =
+    (project.findProperty("agrisatwa.compileSdk") as String?)?.toInt() ?: 36
+val agrisatwaTargetSdk: Int =
+    (project.findProperty("agrisatwa.targetSdk") as String?)?.toInt() ?: 36
+
 val keystorePropertiesFile = rootProject.file("key.properties")
 val keystoreProperties = Properties().apply {
     if (keystorePropertiesFile.exists()) {
@@ -21,7 +28,7 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace = "com.agrisatwa.farm"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = agrisatwaCompileSdk
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -39,7 +46,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = agrisatwaTargetSdk
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
