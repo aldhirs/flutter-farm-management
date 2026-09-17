@@ -116,6 +116,7 @@ class _ChangeBottomSheetState extends State<ChangeBottomSheet> {
               Text("Pen Tujuan", style: TextStyles.label1()),
               const SizedBox(height: 6),
               _dropdownBarn(),
+              const SizedBox(height: Dimens.d16),
               _dropdownPen(),
 
               const SizedBox(height: 16),

@@ -7,6 +7,7 @@ import 'package:farm/features/mutation/items/bloc/mutation_items_state.dart';
 import 'package:farm/features/mutation/items/widgets/add_manual_bottom_sheet.dart';
 import 'package:farm/features/mutation/items/widgets/delete_bottom_sheet.dart';
 import 'package:farm/features/mutation/items/widgets/detail_bottom_sheet.dart';
+import 'package:farm/features/mutation/items/widgets/mutation_info_sheet.dart';
 import 'package:farm/features/mutation/items/widgets/item_widget.dart';
 import 'package:farm/features/mutation/items/widgets/result_cattle_bottom_sheet.dart';
 import 'package:farm/features/scan/scan_page.dart';
@@ -173,13 +174,27 @@ class _MutationPageState
     );
   }
 
+  /// Jumlah tombol aksi yang sedang tampil di kanan bilah.
+  ///
+  /// Membaca syarat yang sama dengan `Visibility` pada daftar actions, supaya
+  /// ruang yang disisihkan judul tidak pernah berbeda dari yang dipakai.
+  int _visibleActionCount() {
+    final bool canEdit = widget.item.isDraft() && !widget.isIn;
+    return canEdit ? 2 : 1;
+  }
+
   SliverAppBar _buildAppBar(BuildContext context, MutationItemsState state) {
     return SliverAppBar(
       expandedHeight: 220.0,
       pinned: true,
       floating: false,
       forceElevated: true,
-      backgroundColor: AppColors.current.mint700,
+
+      /// Sewarna dengan latar yang mengembang.
+      ///
+      /// Latarnya mint800 sedangkan bilahnya mint700, jadi saat menyusut warna
+      /// berganti di tengah gerakan dan terlihat sebagai sambungan.
+      backgroundColor: AppColors.current.mint800,
       foregroundColor: Colors.white,
       flexibleSpace: LayoutBuilder(
         builder: (context, constraints) {
@@ -192,22 +207,32 @@ class _MutationPageState
               (maxHeight - currentHeight) / (maxHeight - minHeight);
           final double titleOpacity = collapsePercentage.clamp(0.0, 1.0);
 
+          /// Judul disisihkan dari tombol aksi di kanan. Alasannya sama dengan
+          /// halaman item penjualan: FlexibleSpaceBar menata judulnya selebar
+          /// toolbar tanpa tahu ada apa di sebelahnya.
+          final double actionsWidth = _visibleActionCount() * 48.0;
+
           return FlexibleSpaceBar(
             collapseMode: CollapseMode.parallax,
+            titlePadding: EdgeInsetsDirectional.only(
+              start: 72,
+              end: actionsWidth + 8,
+              bottom: 16,
+            ),
             title: Opacity(
               opacity: titleOpacity,
               child: Text(
                 'Rincian Mutasi',
                 style: TextStyles.heading5().copyWith(color: Colors.white),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             background: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [const Color(0xFF25ADCB), AppColors.current.mint500],
-                ),
+                /// Bidang pekat satu warna, sama dengan halaman item
+                /// penjualan dan papan feedlot di beranda.
+                color: AppColors.current.mint800,
               ),
               child: SafeArea(
                 bottom: false,
@@ -232,17 +257,27 @@ class _MutationPageState
           );
         },
       ),
+
+      /// Ikon aksi diberi warna putih secara tegas.
+      ///
+      /// Sebelumnya keduanya tanpa warna, jadi mereka mewarisi tema ikon
+      /// bawaan yang gelap — dan duduk tak terlihat di atas bilah ungu.
+      /// Halaman item penjualan sudah menyebutkan warnanya sejak awal; hanya
+      /// halaman ini yang terlewat.
       actions: [
         Visibility(
           visible: widget.item.isDraft() && !widget.isIn,
           child: IconButton(
             onPressed: () => bloc.add(const EditModeToggled()),
-            icon: Icon(state.isEditMode ? Icons.close : Icons.edit),
+            icon: Icon(
+              state.isEditMode ? Icons.close : Icons.edit,
+              color: Colors.white,
+            ),
           ),
         ),
         IconButton(
           onPressed: () => _onShowInfo(),
-          icon: const Icon(Icons.info_outline_rounded),
+          icon: const Icon(Icons.info_outline_rounded, color: Colors.white),
         ),
       ],
     );
@@ -331,7 +366,7 @@ class _MutationPageState
     }
     return FloatingActionButton.extended(
       heroTag: 'addBtn',
-      backgroundColor: AppColors.current.eucalyptus700,
+      backgroundColor: AppColors.current.mint700,
       onPressed: () => _addNew(),
       label: Text(
         'Tambah Data',
@@ -380,14 +415,8 @@ class _MutationPageState
 
   void _onShowInfo() {
     navigator.showBottomSheet(
-      DetailBottomSheet(
-        item: widget.item,
-        isIn: widget.isIn,
-        onDismiss: () {
-          navigator.pop();
-        },
-        showBottomSheet: true,
-      ),
+      isScrollControlled: true,
+      MutationInfoSheet(item: widget.item, isIn: widget.isIn),
     );
   }
 

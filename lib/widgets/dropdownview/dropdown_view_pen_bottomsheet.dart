@@ -321,22 +321,34 @@ class _DropdownViewPenBottomsheetState
                   });
                 },
                 child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: Dimens.d10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: Dimens.d16,
+                    vertical: Dimens.d4,
+                  ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: Dimens.d16,
-                    vertical: Dimens.d8,
+                    vertical: Dimens.d12,
                   ),
+
+                  /// Tepi tipis, bukan 3px.
+                  ///
+                  /// Tepi setebal itu pada dua baris bersebelahan menempel jadi
+                  /// satu garis 6px, yang terbaca sebagai tepi yang saling
+                  /// bertindihan — bukan sebagai dua kartu terpisah. Ketebalan
+                  /// dan warnanya kini sama dengan daftar feedlot, sehingga
+                  /// kedua lembar pilihan ini terlihat berasal dari satu
+                  /// aplikasi.
                   decoration: BoxDecoration(
                     color: selected
-                        ? AppColors.current.mint200
-                        : AppColors.current.neutral100,
-                    border: BoxBorder.all(
-                      width: 3,
+                        ? AppColors.current.mint200.withValues(alpha: 0.6)
+                        : Colors.white,
+                    border: Border.all(
+                      width: selected ? 2 : 1,
                       color: selected
-                          ? AppColors.current.mint300
-                          : AppColors.current.neutral500,
+                          ? AppColors.current.mint700
+                          : AppColors.current.neutral300,
                     ),
-                    borderRadius: BorderRadius.circular(Dimens.d10),
+                    borderRadius: BorderRadius.circular(Dimens.d14),
                   ),
                   child: Row(
                     children: [
@@ -349,10 +361,10 @@ class _DropdownViewPenBottomsheetState
                               children: [
                                 Row(
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.meeting_room_outlined,
                                       size: 18,
-                                      color: Colors.teal,
+                                      color: AppColors.current.mint700,
                                     ),
                                     const SizedBox(width: 6),
                                     Expanded(
@@ -367,10 +379,10 @@ class _DropdownViewPenBottomsheetState
                                 const SizedBox(height: 4),
                                 Row(
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.home_outlined,
                                       size: 18,
-                                      color: Colors.indigo,
+                                      color: AppColors.current.neutral600,
                                     ),
                                     const SizedBox(width: 6),
                                     Expanded(

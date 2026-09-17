@@ -70,6 +70,7 @@ class _DeleteBottomSheetState extends State<DeleteBottomSheet> {
             ),
             _errorWidget(),
             _dropdownBarn(),
+            const SizedBox(height: Dimens.d16),
             _dropdownPen(),
             BlocProvider.value(
               value: widget.bloc,

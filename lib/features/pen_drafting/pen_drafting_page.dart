@@ -9,6 +9,7 @@ import 'package:farm/features/pen_drafting/widgets/item_widget.dart';
 import 'package:farm/features/pen_drafting/widgets/detail_bottom_sheet.dart';
 import 'package:farm/resources/resource.dart';
 import 'package:farm/views/view.dart';
+import 'package:farm/widgets/buttons/filter_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -148,21 +149,23 @@ class _PenDraftingPageState
   }
 
   Widget _filterButton() {
-    return FloatingActionButton.extended(
-      backgroundColor: AppColors.current.eucalyptus700,
-      onPressed: () => navigator.showBottomSheet(
-        FilterBottomSheet(
-          bloc: bloc,
-          onDismiss: () {
-            navigator.pop();
-          },
-        ),
-      ),
-      label: Text(
-        'Filter',
-        style: TextStyles.button2().copyWith(color: Colors.white),
-      ),
-      icon: const Icon(Icons.filter_list_alt, color: Colors.white),
+    return BlocBuilder<PenDraftingBloc, PenDraftingState>(
+      bloc: bloc,
+      buildWhen: (p, c) => p.appliedFilterStatus != c.appliedFilterStatus,
+      builder: (context, state) {
+        return FilterFab(
+          isActive: state.isFilterActive,
+          activeLabel: state.appliedFilterLabel,
+          onPressed: () => navigator.showBottomSheet(
+            FilterBottomSheet(
+              bloc: bloc,
+              onDismiss: () {
+                navigator.pop();
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 

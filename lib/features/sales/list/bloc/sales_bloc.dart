@@ -1,6 +1,5 @@
 import 'package:dartx/dartx.dart';
 import 'package:farm/base/base.dart';
-import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/entities/sales/sales_request.dart';
 import 'package:farm/domain/usecases/sales_use_case.dart';
 import 'package:farm/features/sales/list/bloc/sales_event.dart';
@@ -52,12 +51,13 @@ class SalesBloc extends BaseBloc<SalesEvent, SalesState> {
         if (!_isProjectChosen(emit)) {
           return;
         }
-        var status = '';
-        if (withFilter && state.filterStatus.isNotEmpty) {
-          status = salesStatusMap.entries
-              .firstWhere((item) => item.value == state.filterStatus)
-              .key;
-        }
+        final appliedLabel = withFilter ? state.filterStatus : '';
+        final status = SalesState.statusKeyOf(appliedLabel);
+
+        /// Dicatat pada saat permintaan disusun, bukan saat dropdown disentuh.
+        /// Inilah satu-satunya titik yang tahu filter mana yang benar-benar
+        /// membentuk daftar berikutnya.
+        emit(state.copyWith(appliedFilterStatus: appliedLabel));
         final req = SalesRequest(
           limit: limit,
           id_project: appBloc.state.selectedProject?.id ?? '',

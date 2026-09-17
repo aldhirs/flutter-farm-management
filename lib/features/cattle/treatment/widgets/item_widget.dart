@@ -2,6 +2,7 @@ import 'package:farm/constants/date_constant.dart';
 import 'package:farm/domain/entities/treatment/treatment.dart';
 import 'package:farm/extensions/string.dart';
 import 'package:farm/utils/string_utils.dart';
+import 'package:farm/resources/styles/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -19,13 +20,7 @@ class ItemWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        border: Border.all(color: AppColors.current.neutral300),
       ),
       child: Row(
         children: [

@@ -137,7 +137,7 @@ enum ToastType {
   ),
   info(
     icon: 'assets/icons/ic_toast_info.svg',
-    textActionColor: Color(0xFF047475),
+    textActionColor: Color(0xFF3A1D8F),
     backgroundColor: Color(0xFFEAF7FF),
   ),
   warning(

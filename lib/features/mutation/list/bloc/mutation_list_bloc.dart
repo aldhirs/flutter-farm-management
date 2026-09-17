@@ -1,6 +1,5 @@
 import 'package:dartx/dartx.dart';
 import 'package:farm/base/base.dart';
-import 'package:farm/constants/enum_constants.dart';
 import 'package:farm/domain/entities/mutation/mutation_request.dart';
 import 'package:farm/domain/usecases/mutations_use_case.dart';
 import 'package:farm/features/mutation/list/bloc/mutation_list_event.dart';
@@ -59,12 +58,19 @@ class MutationListBloc extends BaseBloc<MutationListEvent, MutationListState> {
         if (!_isProjectChosen(emit)) {
           return;
         }
-        var status = '';
-        if (withFilter && state.filterStatus.isNotEmpty) {
-          status = salesStatusMap.entries
-              .firstWhere((item) => item.value == state.filterStatus)
-              .key;
-        }
+        final appliedLabel = withFilter ? state.filterStatus : '';
+
+        /// Memakai peta status MUTASI, bukan peta status penjualan.
+        ///
+        /// Baris ini sebelumnya membaca salesStatusMap — tersalin dari daftar
+        /// penjualan. Kedua peta kebetulan berisi label yang sama persis
+        /// sehingga hasilnya benar dan tidak pernah terlihat salah; yang
+        /// disimpan adalah kegagalan di kemudian hari, saat salah satu peta
+        /// ditambah satu status dan filter di layar ini diam-diam berhenti
+        /// mengenalinya.
+        final status = MutationListState.statusKeyOf(appliedLabel);
+
+        emit(state.copyWith(appliedFilterStatus: appliedLabel));
         final req = MutationRequest(
           limit: limit,
           from_project_id: !state.isIn

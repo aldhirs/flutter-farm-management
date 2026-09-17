@@ -251,11 +251,22 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
     return Visibility(
       visible: widget.title.isNotEmpty,
       child: Container(
-        margin: const EdgeInsets.all(Dimens.d16),
+        margin: const EdgeInsets.fromLTRB(
+          Dimens.d20,
+          Dimens.d4,
+          Dimens.d8,
+          Dimens.d12,
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(widget.title, style: TextStyles.heading5()),
+            Text(
+              widget.title,
+              style: TextStyles.heading5().copyWith(
+                color: AppColors.current.mint800,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             if (DropdownTypeEnum.getEnum(widget.dropdownType.value) ==
                 DropdownTypeEnum.multiple)
               TextButton(
@@ -334,12 +345,40 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
                   widget.onChoose.call(selectedItems);
                   widget.navigator.pop();
                 },
+
+                /// Baris terpilih ditandai bidang dan tepi, bukan hanya
+                /// centang kecil di ujung kanan.
+                ///
+                /// Centang sendirian berada sejauh mungkin dari nama yang
+                /// ditandainya — mata harus menyeberangi seluruh lebar layar
+                /// untuk memastikan yang mana yang sedang aktif.
                 child: Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: Dimens.d16,
+                    vertical: Dimens.d4,
+                  ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: Dimens.d16,
-                    vertical: Dimens.d8,
+                    vertical: Dimens.d14,
                   ),
-                  color: selectedItem.color,
+                  decoration: BoxDecoration(
+                    /// `color` pada modelnya bernilai `Colors.transparent`
+                    /// secara bawaan, bukan null — jadi `??` tidak pernah
+                    /// jatuh ke cabang berikutnya, dan baris terpilih tidak
+                    /// pernah mendapat warna isiannya.
+                    color: selectedItem.color != Colors.transparent
+                        ? selectedItem.color
+                        : (selected
+                              ? AppColors.current.mint200.withValues(alpha: 0.6)
+                              : Colors.transparent),
+                    borderRadius: BorderRadius.circular(Dimens.d14),
+                    border: Border.all(
+                      color: selected
+                          ? AppColors.current.mint700
+                          : AppColors.current.neutral300,
+                      width: selected ? Dimens.d2 : Dimens.d1,
+                    ),
+                  ),
                   child: Row(
                     children: [
                       Expanded(
@@ -354,33 +393,34 @@ class _DropdownViewBottomsheetState extends State<DropdownViewBottomsheet> {
                             ),
                             Visibility(
                               visible: selectedItem.notes.isNotEmpty,
-                              child: Text(
-                                selectedItem.notes,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                                style: TextStyles.label4(),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: Dimens.d2),
+                                child: Text(
+                                  selectedItem.notes,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: TextStyles.label4(),
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
                       if (selected)
-                        Icon(Icons.check, color: AppColors.current.mint700),
+                        Icon(
+                          Icons.check_circle,
+                          size: Dimens.d20,
+                          color: AppColors.current.mint700,
+                        ),
                     ],
                   ),
                 ),
               );
             },
-            separatorBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.only(
-                left: Dimens.d16,
-                right: Dimens.d16,
-              ),
-              child: Divider(
-                thickness: Dimens.d1,
-                color: AppColors.current.neutral500,
-              ),
-            ),
+
+            /// Tanpa garis pemisah: tiap baris sudah punya tepinya sendiri,
+            /// dan garis di antaranya hanya menambah satu lapis lagi.
+            separatorBuilder: (context, index) => const SizedBox.shrink(),
           ),
         );
       },

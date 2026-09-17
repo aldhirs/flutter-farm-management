@@ -25,20 +25,12 @@ class ItemWidget extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+
+        /// Bidang rata dengan tepi tipis, seperti kartu daftar penjualan.
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.white, Colors.grey.shade50],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(Dimens.d16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12.withValues(alpha: 0.2),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          border: Border.all(color: AppColors.current.neutral300),
         ),
         child: Padding(padding: const EdgeInsets.all(18), child: _itemPlain()),
       ),
@@ -67,7 +59,7 @@ class ItemWidget extends StatelessWidget {
         /// Header kandang + kamar
         Row(
           children: [
-            _buildCircleIcon(Icons.home_outlined, Colors.teal),
+            _buildCircleIcon(Icons.home_outlined, AppColors.current.mint700),
             const SizedBox(width: 8),
             Expanded(
               child: Text(

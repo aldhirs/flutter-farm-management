@@ -66,7 +66,7 @@ class Popup extends StatelessWidget {
       backgroundColor: AppColors.current.neutral100,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Dimens.d10),
+        borderRadius: BorderRadius.circular(Dimens.d24),
       ),
       child: ResponsiveWidget(
         mobile: _popupWidget(context),
@@ -118,14 +118,12 @@ class Popup extends StatelessWidget {
               ),
             ),
           ),
-          Visibility(
-            visible: textFieldVisibility.defaultFalse(),
-            child: Divider(
-              thickness: Dimens.d1,
-              color: AppColors.current.neutral500,
-            ),
-          ),
-          SizedBox(height: textFieldVisibility.defaultFalse() ? Dimens.d16 : 0),
+
+          /// Tidak ada garis antara kolom isian dan tombolnya.
+          ///
+          /// Garis memisahkan hal yang berbeda; kolom ini dan tombol di
+          /// bawahnya adalah satu pekerjaan yang sama — isi, lalu kirim.
+          SizedBox(height: textFieldVisibility.defaultFalse() ? Dimens.d8 : 0),
           Visibility(
             visible: positiveButtonText?.isNotEmpty == true,
             child: Stack(
@@ -193,14 +191,7 @@ class Popup extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: Dimens.d16),
-          Visibility(
-            visible: textFieldVisibility.defaultFalse(),
-            child: Divider(
-              thickness: Dimens.d1,
-              color: AppColors.current.neutral500,
-            ),
-          ),
+          const SizedBox(height: Dimens.d8),
         ],
       );
     } else {

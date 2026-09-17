@@ -59,37 +59,44 @@ class _DropdownViewFieldState extends State<DropdownViewField> {
       });
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: SafeArea(
-        child: ValueListenableBuilder<List<DropdownCheckboxModel>>(
-          valueListenable: widget.items,
-          builder: (context, items, _) {
-            final selectedItems = items.where((item) => item.selected).toList();
+    /// Bidang ini tidak membawa jaraknya sendiri.
+    ///
+    /// Sebelumnya ia dibungkus `SafeArea` — pengaman yang gunanya menghindari
+    /// takik dan bilah gestur di tepi layar, bukan di tengah formulir. Di dalam
+    /// lembar bawah, sisa tepi bawah layar belum dipakai siapa pun, jadi setiap
+    /// dropdown menambahkannya sendiri: dua dropdown bersebelahan menyisipkan
+    /// dua kali tinggi bilah gestur di antara keduanya, sementara kotak teks di
+    /// atasnya tidak. Itulah jarak yang terlihat tidak sama, dan besarnya
+    /// berbeda-beda menurut ponselnya.
+    ///
+    /// Jarak antarbidang sekarang ditentukan formulir yang memuatnya, yang
+    /// memang satu-satunya tempat yang tahu urutan seluruh bidang.
+    return ValueListenableBuilder<List<DropdownCheckboxModel>>(
+      valueListenable: widget.items,
+      builder: (context, items, _) {
+        final selectedItems = items.where((item) => item.selected).toList();
 
-            if (selectedItems.isNotEmpty) {
-              if (widget.dropdownType == DropdownTypeEnum.single) {
-                _controller.text = selectedItems.first.text;
-              } else {
-                _controller.text = '${selectedItems.length} opsi dipilih';
-              }
-            } else {
-              if (_controller.value.text.isEmpty) {
-                _controller.clear();
-              }
-            }
+        if (selectedItems.isNotEmpty) {
+          if (widget.dropdownType == DropdownTypeEnum.single) {
+            _controller.text = selectedItems.first.text;
+          } else {
+            _controller.text = '${selectedItems.length} opsi dipilih';
+          }
+        } else {
+          if (_controller.value.text.isEmpty) {
+            _controller.clear();
+          }
+        }
 
-            return DropdownInputField(
-              controller: _controller,
-              dropdownInputState: textInputState,
-              label: widget.title,
-              hintText: widget.searchHint,
-              isShowDropdown: isShowDropdown,
-              onTap: _onShowBottomsheet,
-            );
-          },
-        ),
-      ),
+        return DropdownInputField(
+          controller: _controller,
+          dropdownInputState: textInputState,
+          label: widget.title,
+          hintText: widget.searchHint,
+          isShowDropdown: isShowDropdown,
+          onTap: _onShowBottomsheet,
+        );
+      },
     );
   }
 

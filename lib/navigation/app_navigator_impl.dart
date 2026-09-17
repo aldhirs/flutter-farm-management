@@ -347,6 +347,23 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
           constraints: BoxConstraints(
             maxWidth: DeviceUtils.getTabletFixFullWidth() ?? double.infinity,
           ),
+
+          /// Bentuk lembar disebutkan, dan isinya dipotong mengikuti bentuk itu.
+          ///
+          /// Tanpa `clipBehavior`, sudut atas lembar memang membulat tetapi
+          /// isinya tidak ikut dipotong: setiap anak yang punya latar sendiri —
+          /// daftar feedlot, daftar pen, kartu mana pun yang menyentuh tepi
+          /// atas — melukis sudut siku di atas sudut membulat itu. Yang terlihat
+          /// adalah dua tepi yang saling bertindih di kedua pojok, dan itu
+          /// muncul di semua lembar bawah sekaligus karena semuanya melewati
+          /// satu pintu ini.
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(Dimens.d28),
+              topRight: Radius.circular(Dimens.d28),
+            ),
+          ),
+          clipBehavior: m.Clip.antiAlias,
           enableDrag: enableDrag,
           useRootNavigator: useRootNavigator,
           isScrollControlled: isScrollControlled,

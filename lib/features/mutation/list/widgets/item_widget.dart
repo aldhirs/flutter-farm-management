@@ -30,20 +30,12 @@ class ItemWidget extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: Dimens.d12, vertical: 6),
         padding: const EdgeInsets.all(12),
+
+        /// Bidang rata dengan tepi tipis, seperti kartu daftar penjualan.
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.white, Colors.grey.shade50],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(Dimens.d16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12.withValues(alpha: 0.2),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          border: Border.all(color: AppColors.current.neutral300),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +62,7 @@ class ItemWidget extends StatelessWidget {
               isIn
                   ? "Dari: ${item.from_project_name.orEmpty()}"
                   : "Ke: ${item.to_project_name.orEmpty()}",
-              isIn ? Colors.green : Colors.orange,
+              isIn ? AppColors.current.mint700 : Colors.orange,
             ),
             const SizedBox(height: 12),
 

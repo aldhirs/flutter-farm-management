@@ -15,6 +15,7 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       ),
       Home() => const HomeNavBarRoute(),
       DraftingScan() => const DraftingScanRoute(),
+      DraftingList() => const DraftingListRoute(),
       DraftingDetail(:final connection) => DraftingDetailRoute(
         connection: connection,
       ),
@@ -27,6 +28,7 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
         rfid: rfid,
       ),
       Account() => const AccountRoute(),
+      ChangePassword() => const ChangePasswordRoute(),
       SalesPage() => const SalesRoute(),
       SalesItemPage(:final item) => SalesItemsRoute(item: item),
       SalesItemPreviewPage(:final item, :final connection) =>

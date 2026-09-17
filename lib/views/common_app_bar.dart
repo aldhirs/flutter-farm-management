@@ -60,16 +60,15 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       surfaceTintColor: surfaceTintColor,
       scrolledUnderElevation: 0.0,
       forceMaterialTransparency: forceMaterialTransparency.defaultTrue(),
+
+      /// Bidang pekat satu warna, sama dengan kepala halaman lain.
+      ///
+      /// Gradien ungu-ke-ungu tidak mengabarkan apa pun dan selisihnya hilang
+      /// di bawah matahari. Warna yang sama dipakai bilah item penjualan,
+      /// item mutasi, detail ternak, dan papan feedlot di beranda — sehingga
+      /// berpindah antar halaman tidak terasa berpindah aplikasi.
       flexibleSpace: backgroundColor == null
-          ? Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [const Color(0xFF25AFCB), AppColors.current.mint500],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-            )
+          ? Container(color: AppColors.current.mint800)
           : null,
       backgroundColor:
           backgroundColor ?? Colors.transparent, // biar gradient yang tampil
