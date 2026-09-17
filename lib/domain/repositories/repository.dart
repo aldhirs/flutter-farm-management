@@ -29,6 +29,9 @@ import 'package:farm/domain/entities/pen/pen.dart';
 import 'package:farm/domain/entities/pen/pen_request.dart';
 import 'package:farm/domain/entities/project/project.dart';
 import 'package:farm/domain/entities/project/project_request.dart';
+import 'package:farm/domain/entities/auth/change_password_request.dart';
+import 'package:farm/domain/entities/project/discover_summary.dart';
+import 'package:farm/domain/entities/project/discover_summary_request.dart';
 import 'package:farm/domain/entities/reception/reception.dart';
 import 'package:farm/domain/entities/reception/reception_assignee.dart';
 import 'package:farm/domain/entities/reception/reception_assignee_request.dart';
@@ -56,7 +59,11 @@ import 'package:farm/domain/entities/treatment/treatment_type_request.dart';
 abstract class Repository {
   bool get isLoggedIn;
   Future<DataResponse<UserData>> login(LoginRequest request);
+  Future<DataResponse<void>> changePassword(ChangePasswordRequest request);
   Future<DataListResponse<Project>> projects(ProjectRequest request);
+  Future<DataResponse<DiscoverSummary>> discoverSummary(
+    DiscoverSummaryRequest request,
+  );
   Future<DataListResponse<Barn>> barns(BarnRequest request);
   Future<DataListResponse<Pen>> pens(PenRequest request);
   Future<DataListResponse<Level>> levels(LevelRequest request);

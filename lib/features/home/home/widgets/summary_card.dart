@@ -1,3 +1,4 @@
+import 'package:farm/resources/styles/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class SummaryCard extends StatelessWidget {
@@ -18,19 +19,13 @@ class SummaryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(color: AppColors.current.neutral300),
       ),
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 30, color: const Color(0xFF25ADCB)),
+          Icon(icon, size: 30, color: AppColors.current.mint700),
           const SizedBox(height: 8),
           Text(
             label,
