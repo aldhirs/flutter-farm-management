@@ -24,25 +24,6 @@ abstract class OnLoginPressed extends LoginEvent with _$OnLoginPressed {
 }
 
 @freezed
-abstract class InitForgotPassword extends LoginEvent with _$InitForgotPassword {
-  const factory InitForgotPassword({
-    required String title,
-    required List<InlineSpan> subtitle,
-    required String buttonTitle,
-  }) = _InitForgotPassword;
-
-  const InitForgotPassword._();
-}
-
-@freezed
-abstract class ForgotPasswordPressed extends LoginEvent
-    with _$ForgotPasswordPressed {
-  const factory ForgotPasswordPressed() = _ForgotPasswordPressed;
-
-  const ForgotPasswordPressed._();
-}
-
-@freezed
 abstract class OnInputEmailChanged extends LoginEvent
     with _$OnInputEmailChanged {
   const factory OnInputEmailChanged({required String email}) =

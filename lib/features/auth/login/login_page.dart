@@ -168,7 +168,7 @@ class _LoginPageState extends BasePageState<LoginPage, LoginBloc>
                   useRootNavigator: false,
                   barrierDismissible: false,
                   context: context,
-                  builder: (context) => _popupInputForgotPassword(),
+                  builder: (context) => _popupForgotPassword(),
                 );
               },
             ),
@@ -374,62 +374,38 @@ class _LoginPageState extends BasePageState<LoginPage, LoginBloc>
     );
   }
 
-  Widget _popupInputForgotPassword() {
-    bloc.add(
-      InitForgotPassword(
-        title: 'Lupa Kata Sandi',
-        subtitle: [
-          TextSpan(
-            text:
-                'Masukkan alamat e-mail akun Anda. Instruksi untuk membuat '
-                'kata sandi baru akan dikirim ke sana.',
-          ),
-        ],
-        buttonTitle: 'Kirim Instruksi',
-      ),
-    );
-    return BlocProvider.value(
-      value: bloc,
-      child: BlocBuilder<LoginBloc, LoginState>(
-        builder: (context, state) {
-          return Stack(
-            children: [
-              Popup(
-                textFieldVisibility: true,
-                closeVisibility: true,
-                textInputTitle: 'Alamat E-Mail',
-                textInputHint: 'nama@perusahaan.com',
-                title: 'Lupa Kata Sandi',
-
-                /// Keterangan diberikan langsung di sini.
-                ///
-                /// Sebelumnya kalimatnya dititipkan lewat event
-                /// `InitForgotPassword`, tetapi penanganan event itu hanya
-                /// memancarkan ulang state tanpa menyimpan apa pun — jadi
-                /// dialognya selalu terbuka tanpa satu kalimat penjelas.
-                description: [
-                  TextSpan(
-                    text:
-                        'Masukkan alamat e-mail akun Anda. Instruksi untuk '
-                        'membuat kata sandi baru akan dikirim ke sana.',
-                  ),
-                ],
-                positiveButtonText: 'Kirim Instruksi',
-                positiveButtonType: ButtonType.primary,
-                isLoading: false,
-                onPositiveButtonPressed: () {
-                  navigator.pop();
-                  FocusScope.of(context).unfocus();
-                  // bloc.add(const ForgotPasswordEmailReceived());
-                },
-                onChanged: (value) {
-                  // bloc.add(EmailForgotPasswordChanged(email: value));
-                },
-              ),
-            ],
-          );
-        },
-      ),
+  /// Memberi tahu bahwa kata sandi hanya bisa direset administrator.
+  ///
+  /// Dulu dialog ini meminta alamat e-mail dan berjanji akan mengirim
+  /// instruksi ke sana. Janji itu tidak pernah ditepati: penanganan event-nya
+  /// dikomentari, jadi menekan "Kirim Instruksi" hanya menutup dialog. Orang
+  /// yang lupa kata sandinya akan menunggu surel yang tidak akan pernah datang,
+  /// dan sementara itu tidak menghubungi siapa pun yang sebenarnya bisa
+  /// menolong.
+  ///
+  /// Kalimatnya disamakan dengan yang dipakai aplikasi web, karena keduanya
+  /// menjelaskan satu kenyataan yang sama: di sistem ini pengaturan ulang kata
+  /// sandi memang hanya dapat dilakukan administrator.
+  Widget _popupForgotPassword() {
+    return Popup(
+      title: 'Lupa Kata Sandi',
+      closeVisibility: true,
+      description: [
+        const TextSpan(
+          text:
+              'Pengaturan ulang kata sandi hanya dapat dilakukan oleh '
+              'administrator sistem. Silakan hubungi administrator di '
+              'organisasi Anda untuk memperoleh kata sandi baru, lalu masuk '
+              'kembali menggunakan kata sandi tersebut.',
+        ),
+      ],
+      positiveButtonText: 'Mengerti',
+      positiveButtonType: ButtonType.primary,
+      onPositiveButtonPressed: () {
+        navigator.pop();
+        FocusScope.of(context).unfocus();
+      },
+      onClosePressed: () => navigator.pop(),
     );
   }
 }

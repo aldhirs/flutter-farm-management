@@ -30,8 +30,6 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
     on<OnInputEmailChanged>(_onInputEmailChanged, transformer: log());
     on<OnInputPasswordChanged>(_onInputPasswordChanged, transformer: log());
     on<ClearError>(_onClearError, transformer: log());
-    on<InitForgotPassword>(_initForgotPassword, transformer: log());
-    on<ForgotPasswordPressed>(_forgotPasswordPressed, transformer: log());
   }
 
   Future<void> _initialized(Initiated event, Emitter<LoginState> emit) async {
@@ -146,18 +144,6 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
   Future<void> _onClearButtonPressed(Emitter<LoginState> emit) async {
     emit(state.copyWith(isButtonLoginPressed: false));
   }
-
-  Future<void> _initForgotPassword(
-    InitForgotPassword event,
-    Emitter<LoginState> emit,
-  ) async {
-    emit(state.copyWith());
-  }
-
-  Future<void> _forgotPasswordPressed(
-    ForgotPasswordPressed event,
-    Emitter<LoginState> emit,
-  ) async {}
 
   Future<void> _onUpdateFcmToken(Emitter<LoginState> emit) async {
     return runBlocCatching(
